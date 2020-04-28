@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.database.AppDatabase;
 
 public class NextTripsFragment extends Fragment {
 

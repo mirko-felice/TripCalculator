@@ -1,0 +1,154 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "96b571c90592f7ac1e7d0a15a20b584e",
+    "entities": [
+      {
+        "tableName": "Trip",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`TripId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `Name` TEXT NOT NULL, `Diary` TEXT, `IsActive` INTEGER NOT NULL, `IsEnded` INTEGER NOT NULL, `StartDate` INTEGER, `EndDate` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "TripId",
+            "columnName": "TripId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "Name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "Diary",
+            "columnName": "Diary",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "IsActive",
+            "columnName": "IsActive",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "IsEnded",
+            "columnName": "IsEnded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "StartDate",
+            "columnName": "StartDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "EndDate",
+            "columnName": "EndDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "TripId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Location",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`Id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `Order` INTEGER NOT NULL, `TripId` INTEGER NOT NULL, `Note` TEXT, `ImgNames` TEXT, `IsPassed` TEXT, `PreviousId` INTEGER, `Reminder` TEXT, FOREIGN KEY(`TripId`) REFERENCES `Trip`(`TripId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "Id",
+            "columnName": "Id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "Order",
+            "columnName": "Order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "TripId",
+            "columnName": "TripId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "Note",
+            "columnName": "Note",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ImgNames",
+            "columnName": "ImgNames",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "IsPassed",
+            "columnName": "IsPassed",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "PreviousId",
+            "columnName": "PreviousId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "Reminder",
+            "columnName": "Reminder",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "Id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Location_TripId_Order",
+            "unique": true,
+            "columnNames": [
+              "TripId",
+              "Order"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_Location_TripId_Order` ON `${TABLE_NAME}` (`TripId`, `Order`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Trip",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "TripId"
+            ],
+            "referencedColumns": [
+              "TripId"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '96b571c90592f7ac1e7d0a15a20b584e')"
+    ]
+  }
+}
