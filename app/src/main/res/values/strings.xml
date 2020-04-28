@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TripCalculator</string>
+    <string name="next_trips">Prossimi Viaggi</string>
+    <string name="past_trips">Cronologia Viaggi</string>
 </resources>
