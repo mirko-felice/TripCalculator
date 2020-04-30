@@ -13,11 +13,15 @@ import java.util.List;
 
 public class TripViewModel extends AndroidViewModel {
 
-    public LiveData<List<Trip>> trips;
+    private LiveData<List<Trip>> trips;
 
     public TripViewModel(@NonNull Application application) {
         super(application);
         AppDatabase database = AppDatabase.getInstance(application);
         trips = database.tripDao().getAllTrips();
+    }
+
+    public LiveData<List<Trip>> getTrips() {
+        return trips;
     }
 }

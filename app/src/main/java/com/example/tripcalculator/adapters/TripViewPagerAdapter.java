@@ -1,4 +1,4 @@
-package com.example.tripcalculator;
+package com.example.tripcalculator.adapters;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,8 +19,8 @@ public class TripViewPagerAdapter extends FragmentPagerAdapter {
     public TripViewPagerAdapter(FragmentManager fm) {
         super(fm);
         fragments = new ArrayList<>();
-        fragments.add(new PastTripsFragment());
         fragments.add(new NextTripsFragment());
+        fragments.add(new PastTripsFragment());
         fragmentsTitles = new ArrayList<>();
         fragmentsTitles.add("Prossimi Viaggi");
         fragmentsTitles.add("Cronologia Viaggi");
