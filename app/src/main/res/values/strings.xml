@@ -2,4 +2,6 @@
     <string name="app_name">TripCalculator</string>
     <string name="next_trips">Prossimi Viaggi</string>
     <string name="past_trips">Cronologia Viaggi</string>
+    <string name="app_label">Cerca luogo</string>
+    <string name="search_title">Ricerca</string>
 </resources>
