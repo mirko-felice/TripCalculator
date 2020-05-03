@@ -5,7 +5,6 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
@@ -18,6 +17,12 @@ public interface TripDao {
 
     @Query("SELECT * FROM Trip where TripId = :tripId")
     public LiveData<Trip> getTripFromId(int tripId);
+
+    @Query("SELECT * FROM Trip where IsEnded = 1")
+    public LiveData<List<Trip>> getEndedTrips();
+
+    @Query("SELECT * FROM Trip order by InsertDate DESC limit 1")
+    public LiveData<Trip> getLastInsertedTrip();
 
     @Insert
     public void insertTrip(Trip trip);

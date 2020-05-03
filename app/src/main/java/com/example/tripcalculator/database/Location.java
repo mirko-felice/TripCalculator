@@ -7,7 +7,6 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-//TODO aggiungere le coordinate
 @Entity(foreignKeys = @ForeignKey(entity = Trip.class, childColumns = "TripId", parentColumns = "TripId", onDelete = ForeignKey.CASCADE), indices = @Index(value = {"TripId", "Order"}, unique = true))
 public class Location {
 
@@ -34,4 +33,13 @@ public class Location {
 
     @Nullable
     public String Reminder;
+
+    @NonNull
+    public double Latitude;
+
+    @NonNull
+    public double Longitude;
+
+    @NonNull
+    public String DisplayName;
 }

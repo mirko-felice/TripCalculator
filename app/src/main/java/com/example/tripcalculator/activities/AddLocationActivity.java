@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
+import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.viewmodel.LocationViewModelFactory;
 import com.example.tripcalculator.databinding.ActivityAddLocationBinding;
 import com.example.tripcalculator.ui.adapters.LocationRecyclerViewAdapter;
@@ -25,8 +27,9 @@ public class AddLocationActivity extends AppCompatActivity {
         binding.locations.setAdapter(adapter);
         binding.addLocation.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
         setContentView(binding.getRoot());
-
-        viewModel = new LocationViewModelFactory(getApplication(), getIntent().getIntExtra("TripId", 0)).create(LocationViewModel.class);
-        viewModel.getLocations().observe(this, adapter::updateLocations);
+        AppDatabase.getInstance(this).tripDao().getLastInsertedTrip().observe(this, trip -> {
+            viewModel = new LocationViewModelFactory(getApplication(), trip.TripId).create(LocationViewModel.class);
+            viewModel.getLocations().observe(this, adapter::updateLocations);
+        });
     }
 }

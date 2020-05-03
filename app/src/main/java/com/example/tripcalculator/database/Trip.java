@@ -28,4 +28,7 @@ public class Trip {
 
     @Nullable
     public Date EndDate;
+
+    @NonNull
+    public Date InsertDate;
 }

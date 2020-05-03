@@ -12,6 +12,10 @@ import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.ActivityAddTripBinding;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
@@ -31,10 +35,9 @@ public class AddTripActivity extends AppCompatActivity {
             trip.Name = binding.editName.getText().toString();
             trip.IsActive = false;
             trip.IsEnded = false;
+            trip.InsertDate = new Date();
             Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).tripDao().insertTrip(trip));
             Intent intent = new Intent(this, AddLocationActivity.class);
-            //TODO al posto di zero passare l'id dell'ultimo trip inserito
-            intent.putExtra("TripId", 0);
             startActivity(intent);
             finish();
         });
