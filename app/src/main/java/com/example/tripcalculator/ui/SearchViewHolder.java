@@ -1,10 +1,12 @@
-package com.example.tripcalculator;
+package com.example.tripcalculator.ui;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tripcalculator.R;
 
 public class SearchViewHolder extends RecyclerView.ViewHolder {
 

@@ -45,7 +45,7 @@ public class NextTripsFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TripItemTouchHelper(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT, adapter));
         itemTouchHelper.attachToRecyclerView(binding.recyclerView);
         viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
-        viewModel.getTrips().observe(this, adapter::updateTrips);
+        viewModel.getTrips().observe(getViewLifecycleOwner(), adapter::updateTrips);
         return binding.getRoot();
     }
 

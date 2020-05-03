@@ -4,4 +4,5 @@
     <string name="past_trips">Cronologia Viaggi</string>
     <string name="app_label">Cerca luogo</string>
     <string name="search_title">Ricerca</string>
+    <string name="welcome_locations">Qui puoi controllare le singole località del tuo viaggio, prova ad aggiungere, cancellare o modificare!</string>
 </resources>

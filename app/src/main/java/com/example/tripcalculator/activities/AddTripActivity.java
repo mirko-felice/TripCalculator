@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.tripcalculator.database.AppDatabase;
@@ -31,6 +32,10 @@ public class AddTripActivity extends AppCompatActivity {
             trip.IsActive = false;
             trip.IsEnded = false;
             Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).tripDao().insertTrip(trip));
+            Intent intent = new Intent(this, AddLocationActivity.class);
+            //TODO al posto di zero passare l'id dell'ultimo trip inserito
+            intent.putExtra("TripId", 0);
+            startActivity(intent);
             finish();
         });
     }

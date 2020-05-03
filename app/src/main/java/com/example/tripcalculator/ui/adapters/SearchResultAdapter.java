@@ -1,4 +1,4 @@
-package com.example.tripcalculator.adapters;
+package com.example.tripcalculator.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.SearchViewHolder;
+import com.example.tripcalculator.ui.SearchViewHolder;
 import com.example.tripcalculator.structures.Location;
 
 import java.util.ArrayList;

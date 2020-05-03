@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.adapters.TripViewPagerAdapter;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.databinding.ActivityMainBinding;
+import com.example.tripcalculator.ui.adapters.TripViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,11 +26,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
         viewPager = binding.viewPager;
         viewPager.setAdapter(new TripViewPagerAdapter(getSupportFragmentManager()));
-
-        ((Button)findViewById(R.id.button3)).setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-            startActivity(intent);
-        });
     }
 
     @Override

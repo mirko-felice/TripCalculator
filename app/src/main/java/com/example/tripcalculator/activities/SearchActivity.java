@@ -19,7 +19,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.SearchView;
 
 import com.android.volley.Request;
@@ -29,7 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.adapters.SearchResultAdapter;
+import com.example.tripcalculator.ui.adapters.SearchResultAdapter;
 import com.example.tripcalculator.databinding.ActivitySearchBinding;
 import com.google.android.material.snackbar.Snackbar;
 
