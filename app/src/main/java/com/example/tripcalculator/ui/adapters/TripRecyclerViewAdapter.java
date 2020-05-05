@@ -1,5 +1,11 @@
 package com.example.tripcalculator.ui.adapters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +15,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.ui.TripActionModeCallback;
 import com.example.tripcalculator.ui.TripViewHolder;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -30,7 +40,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
     public TripRecyclerViewAdapter(FragmentActivity activity) {
         this.activity = activity;
-        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_AppCompat_DayNight_Dialog)
+        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
                 .setTitle("Sei sicuro di voler eliminare il viaggio?")
                 .setPositiveButton("SI", (dialog, which) -> deleteItem())
                 .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
@@ -46,12 +56,43 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
+        Intent intent = new Intent(activity.getApplicationContext(), ReminderReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
+
         Trip trip = trips.get(position);
         holder.setName(trip.Name);
         holder.itemView.setOnLongClickListener(v -> {
             activity.startActionMode(new TripActionModeCallback(trip, activity.getApplicationContext()));
             return true;
         });
+        holder.itemView.findViewById(R.id.plan_trip_btn).setOnClickListener(v -> {
+            //activity.registerReceiver(new AlarmReceiver(), new IntentFilter("com.example.tripcalculator.NOTIFICATION"));
+            AlarmManager alarmManager = (AlarmManager) activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            Calendar now = Calendar.getInstance();
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
+            Calendar timeToSet = Calendar.getInstance();
+            TimePickerDialog timePickerDialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
+                timeToSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                timeToSet.set(Calendar.MINUTE, minute);
+
+                assert alarmManager != null;
+                alarmManager.setExact(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
+            }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false);
+
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    timeToSet.set(Calendar.MILLISECOND, Math.toIntExact(datePicker.getSelection()));
+                }
+                timePickerDialog.show();
+            });
+            datePicker.addOnNegativeButtonClickListener(v1 -> showSnack());
+            datePicker.addOnCancelListener(dialog -> showSnack());
+            datePicker.show(activity.getSupportFragmentManager(), datePicker.toString());
+        });
+    }
+    
+    private void showSnack(){
+        Snackbar.make(activity.findViewById(R.id.coordinator_layout),"Sorry", Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -90,5 +131,4 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
         Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(activity).tripDao().deleteTrip(lastTripDismiss));
         notifyItemRemoved(lastTripDismissPosition);
     }
-
 }
