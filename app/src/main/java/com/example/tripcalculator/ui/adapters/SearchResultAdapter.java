@@ -10,8 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.activities.SearchActivity;
+import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.ui.SearchViewHolder;
-import com.example.tripcalculator.structures.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +20,18 @@ import java.util.List;
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchViewHolder> {
 
     private List<Location> result = new ArrayList<>();
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
+    private SearchActivity activity;
 
-    public SearchResultAdapter(Context context){
+    public SearchResultAdapter(Context context, SearchActivity activity){
+        this.activity = activity;
         this.inflater = LayoutInflater.from(context);
     }
 
 
-    public void addLocation(double latitude, double longitude, String displayName){
-        this.result.add(new Location(latitude, longitude, displayName));
+    public void setLocations(List<Location> locations){
+        this.result = locations;
+        activity.setSearchResult(locations);
         notifyDataSetChanged();
     }
 
@@ -46,11 +50,22 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
         Location location = result.get(position);
-        ((TextView) holder.itemView.findViewById(R.id.result_location)).setText(location.getDisplayName());
+        TextView element = (TextView) holder.itemView.findViewById(R.id.result_location);
+        element.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.focusOn(result.get(position));
+            }
+        });
+        element.setText(location.DisplayName);
     }
 
     @Override
     public int getItemCount() {
         return result.size();
+    }
+
+    public Location getLocation(int position){
+        return result.get(position);
     }
 }

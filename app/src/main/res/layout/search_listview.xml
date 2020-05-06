@@ -6,6 +6,5 @@
     <TextView
         android:id="@+id/result_location"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ciao" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

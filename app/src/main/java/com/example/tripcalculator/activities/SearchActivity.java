@@ -3,7 +3,8 @@ package com.example.tripcalculator.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.SearchManager;
@@ -16,27 +17,24 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.ui.adapters.SearchResultAdapter;
+import com.example.tripcalculator.Utility.Utilities;
+import com.example.tripcalculator.database.Location;
+import com.example.tripcalculator.fragments.MapFragment;
+import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.databinding.ActivitySearchBinding;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -49,13 +47,12 @@ public class SearchActivity extends AppCompatActivity {
     //permission vars
     private static boolean isLocationAllowed = false;
     private static boolean isNetworkConnected = false;
-    //search vars
+    FragmentManager fragmentManager;
     Snackbar snackbar;
 
-    private RequestQueue requestQueue;
-    private final static String TAG = "OSM_REQUEST";
-    SearchResultAdapter adapter;
     ActivitySearchBinding binding;
+    SearchResultFragment searchResultFragment;
+    MapFragment mapFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,22 +63,37 @@ public class SearchActivity extends AppCompatActivity {
         snackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Impostazioni", (v) -> { setSettingsIntent(); });
 
-        requestQueue = Volley.newRequestQueue(this);
-        Context context = getApplicationContext();
-        adapter = new SearchResultAdapter(this);
-
-        binding.searchResultList.setLayoutManager(new LinearLayoutManager(this));
-        binding.searchResultList.setAdapter(adapter);
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        searchResultFragment = new SearchResultFragment();
+        mapFragment = new MapFragment();
+        fragmentTransaction.add(R.id.search_layout, mapFragment);
+        fragmentTransaction.add(R.id.search_layout, searchResultFragment);
+        fragmentTransaction.hide(searchResultFragment);
+        fragmentTransaction.commit();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerNetworkCallback();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            connectivityManager.unregisterNetworkCallback(networkCallback);
+        }
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
             String query = intent.getStringExtra(SearchManager.QUERY);
-            adapter.clearSearchResult();
-            createRequest(query);
+            searchResultFragment.executeQueue(query);
         }
     }
 
@@ -91,14 +103,41 @@ public class SearchActivity extends AppCompatActivity {
         inflater.inflate(R.menu.options_menu, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView =  (SearchView) menu.findItem(R.id.search).getActionView();
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchView =  (SearchView) searchMenuItem.getActionView();
         if (searchManager != null){
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         }
         searchView.setIconifiedByDefault(false);
+        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                fragmentTransaction.show(searchResultFragment).commit();
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                closeSearch();
+                return true;
+            }
+        });
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                    fragmentTransaction.show(searchResultFragment).commit();
+                }
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                mapFragment.clearMarkers();
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 intent.setAction(Intent.ACTION_SEARCH);
                 intent.putExtra(SearchManager.QUERY, query);
@@ -134,6 +173,22 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    private void closeSearch(){
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        fragmentTransaction.hide(searchResultFragment).commit();
+    }
+
+    public void setSearchResult(List<Location> locations){
+        Utilities.hideKeyboard(this);
+        mapFragment.setSearchResults(locations);
+    }
+
+    public void focusOn(Location location){
+        closeSearch();
+        mapFragment.focusOn(location);
+    }
+
     private void setSettingsIntent() {
         Intent intent = new Intent();
         intent.setAction((Settings.ACTION_WIRELESS_SETTINGS));
@@ -156,32 +211,6 @@ public class SearchActivity extends AppCompatActivity {
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET}, REQUEST_INTERNET_PERMISSION);
         }
-    }
-
-    private void createRequest(String place){
-        String url = "https://nominatim.openstreetmap.org/search?q=" + place + "&format=json";
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject singleAddress = response.getJSONObject(i);
-                        adapter.addLocation(Double.parseDouble(singleAddress.get("lat").toString()), Double.parseDouble(singleAddress.get("lon").toString()), singleAddress.get("display_name").toString());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("SEARCH", error.toString());
-            }
-        });
-
-        jsonArrayRequest.setTag(TAG);
-        requestQueue.add(jsonArrayRequest);
     }
 
     private void registerNetworkCallback(){
