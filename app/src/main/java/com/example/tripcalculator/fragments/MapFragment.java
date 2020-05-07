@@ -15,8 +15,10 @@ import androidx.preference.PreferenceManager;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.Utility.PathOptimizingThread;
 import com.example.tripcalculator.Utility.Utilities;
+import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
+import com.example.tripcalculator.ui.LocationInfoWindow;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
@@ -110,7 +112,8 @@ public class MapFragment extends Fragment {
             markers.add(marker);
             marker.setPosition(point);
             marker.setTitle(location.DisplayName);
-            marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
+            marker.setInfoWindow(new LocationInfoWindow(R.layout.my_infowindow, map, location, (SearchActivity)getActivity()));
+            //marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
             map.getOverlays().add(marker);
         }
         Road road = new Road(searchResultPoints);

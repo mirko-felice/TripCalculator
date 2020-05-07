@@ -25,6 +25,7 @@ import android.widget.SearchView;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.Utility.Utilities;
+import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
@@ -49,6 +50,9 @@ public class SearchActivity extends AppCompatActivity {
     private static boolean isNetworkConnected = false;
     FragmentManager fragmentManager;
     Snackbar snackbar;
+
+    //tripId
+    private int tripId = -1;
 
     ActivitySearchBinding binding;
     SearchResultFragment searchResultFragment;
@@ -94,6 +98,9 @@ public class SearchActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchResultFragment.executeQueue(query);
+        }
+        if (intent.hasExtra("TripId") && this.tripId == -1){
+            this.tripId = intent.getIntExtra("TripId", -1);
         }
     }
 
@@ -187,6 +194,15 @@ public class SearchActivity extends AppCompatActivity {
     public void focusOn(Location location){
         closeSearch();
         mapFragment.focusOn(location);
+    }
+
+    public void addLocationToTrip(Location location){
+        List<Location> locationsAdded = AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId).getValue();
+        location.Id = 0;
+        location.Order = locationsAdded.get(locationsAdded.size() - 1).Order + 1;
+        location.TripId = tripId;
+        location.IsPassed = "False";
+        AppDatabase.getInstance(this).locationDao().insertLocation(location);
     }
 
     private void setSettingsIntent() {

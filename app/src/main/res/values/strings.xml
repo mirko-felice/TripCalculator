@@ -7,4 +7,7 @@
     <string name="welcome_locations">Qui puoi controllare le singole località del tuo viaggio, prova ad aggiungere, cancellare o modificare!</string>
     <string name="start_trip">Inizia Viaggio</string>
     <string name="plan_trip">Pianifica Viaggio</string>
+    <string name="aggiungi">Aggiungi</string>
+    <string name="longitude_n">Longitude:\n%1$f</string>
+    <string name="latitude_n">Latitude:\n%1$f</string>
 </resources>
