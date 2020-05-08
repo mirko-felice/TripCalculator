@@ -13,15 +13,22 @@ import java.util.List;
 
 public class TripViewModel extends AndroidViewModel {
 
-    private LiveData<List<Trip>> trips;
+    private AppDatabase database;
 
     public TripViewModel(@NonNull Application application) {
         super(application);
-        AppDatabase database = AppDatabase.getInstance(application);
-        trips = database.tripDao().getAllTrips();
+        database = AppDatabase.getInstance(application);
     }
 
     public LiveData<List<Trip>> getTrips() {
-        return trips;
+        return database.tripDao().getAllTrips();
+    }
+
+    public LiveData<Trip> getActiveTrip() {
+        return database.tripDao().getActiveTrip();
+    }
+
+    public LiveData<Trip> getLastInsertedTrip(){
+        return database.tripDao().getLastInsertedTrip();
     }
 }

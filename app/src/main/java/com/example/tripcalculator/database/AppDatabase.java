@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Trip.class, Location.class}, version = 2)
+@Database(entities = {Trip.class, Location.class}, version = 3)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -29,11 +29,20 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL(ADD_DISPLAY_NAME_TO_LOCATION);
         }
     };
+    private static Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DROP TABLE `Location`");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `Location` (`Id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `Order` INTEGER NOT NULL, `TripId` INTEGER NOT NULL, `Note` TEXT, `ImgNames` TEXT, `IsPassed` INTEGER NOT NULL, `PreviousId` INTEGER, `Reminder` TEXT, `Latitude` REAL NOT NULL, `Longitude` REAL NOT NULL, `DisplayName` TEXT NOT NULL, FOREIGN KEY(`TripId`) REFERENCES `Trip`(`TripId`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_Location_TripId_Order` ON `Location` (`TripId`, `Order`)");
+        }
+    };
 
     public static AppDatabase getInstance(Context context) {
         if(instance == null){
             instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
                             .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_2_3)
                             .build();
         }
         return instance;

@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Parcel;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +22,17 @@ import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.ui.TripActionModeCallback;
 import com.example.tripcalculator.ui.TripViewHolder;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 
 public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder> implements ItemTouchHelperAdapter {
@@ -44,6 +49,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
                 .setTitle("Sei sicuro di voler eliminare il viaggio?")
                 .setPositiveButton("SI", (dialog, which) -> deleteItem())
                 .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
+                .setOnDismissListener(dialog -> notifyDataSetChanged())
                 .create();
     }
 
@@ -69,19 +75,25 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
             //activity.registerReceiver(new AlarmReceiver(), new IntentFilter("com.example.tripcalculator.NOTIFICATION"));
             AlarmManager alarmManager = (AlarmManager) activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
             Calendar now = Calendar.getInstance();
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
             Calendar timeToSet = Calendar.getInstance();
-            TimePickerDialog timePickerDialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(activity, R.style.TimePickerDialog, (view, hourOfDay, minute) -> {
                 timeToSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 timeToSet.set(Calendar.MINUTE, minute);
 
+                if(timeToSet.before(now)){
+                    showSnack();
+                    return;
+                }
                 assert alarmManager != null;
                 alarmManager.setExact(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
             }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false);
+            timePickerDialog.setOnCancelListener(dialog -> showSnack());
 
+            CalendarConstraints calendarConstraints = new CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now()).build();
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().setCalendarConstraints(calendarConstraints).build();
             datePicker.addOnPositiveButtonClickListener(selection -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    timeToSet.set(Calendar.MILLISECOND, Math.toIntExact(datePicker.getSelection()));
+                    timeToSet.setTimeInMillis(datePicker.getSelection());
                 }
                 timePickerDialog.show();
             });

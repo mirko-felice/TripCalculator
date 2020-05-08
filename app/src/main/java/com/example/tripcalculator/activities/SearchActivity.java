@@ -201,7 +201,7 @@ public class SearchActivity extends AppCompatActivity {
         location.Id = 0;
         location.Order = locationsAdded.get(locationsAdded.size() - 1).Order + 1;
         location.TripId = tripId;
-        location.IsPassed = "False";
+        location.IsPassed = false;
         AppDatabase.getInstance(this).locationDao().insertLocation(location);
     }
 

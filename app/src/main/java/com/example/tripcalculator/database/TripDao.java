@@ -24,6 +24,9 @@ public interface TripDao {
     @Query("SELECT * FROM Trip order by InsertDate DESC limit 1")
     public LiveData<Trip> getLastInsertedTrip();
 
+    @Query("SELECT * FROM Trip where IsActive = 1")
+    public LiveData<Trip> getActiveTrip();
+
     @Insert
     public void insertTrip(Trip trip);
 

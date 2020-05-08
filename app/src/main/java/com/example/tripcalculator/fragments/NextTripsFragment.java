@@ -17,12 +17,16 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.ui.TripActionModeCallback;
+import com.example.tripcalculator.activities.TripActivity;
+import com.example.tripcalculator.database.AppDatabase;
+import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.ui.TripItemTouchHelper;
-import com.example.tripcalculator.activities.AddTripActivity;
 import com.example.tripcalculator.databinding.NextTripsFragmentBinding;
 import com.example.tripcalculator.ui.adapters.TripRecyclerViewAdapter;
 import com.example.tripcalculator.viewmodel.TripViewModel;
+
+import java.util.Date;
+import java.util.concurrent.Executors;
 
 public class NextTripsFragment extends Fragment {
 
@@ -35,7 +39,14 @@ public class NextTripsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = NextTripsFragmentBinding.inflate(getLayoutInflater(), container, false);
         binding.addTrip.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), AddTripActivity.class);
+            Trip trip = new Trip();
+            trip.TripId = 0;
+            trip.Name = "Nuovo Viaggio";
+            trip.IsActive = false;
+            trip.IsEnded = false;
+            trip.InsertDate = new Date();
+            Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(getContext()).tripDao().insertTrip(trip));
+            Intent intent = new Intent(getContext(), TripActivity.class);
             startActivity(intent);
         });
         adapter = new TripRecyclerViewAdapter(requireActivity());
@@ -45,7 +56,16 @@ public class NextTripsFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TripItemTouchHelper(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT, adapter));
         itemTouchHelper.attachToRecyclerView(binding.recyclerView);
         viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
-        viewModel.getTrips().observe(getViewLifecycleOwner(), adapter::updateTrips);
+        viewModel.getActiveTrip().observe(getViewLifecycleOwner(), trip -> {
+            if(trip != null){
+                /*Intent intent = new Intent(TripActivity.class);
+                intent.putExtra("TripId", trip.TripId);
+                startActivity(intent);*/
+            }
+        });
+        viewModel.getTrips().observe(getViewLifecycleOwner(), trips -> {
+            adapter.updateTrips(trips);
+        });
         return binding.getRoot();
     }
 

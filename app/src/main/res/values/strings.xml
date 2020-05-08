@@ -10,4 +10,7 @@
     <string name="aggiungi">Aggiungi</string>
     <string name="longitude_n">Longitude:\n%1$f</string>
     <string name="latitude_n">Latitude:\n%1$f</string>
+    <string name="settings">Impostazioni</string>
+    <string name="add_location">Aggiungi località</string>
+    <string name="trip_hint">Nome del viaggio</string>
 </resources>

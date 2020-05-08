@@ -1,7 +1,15 @@
 <resources>
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!--<item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorSecondary">@color/colorAccent</item>-->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+        <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="TimePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
     </style>
 </resources>

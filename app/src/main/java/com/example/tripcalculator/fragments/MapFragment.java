@@ -153,7 +153,7 @@ public class MapFragment extends Fragment {
         ArrayList<GeoPoint> nextWaypoints = new ArrayList<>();
         for(Location location : path){
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
-            if (Boolean.getBoolean(location.IsPassed)) {
+            if (location.IsPassed) {
                 passedWaypoints.add(point);
             } else {
                 nextWaypoints.add(point);

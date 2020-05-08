@@ -25,8 +25,8 @@ public class Location {
     @Nullable
     public String ImgNames;
 
-    @Nullable
-    public String IsPassed;
+    @NonNull
+    public boolean IsPassed;
 
     @Nullable
     public Long PreviousId;
