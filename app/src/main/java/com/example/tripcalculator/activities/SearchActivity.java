@@ -188,7 +188,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void setSearchResult(List<Location> locations){
         Utilities.hideKeyboard(this);
-        mapFragment.setSearchResults(locations);
+        mapFragment.setLocationMarkers(locations);
     }
 
     public void focusOn(Location location){

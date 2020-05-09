@@ -13,4 +13,6 @@
     <string name="settings">Impostazioni</string>
     <string name="add_location">Aggiungi località</string>
     <string name="trip_hint">Nome del viaggio</string>
+    <string name="prev_location">Località precedente</string>
+    <string name="next_location">Località successiva</string>
 </resources>

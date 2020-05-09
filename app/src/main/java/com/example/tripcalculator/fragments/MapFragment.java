@@ -14,7 +14,6 @@ import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.Utility.PathOptimizingThread;
-import com.example.tripcalculator.Utility.Utilities;
 import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
@@ -48,7 +47,7 @@ public class MapFragment extends Fragment {
     private List<Marker> markers;
     private ArrayList<GeoPoint> searchResultPoints;
     //ROAD
-    private ArrayList<Location> path;
+    private List<Location> path;
 
     @Nullable
     @Override
@@ -103,8 +102,7 @@ public class MapFragment extends Fragment {
         searchResultPoints.clear();
     }
 
-    public void setSearchResults(List<Location> locations){
-        IMapController mapController = map.getController();
+    public void setLocationMarkers(List<Location> locations){
         for (Location location : locations) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
             searchResultPoints.add(point);
@@ -116,6 +114,10 @@ public class MapFragment extends Fragment {
             //marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
             map.getOverlays().add(marker);
         }
+        showAllMarkers();
+    }
+
+    public void showAllMarkers(){
         Road road = new Road(searchResultPoints);
         BoundingBox boundingBox = road.mBoundingBox;
         map.zoomToBoundingBox(boundingBox, true);
@@ -128,7 +130,7 @@ public class MapFragment extends Fragment {
         mapController.setCenter(point);
     }
 
-    public void setPath(ArrayList<Location> path){
+    public void setPath(List<Location> path){
         this.path = path;
     }
 
@@ -166,5 +168,6 @@ public class MapFragment extends Fragment {
         Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.WHITE, 1.5f);
         map.getOverlays().add(passedRoadOverlay);
         map.getOverlays().add(roadToDoOverlay);
+        setLocationMarkers(path);
     }
 }

@@ -9,15 +9,16 @@ import org.osmdroid.util.GeoPoint;
 
 import java.lang.reflect.Executable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PathOptimizingThread implements Runnable {
 
-    private ArrayList<Location> path;
+    private List<Location> path;
     private Location startPoint;
     private Location endPoint;
 
     //TODO modify if "startPoint" and "endPoint" is included in "path"
-    public PathOptimizingThread(ArrayList<Location> path, Location startPoint, @Nullable Location endPoint){
+    public PathOptimizingThread(List<Location> path, Location startPoint, @Nullable Location endPoint){
         this.path = path;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -26,9 +27,9 @@ public class PathOptimizingThread implements Runnable {
     @Override
     public void run() {
         if (this.path != null){
-            ArrayList<Location> primaryLocations = new ArrayList<>();
-            ArrayList<Location> nextLocations = new ArrayList<>();
-            ArrayList<Location> resultPath = new ArrayList<>();
+            List<Location> primaryLocations = new ArrayList<>();
+            List<Location> nextLocations = new ArrayList<>();
+            List<Location> resultPath = new ArrayList<>();
 
 
 
@@ -76,7 +77,7 @@ public class PathOptimizingThread implements Runnable {
         }
     }
 
-    public ArrayList<Location> getPath() {
+    public List<Location> getPath() {
         return path;
     }
 }

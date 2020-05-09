@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.activities.ActiveTripActivity;
 import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Trip;
@@ -58,9 +59,9 @@ public class NextTripsFragment extends Fragment {
         viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
         viewModel.getActiveTrip().observe(getViewLifecycleOwner(), trip -> {
             if(trip != null){
-                /*Intent intent = new Intent(TripActivity.class);
+                Intent intent = new Intent(getContext(), ActiveTripActivity.class);
                 intent.putExtra("TripId", trip.TripId);
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
         viewModel.getTrips().observe(getViewLifecycleOwner(), trips -> {
