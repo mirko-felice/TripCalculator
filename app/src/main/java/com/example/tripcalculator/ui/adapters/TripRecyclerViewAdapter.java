@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tripcalculator.activities.ActiveTripActivity;
 import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
@@ -71,6 +72,14 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
             activity.startActionMode(new TripActionModeCallback(trip, activity.getApplicationContext()));
             return true;
         });
+        holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
+            Intent startIntent = new Intent(activity.getApplicationContext(), ActiveTripActivity.class);
+            trip.IsActive = true;
+            Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(activity.getApplicationContext()).tripDao().updateTrip(trip));
+            startIntent.putExtra("TripId", trip.TripId);
+            activity.startActivity(startIntent);
+            }
+       );
         holder.itemView.findViewById(R.id.plan_trip_btn).setOnClickListener(v -> {
             //activity.registerReceiver(new AlarmReceiver(), new IntentFilter("com.example.tripcalculator.NOTIFICATION"));
             AlarmManager alarmManager = (AlarmManager) activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);

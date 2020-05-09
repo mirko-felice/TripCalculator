@@ -36,6 +36,8 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -199,10 +201,10 @@ public class SearchActivity extends AppCompatActivity {
     public void addLocationToTrip(Location location){
         List<Location> locationsAdded = AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId).getValue();
         location.Id = 0;
-        location.Order = locationsAdded.get(locationsAdded.size() - 1).Order + 1;
+        location.Order = locationsAdded.size() > 0 ? locationsAdded.get(locationsAdded.size() - 1).Order + 1 : 1;
         location.TripId = tripId;
         location.IsPassed = false;
-        AppDatabase.getInstance(this).locationDao().insertLocation(location);
+        Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).locationDao().insertLocation(location));
     }
 
     private void setSettingsIntent() {
