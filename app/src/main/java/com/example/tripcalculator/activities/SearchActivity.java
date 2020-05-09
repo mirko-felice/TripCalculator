@@ -27,6 +27,7 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.Utility.Utilities;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
+import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.databinding.ActivitySearchBinding;
@@ -77,6 +78,10 @@ public class SearchActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.search_layout, searchResultFragment);
         fragmentTransaction.hide(searchResultFragment);
         fragmentTransaction.commit();
+        Intent intent = getIntent();
+        if (intent.hasExtra("TripId")){
+            this.tripId = intent.getIntExtra("TripId", -1);
+        }
     }
 
     @Override
@@ -100,9 +105,6 @@ public class SearchActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchResultFragment.executeQueue(query);
-        }
-        if (intent.hasExtra("TripId") && this.tripId == -1){
-            this.tripId = intent.getIntExtra("TripId", -1);
         }
     }
 
@@ -199,12 +201,14 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void addLocationToTrip(Location location){
-        List<Location> locationsAdded = AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId).getValue();
-        location.Id = 0;
-        location.Order = locationsAdded.size() > 0 ? locationsAdded.get(locationsAdded.size() - 1).Order + 1 : 1;
-        location.TripId = tripId;
-        location.IsPassed = false;
-        Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).locationDao().insertLocation(location));
+        AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId).observe(this, locations -> {
+            location.Id = 0;
+            location.TripId = tripId;
+            location.Order = locations.size() > 0 ? locations.get(locations.size() - 1).Order + 1 : 1;
+            location.IsPassed = false;
+            Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).locationDao().insertLocation(location));
+        });
+        finish();
     }
 
     private void setSettingsIntent() {

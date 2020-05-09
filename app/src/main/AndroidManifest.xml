@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity android:name=".activities.TripActivity"></activity>
+        <activity android:name=".activities.ActiveTripActivity"></activity>
         <activity
             android:name=".activities.SearchActivity"
             android:launchMode="singleTop">

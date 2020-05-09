@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
@@ -37,7 +38,10 @@ public class ActiveTripActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.hasExtra("TripId")){
             tripId = intent.getIntExtra("TripId", -1);
-            path = AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId).getValue();
+            path = AppDatabase.getInstance(this.getApplicationContext()).locationDao().getLocationsFromTrip(tripId).getValue();
+            if (path == null){
+                finish();
+            }
             binding = ActivityActiveTripBinding.inflate(getLayoutInflater());
 
             actualLocationTextView = binding.actualLocation;
