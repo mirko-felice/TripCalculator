@@ -15,8 +15,11 @@ public interface LocationDao {
     @Query("SELECT * FROM Location where Id = :id")
     public LiveData<Location> getLocationFromId(long id);
 
-    @Query("SELECT * FROM Location where tripId = :tripId")
+    @Query("SELECT * FROM Location where TripId = :tripId")
     public LiveData<List<Location>> getLocationsFromTrip(int tripId);
+
+    @Query("SELECT * FROM Location where TripId != :tripId and PreviousId = null")
+    public LiveData<List<Location>> getPossiblePreviousLocations(int tripId);
 
     @Insert
     public void insertLocation(Location location);

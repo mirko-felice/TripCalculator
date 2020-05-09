@@ -13,7 +13,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.databinding.ActivityMainBinding;
-import com.example.tripcalculator.fragments.SettingsFragment;
 import com.example.tripcalculator.ui.adapters.TripViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.settings){
+        if (item.getItemId() == R.id.settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }

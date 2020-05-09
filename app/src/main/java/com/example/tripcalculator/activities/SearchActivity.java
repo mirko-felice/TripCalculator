@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 
 import android.Manifest;
 import android.app.SearchManager;
@@ -201,14 +202,16 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void addLocationToTrip(Location location){
-        AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId).observe(this, locations -> {
+        LiveData<List<Location>> liveData = AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId);
+        liveData.observe(this, locations -> {
             location.Id = 0;
             location.TripId = tripId;
             location.Order = locations.size() > 0 ? locations.get(locations.size() - 1).Order + 1 : 1;
             location.IsPassed = false;
             Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).locationDao().insertLocation(location));
+            liveData.removeObservers(this);
+            finish();
         });
-        finish();
     }
 
     private void setSettingsIntent() {

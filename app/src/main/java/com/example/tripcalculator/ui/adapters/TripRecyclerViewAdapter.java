@@ -6,8 +6,11 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Parcel;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,41 +20,41 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.activities.ActiveTripActivity;
+import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Trip;
-import com.example.tripcalculator.ui.TripActionModeCallback;
 import com.example.tripcalculator.ui.TripViewHolder;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.Executors;
 
-public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder> implements ItemTouchHelperAdapter {
+public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
     private FragmentActivity activity;
     private List<Trip> trips = new ArrayList<>();
     private AlertDialog alertDialog;
     private Trip lastTripDismiss;
     private int lastTripDismissPosition;
+    private ActionMode actionMode;
 
     public TripRecyclerViewAdapter(FragmentActivity activity) {
         this.activity = activity;
-        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
+        /*this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
                 .setTitle("Sei sicuro di voler eliminare il viaggio?")
                 .setPositiveButton("SI", (dialog, which) -> deleteItem())
                 .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
                 .setOnDismissListener(dialog -> notifyDataSetChanged())
-                .create();
+                .create();*/
     }
 
     @NonNull
@@ -67,10 +70,20 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
 
         Trip trip = trips.get(position);
+        MaterialCardView card = (MaterialCardView) holder.itemView.findViewById(R.id.trip_card);
+
         holder.setName(trip.Name);
-        holder.itemView.setOnLongClickListener(v -> {
-            activity.startActionMode(new TripActionModeCallback(trip, activity.getApplicationContext()));
+        card.setOnLongClickListener(v -> {
+            card.setChecked(!card.isChecked());
+            if(actionMode == null){
+                actionMode = activity.startActionMode(new TripActionModeCallback());
+            }
             return true;
+        });
+        card.setOnClickListener(v -> {
+            Intent modifyIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
+            modifyIntent.putExtra("TripId", trip.TripId);
+            activity.startActivity(modifyIntent);
         });
         holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
             Intent startIntent = new Intent(activity.getApplicationContext(), ActiveTripActivity.class);
@@ -126,30 +139,36 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
         notifyDataSetChanged();
     }
 
-    @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(trips, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(trips, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
-        return true;
-    }
-
-    @Override
-    public void onItemDismiss(int position) {
-        lastTripDismiss = trips.get(position);
-        lastTripDismissPosition = position;
-        this.alertDialog.show();
-    }
-
     private void deleteItem(){
         Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(activity).tripDao().deleteTrip(lastTripDismiss));
         notifyItemRemoved(lastTripDismissPosition);
+    }
+
+    class TripActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.delete_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            //if(item.getItemId() == R.id.delete)
+                //alertDialog.show();
+            //TODO Aggiornare alertdialog
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+        }
     }
 }

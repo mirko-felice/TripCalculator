@@ -31,4 +31,8 @@ public class TripViewModel extends AndroidViewModel {
     public LiveData<Trip> getLastInsertedTrip(){
         return database.tripDao().getLastInsertedTrip();
     }
+
+    public LiveData<Trip> getTripFromId(int tripId) {
+        return database.tripDao().getTripFromId(tripId);
+    }
 }

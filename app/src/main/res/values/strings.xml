@@ -15,4 +15,9 @@
     <string name="trip_hint">Nome del viaggio</string>
     <string name="prev_location">Località precedente</string>
     <string name="next_location">Località successiva</string>
+    <string name="add_reminder">Aggiungi Promemoria</string>
+    <string name="set_previous">Imposta Precedente</string>
+    <string name="locations_list_label">Lista delle destinazioni</string>
+    <string name="save_changes_title">Salva Modifiche</string>
+    <string name="optimize_trip">Ottimizza il percorso</string>
 </resources>
