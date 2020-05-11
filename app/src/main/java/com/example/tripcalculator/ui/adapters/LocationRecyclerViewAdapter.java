@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.Utility.ReminderDialog;
+import com.example.tripcalculator.Utility.DialogHelper;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.ui.LocationViewHolder;
@@ -31,7 +31,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
     public LocationRecyclerViewAdapter(Context context) {
         this.context = context;
         this.alertDialog = new AlertDialog.Builder(context, R.style.Theme_MaterialComponents_Light_Dialog)
-                .setTitle("Sei sicuro di voler eliminare il viaggio?")
+                .setTitle("Sei sicuro di voler eliminare la destinazione?")
                 .setPositiveButton("SI", (dialog, which) -> deleteItem())
                 .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
                 .setOnDismissListener(dialog -> notifyDataSetChanged())
@@ -50,12 +50,10 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
         Location location = locations.get(position);
         holder.setName(location.DisplayName);
         holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> {
-            // TODO aggiungere promemoria con dialog
-            ReminderDialog.createReminderDialog(location, context).show();
+            DialogHelper.showReminderDialog(location, context);
         });
         holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> {
-            // TODO settare precedente con dialog
-            ReminderDialog.createSetPreviousDialog(location, context).show();
+            DialogHelper.showSetPreviousDialog(location, context);
         });
     }
 

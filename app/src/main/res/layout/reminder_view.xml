@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:id="@+id/reminder_layout">
+    android:layout_height="match_parent" >
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Qui puoi aggiungere un promemoria che ti verrà ricordato quando raggiungerai la destinazione selezionata"/>
+        android:layout_margin="16dp"
+        android:text="Qui puoi aggiungere un promemoria che ti verrà ricordato quando raggiungerai la destinazione selezionata" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="@string/about"
+            android:id="@+id/reminder"/>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

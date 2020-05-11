@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,12 +14,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tripcalculator.Utility.DatabaseQueryHelper;
 import com.example.tripcalculator.activities.ActiveTripActivity;
 import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
@@ -42,6 +47,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
     private FragmentActivity activity;
     private List<Trip> trips = new ArrayList<>();
+    private List<MaterialCardView> tripCards = new ArrayList<>();
     private AlertDialog alertDialog;
     private Trip lastTripDismiss;
     private int lastTripDismissPosition;
@@ -49,12 +55,12 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
     public TripRecyclerViewAdapter(FragmentActivity activity) {
         this.activity = activity;
-        /*this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
-                .setTitle("Sei sicuro di voler eliminare il viaggio?")
-                .setPositiveButton("SI", (dialog, which) -> deleteItem())
-                .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
-                .setOnDismissListener(dialog -> notifyDataSetChanged())
-                .create();*/
+        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
+                .setTitle("Sei sicuro di voler eliminare i viaggi selezionati?")
+                .setPositiveButton("SI", (dialog, which) -> deleteItems())
+                .setNegativeButton("NO", (dialog, which) -> deselectAllCards())
+                .setOnDismissListener(dialog -> deselectAllCards())
+                .create();
     }
 
     @NonNull
@@ -71,12 +77,27 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
         Trip trip = trips.get(position);
         MaterialCardView card = (MaterialCardView) holder.itemView.findViewById(R.id.trip_card);
-
+        tripCards.add(card);
         holder.setName(trip.Name);
         card.setOnLongClickListener(v -> {
-            card.setChecked(!card.isChecked());
             if(actionMode == null){
+                card.setChecked(!card.isChecked());
                 actionMode = activity.startActionMode(new TripActionModeCallback());
+            } else{
+                int countChecked = 0;
+                for (MaterialCardView cardView : tripCards){
+                    if(cardView.isChecked()) {
+                        countChecked++;
+                    }
+                }
+                if(countChecked == 1){
+                    card.setChecked(!card.isChecked());
+                    actionMode.finish();
+                    actionMode = null;
+                    return false;
+                } else {
+                    card.setChecked(!card.isChecked());
+                }
             }
             return true;
         });
@@ -136,12 +157,24 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
     public void updateTrips(List<Trip> trips) {
         this.trips = trips;
+        this.tripCards.clear();
         notifyDataSetChanged();
     }
 
-    private void deleteItem(){
-        Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(activity).tripDao().deleteTrip(lastTripDismiss));
-        notifyItemRemoved(lastTripDismissPosition);
+    private void deleteItems(){
+        for (MaterialCardView card : tripCards){
+            if(card.isChecked()){
+                Trip trip = trips.get(tripCards.indexOf(card));
+                DatabaseQueryHelper.delete(trip, activity.getApplicationContext());
+            }
+        }
+        deselectAllCards();
+    }
+
+    public void deselectAllCards() {
+        for(MaterialCardView card : tripCards){
+            card.setChecked(false);
+        }
     }
 
     class TripActionModeCallback implements ActionMode.Callback {
@@ -160,15 +193,24 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            //if(item.getItemId() == R.id.delete)
-                //alertDialog.show();
-            //TODO Aggiornare alertdialog
-            return true;
+            switch (item.getItemId()){
+                case R.id.delete:
+                    //TODO Aggiornare alertdialog
+                    alertDialog.show();
+                    mode.finish();
+                    return true;
+                case android.R.id.home:
+                    deselectAllCards();
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
+            actionMode = null;
         }
     }
 }

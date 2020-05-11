@@ -2,6 +2,7 @@ package com.example.tripcalculator.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,22 +14,24 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.databinding.ActivityMainBinding;
+import com.example.tripcalculator.fragments.NextTripsFragment;
 import com.example.tripcalculator.ui.adapters.TripViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
-    private ViewPager viewPager;
+    TripViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getApplication().setTheme(R.style.AppTheme);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.example.tripcalculator.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        ViewPager viewPager;
         viewPager = binding.viewPager;
-        viewPager.setAdapter(new TripViewPagerAdapter(getSupportFragmentManager()));
+        adapter = new TripViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
     }
 
     @Override

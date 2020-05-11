@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -55,15 +56,22 @@ public class NextTripsFragment extends Fragment {
         binding.recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
-        viewModel.getActiveTrip().observe(getViewLifecycleOwner(), trip -> {
+        /*viewModel.getActiveTrip().observe(getViewLifecycleOwner(), trip -> {
             if(trip != null){
                 Intent intent = new Intent(getContext(), ActiveTripActivity.class);
                 intent.putExtra("TripId", trip.TripId);
                 startActivity(intent);
             }
-        });
+        });*/
         viewModel.getTrips().observe(getViewLifecycleOwner(), trips -> {
             adapter.updateTrips(trips);
+        });
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                adapter.deselectAllCards();
+            }
         });
         return binding.getRoot();
     }
@@ -76,8 +84,8 @@ public class NextTripsFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.delete) {
-            //requireActivity().startActionMode(new TripActionModeCallback(, getContext()));
+        if (item.getItemId() == R.id.home) {
+            adapter.deselectAllCards();
             return true;
         }
         return false;
@@ -88,4 +96,7 @@ public class NextTripsFragment extends Fragment {
         binding = null;
     }
 
+    public TripRecyclerViewAdapter getAdapter() {
+        return adapter;
+    }
 }
