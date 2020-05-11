@@ -27,7 +27,7 @@ public class SummaryRecyclerViewAdapter extends RecyclerView.Adapter<SummaryView
     @NonNull
     @Override
     public SummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View locationView = LayoutInflater.from(context).inflate(R.layout.location_view, parent, false);
+        View locationView = LayoutInflater.from(context).inflate(R.layout.summary_view, parent, false);
         return new SummaryViewHolder(locationView);
     }
 

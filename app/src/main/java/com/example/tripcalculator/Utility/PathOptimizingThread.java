@@ -1,37 +1,27 @@
 package com.example.tripcalculator.Utility;
 
-import androidx.annotation.Nullable;
+import android.os.AsyncTask;
 
 import com.example.tripcalculator.database.Location;
 
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.util.GeoPoint;
 
-import java.lang.reflect.Executable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class PathOptimizingThread implements Runnable {
-
-    private List<Location> path;
-    private Location startPoint;
-    private Location endPoint;
-
-    //TODO modify if "startPoint" and "endPoint" is included in "path"
-    public PathOptimizingThread(List<Location> path, Location startPoint, @Nullable Location endPoint){
-        this.path = path;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
-    }
+public class PathOptimizingThread extends AsyncTask<Location, Void, List<Location>> {
 
     @Override
-    public void run() {
-        if (this.path != null){
+    protected List<Location> doInBackground(Location... locations) {
+        List<Location> path = new ArrayList<>(Arrays.asList(locations));
+        if (path.size() > 0){
             List<Location> primaryLocations = new ArrayList<>();
             List<Location> nextLocations = new ArrayList<>();
             List<Location> resultPath = new ArrayList<>();
-
-
+            resultPath.add(path.get(0));
+            path.remove(0);
 
             for (Location location : path){
                 if (location.PreviousId == null){
@@ -40,9 +30,6 @@ public class PathOptimizingThread implements Runnable {
                     nextLocations.add(location);
                 }
             }
-
-
-            resultPath.add(startPoint);
 
             for (int i = 0; i < path.size(); i++){
                 GeoPoint firstPoint = new GeoPoint(resultPath.get(resultPath.size() - 1).Latitude, resultPath.get(resultPath.size() - 1).Longitude);
@@ -68,16 +55,7 @@ public class PathOptimizingThread implements Runnable {
                 nextLocations.remove(nextLocationToAdd);
                 resultPath.add(nextLocationToAdd);
             }
-
-            if (endPoint != null){
-                resultPath.add(endPoint);
-            }
-
-            this.path = resultPath;
         }
-    }
-
-    public List<Location> getPath() {
         return path;
     }
 }

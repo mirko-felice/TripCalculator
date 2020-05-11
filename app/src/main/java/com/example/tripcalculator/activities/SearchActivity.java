@@ -28,7 +28,6 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.Utility.Utilities;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.databinding.ActivitySearchBinding;
@@ -38,7 +37,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class SearchActivity extends AppCompatActivity {
@@ -124,9 +122,7 @@ public class SearchActivity extends AppCompatActivity {
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-                fragmentTransaction.show(searchResultFragment).commit();
+
                 return true;
             }
 
@@ -166,6 +162,17 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.search){
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+            fragmentTransaction.show(searchResultFragment).commit();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         switch (requestCode){
@@ -193,7 +200,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void setSearchResult(List<Location> locations){
         Utilities.hideKeyboard(this);
-        mapFragment.setLocationMarkers(locations);
+        mapFragment.setSearchLocationMarkers(locations);
     }
 
     public void focusOn(Location location){

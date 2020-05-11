@@ -1,6 +1,8 @@
 package com.example.tripcalculator.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.tripcalculator.R;
@@ -8,17 +10,17 @@ import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
 
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.infowindow.InfoWindow;
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 
-public class LocationInfoWindow extends InfoWindow {
+public class LocationInfoWindow extends MarkerInfoWindow {
 
     private Location location;
     private SearchActivity searchActivity;
 
-    public LocationInfoWindow(int layoutResId, MapView mapView, Location location, SearchActivity searchActivity) {
-        super(layoutResId, mapView);
+    public LocationInfoWindow(MapView mapView, Location location, Activity searchActivity) {
+        super(R.layout.my_infowindow, mapView);
         this.location = location;
-        this.searchActivity = searchActivity;
+        this.searchActivity = (SearchActivity) searchActivity;
     }
 
     @Override

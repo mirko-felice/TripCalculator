@@ -2,6 +2,7 @@ package com.example.tripcalculator.fragments;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.Utility.PathOptimizingThread;
-import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
 import com.example.tripcalculator.ui.LocationInfoWindow;
@@ -23,6 +22,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBox;
@@ -32,11 +32,13 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MapFragment extends Fragment {
 
@@ -93,8 +95,8 @@ public class MapFragment extends Fragment {
         map.onPause();
     }
 
-    public void clearMarkers(){
-        for (Marker marker : markers){
+    public void clearMarkers() {
+        for (Marker marker : markers) {
             marker.remove(map);
             map.getOverlays().remove(marker);
         }
@@ -102,7 +104,7 @@ public class MapFragment extends Fragment {
         searchResultPoints.clear();
     }
 
-    public void setLocationMarkers(List<Location> locations){
+    public void setSearchLocationMarkers(List<Location> locations) {
         for (Location location : locations) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
             searchResultPoints.add(point);
@@ -110,17 +112,29 @@ public class MapFragment extends Fragment {
             markers.add(marker);
             marker.setPosition(point);
             marker.setTitle(location.DisplayName);
-            marker.setInfoWindow(new LocationInfoWindow(R.layout.my_infowindow, map, location, (SearchActivity)getActivity()));
+            MarkerInfoWindow infoWindow = new LocationInfoWindow(map, location, getActivity());
+            marker.setInfoWindow(infoWindow);
             //marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
             map.getOverlays().add(marker);
         }
-        showAllMarkers();
+        focusOn(locations.get(0));
     }
 
-    public void showAllMarkers(){
-        Road road = new Road(searchResultPoints);
-        BoundingBox boundingBox = road.mBoundingBox;
-        map.zoomToBoundingBox(boundingBox, true);
+    public void setPathLocationMarkers(List<Location> locations) {
+        for (Location location : locations) {
+            GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
+            searchResultPoints.add(point);
+            Marker marker = new Marker(map);
+            markers.add(marker);
+            marker.setPosition(point);
+            marker.setTitle(location.DisplayName);
+            marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
+            map.getOverlays().add(marker);
+        }
+    }
+
+    public void showAllMarkers(Road road) {
+        map.zoomToBoundingBox(road.mBoundingBox, true);
     }
 
     public void focusOn(Location location) {
@@ -130,30 +144,14 @@ public class MapFragment extends Fragment {
         mapController.setCenter(point);
     }
 
-    public void setPath(List<Location> path){
+    public void setPath(List<Location> path) {
         this.path = path;
     }
 
-    public void optimizePath(Location startLocation, @Nullable Location endLocation){
-        PathOptimizingThread optimizingThread = new PathOptimizingThread(this.path, startLocation, endLocation);
-        optimizingThread.run();
-        this.path = optimizingThread.getPath();
-    }
-
-    public void moveLocation(int from, int to){
-        if (to >= 0 && from <= path.size() - 1) {
-            Location location = path.get(from);
-            for (int i = from; i > to; i--) {
-                path.add(i, path.get(i - 1));
-            }
-            path.add(to, location);
-        }
-    }
-
-    public void showActualRoad(){
+    public void showActualRoad() {
         ArrayList<GeoPoint> passedWaypoints = new ArrayList<>();
         ArrayList<GeoPoint> nextWaypoints = new ArrayList<>();
-        for(Location location : path){
+        for (Location location : path) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
             if (location.IsPassed) {
                 passedWaypoints.add(point);
@@ -161,13 +159,50 @@ public class MapFragment extends Fragment {
                 nextWaypoints.add(point);
             }
         }
-        RoadManager roadManager = new OSRMRoadManager(getContext());
-        Road passedRoad = roadManager.getRoad(passedWaypoints);
-        Road roadToDo = roadManager.getRoad(nextWaypoints);
-        Polyline passedRoadOverlay = RoadManager.buildRoadOverlay(passedRoad, Color.GREEN, 1.5f);
-        Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.WHITE, 1.5f);
-        map.getOverlays().add(passedRoadOverlay);
-        map.getOverlays().add(roadToDoOverlay);
-        setLocationMarkers(path);
+        ShowRoadTask showRoadTask = new ShowRoadTask();
+        showRoadTask.execute(passedWaypoints, nextWaypoints);
+
+        try {
+            List<Polyline> polylines = showRoadTask.get();
+            Polyline passedRoadOverlay = polylines.get(0);
+            Polyline roadToDoOverlay = polylines.get(1);
+            if (passedRoadOverlay != null) {
+                map.getOverlays().add(passedRoadOverlay);
+            }
+            if (roadToDoOverlay != null) {
+                map.getOverlays().add(roadToDoOverlay);
+            }
+            setPathLocationMarkers(path);
+            passedWaypoints.addAll(nextWaypoints);
+            Road fullRoad = new Road(passedWaypoints);
+            showAllMarkers(fullRoad);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class ShowRoadTask extends AsyncTask<ArrayList<GeoPoint>, Void, List<Polyline>> {
+
+        @Override
+        protected List<Polyline> doInBackground(ArrayList<GeoPoint>... arrayLists) {
+            RoadManager roadManager = new OSRMRoadManager(getContext());
+            List<Polyline> polylines = new ArrayList<>();
+            polylines.add(null);
+            polylines.add(null);
+            if (arrayLists[0].size() > 0) {
+                Road passedRoad = roadManager.getRoad(arrayLists[0]);
+                if (passedRoad.mStatus == Road.STATUS_OK) {
+                    Polyline passedRoadOverlay = RoadManager.buildRoadOverlay(passedRoad, Color.GREEN, 4f);
+                    polylines.add(0, passedRoadOverlay);
+                }
+            }
+            if (arrayLists[1].size() > 0) {
+                Road roadToDo = roadManager.getRoad(arrayLists[1]);
+
+                Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.BLACK, 4f);
+                polylines.add(1, roadToDoOverlay);
+            }
+            return polylines;
+        }
     }
 }

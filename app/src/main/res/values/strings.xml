@@ -25,4 +25,5 @@
     <string name="mod_reminder">Modifica Promemoria</string>
     <string name="add_note">Aggiungi Nota</string>
     <string name="view_reminder">Visualizza Promemoria</string>
+    <string name="details">Details</string>
 </resources>
