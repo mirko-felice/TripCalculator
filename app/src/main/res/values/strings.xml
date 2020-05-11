@@ -20,4 +20,9 @@
     <string name="locations_list_label">Lista delle destinazioni</string>
     <string name="save_changes_title">Salva Modifiche</string>
     <string name="optimize_trip">Ottimizza il percorso</string>
+    <string name="summary_label">Riepilogo Del Viaggio</string>
+    <string name="add_photo">"Allega Foto"</string>
+    <string name="mod_reminder">Modifica Promemoria</string>
+    <string name="add_note">Aggiungi Nota</string>
+    <string name="view_reminder">Visualizza Promemoria</string>
 </resources>

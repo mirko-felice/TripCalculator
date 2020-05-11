@@ -39,7 +39,7 @@ public class NextTripsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = NextTripsFragmentBinding.inflate(getLayoutInflater(), container, false);
+        binding = NextTripsFragmentBinding.inflate(inflater, container, false);
         binding.addTrip.setOnClickListener(v -> {
             Trip trip = new Trip();
             trip.TripId = 0;

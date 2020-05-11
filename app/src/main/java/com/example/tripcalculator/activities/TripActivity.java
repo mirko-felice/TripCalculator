@@ -44,7 +44,6 @@ public class TripActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if(intent.hasExtra("TripId")){
-            //TODO modifica
             tripViewModel.getTripFromId(intent.getIntExtra("TripId", -1)).observe(this, trip1 -> {
                 this.trip = trip1;
                 binding.tripName.setText(trip.Name);
@@ -53,7 +52,6 @@ public class TripActivity extends AppCompatActivity {
                 searchIntent.putExtra("TripId", trip.TripId);
             });
         } else {
-            //TODO creazione
             tripViewModel.getLastInsertedTrip().observe(this, trip -> {
                 this.trip = trip;
                 binding.tripName.setText(trip.Name);
