@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface TripDao {
 
-    @Query("SELECT * FROM Trip ORDER BY StartDate")
+    @Query("SELECT * FROM Trip where IsEnded = 0 ORDER BY StartDate ")
     public LiveData<List<Trip>> getAllTrips();
 
     @Query("SELECT * FROM Trip where TripId = :tripId")

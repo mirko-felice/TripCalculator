@@ -52,10 +52,28 @@ public class DialogHelper {
         });
     }
 
+    public static void showAddNote(Location location, Context context){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.note_view, null, false);
+        builder.setTitle("Note")
+                .setView(view)
+                .setPositiveButton("Inserisci", (dialog, which) -> setNote(view, location))
+                .setNegativeButton("Cancella", (dialog, which) -> Toast.makeText(context, "Nota non aggiunta", Toast.LENGTH_SHORT).show())
+                .setOnDismissListener(dialog -> Toast.makeText(context, "Nota non aggiunta", Toast.LENGTH_SHORT).show())
+                .show();
+    }
+
     private static void setReminder(View view, Location location) {
         TextInputEditText editText = view.findViewById(R.id.reminder);
         location.Reminder = editText.getText() != null ? editText.getText().toString(): "Errore";
         Toast.makeText(view.getContext(), "Il promemoria è stato salvato.", Toast.LENGTH_SHORT).show();
+        DatabaseQueryHelper.update(location, view.getContext());
+    }
+
+    private static void setNote(View view, Location location) {
+        TextInputEditText editText = view.findViewById(R.id.note);
+        location.Note = editText.getText() != null ? editText.getText().toString(): "Errore";
+        Toast.makeText(view.getContext(), "La nota è stata salvata.", Toast.LENGTH_SHORT).show();
         DatabaseQueryHelper.update(location, view.getContext());
     }
 

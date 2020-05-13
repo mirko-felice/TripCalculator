@@ -74,7 +74,7 @@ public class ActiveTripActivity extends AppCompatActivity {
                 }
 
                 FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-                summaryFragment = new SummaryFragment(new LocationViewModelFactory(getApplication(), tripId).create(LocationViewModel.class));
+                summaryFragment = new SummaryFragment(new LocationViewModelFactory(getApplication(), tripId).create(LocationViewModel.class), tripId);
                 fragmentTransaction1.add(R.id.activity_active_trip_layout, summaryFragment);
                 fragmentTransaction1.hide(summaryFragment);
                 fragmentTransaction1.commit();
