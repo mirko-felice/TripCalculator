@@ -16,6 +16,7 @@ import androidx.preference.PreferenceManager;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
+import com.example.tripcalculator.ui.ActiveTripLocationInfoWindow;
 import com.example.tripcalculator.ui.LocationInfoWindow;
 
 import org.osmdroid.api.IMapController;
@@ -128,7 +129,9 @@ public class MapFragment extends Fragment {
             markers.add(marker);
             marker.setPosition(point);
             marker.setTitle(location.DisplayName);
-            marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
+            MarkerInfoWindow infoWindow = new ActiveTripLocationInfoWindow(map, location, getActivity());
+            marker.setInfoWindow(infoWindow);
+            //marker.setSubDescription("Latitude: " + location.Latitude + ";\nLongitude" + location.Longitude + ";");
             map.getOverlays().add(marker);
         }
     }

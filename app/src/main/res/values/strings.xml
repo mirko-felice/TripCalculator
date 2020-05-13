@@ -27,4 +27,9 @@
     <string name="view_reminder">Visualizza Promemoria</string>
     <string name="details">Details</string>
     <string name="end_trip_label">Termina Viaggio</string>
+    <string name="show_details">Visualizza dettagli</string>
+    <string name="show_notes">Note</string>
+    <string name="show_reminder">Promemoria</string>
+    <string name="show_images">Immagini</string>
+    <string name="set_passed">Superato</string>
 </resources>

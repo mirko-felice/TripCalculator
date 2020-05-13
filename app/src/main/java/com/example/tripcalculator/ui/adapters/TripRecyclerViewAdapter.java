@@ -40,6 +40,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -102,13 +103,20 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
             return true;
         });
         card.setOnClickListener(v -> {
-            Intent modifyIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
-            modifyIntent.putExtra("TripId", trip.TripId);
-            activity.startActivity(modifyIntent);
+            if(trip.IsActive){
+                Intent activeTripIntent = new Intent(activity.getApplicationContext(), ActiveTripActivity.class);
+                activeTripIntent.putExtra("TripId", trip.TripId);
+                activity.startActivity(activeTripIntent);
+            } else {
+                Intent modifyIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
+                modifyIntent.putExtra("TripId", trip.TripId);
+                activity.startActivity(modifyIntent);
+            }
         });
         holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
             Intent startIntent = new Intent(activity.getApplicationContext(), ActiveTripActivity.class);
             trip.IsActive = true;
+            trip.StartDate = new Date();
             Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(activity.getApplicationContext()).tripDao().updateTrip(trip));
             startIntent.putExtra("TripId", trip.TripId);
             activity.startActivity(startIntent);

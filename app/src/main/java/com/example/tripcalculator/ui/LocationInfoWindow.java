@@ -1,8 +1,6 @@
 package com.example.tripcalculator.ui;
 
 import android.app.Activity;
-import android.content.Context;
-import android.view.View;
 import android.widget.TextView;
 
 import com.example.tripcalculator.R;
@@ -30,9 +28,7 @@ public class LocationInfoWindow extends MarkerInfoWindow {
         String longitudeString = searchActivity.getString(R.string.longitude_n, location.Longitude);
         ((TextView)mView.findViewById(R.id.latitude)).setText(latitudeString);
         ((TextView)mView.findViewById(R.id.longitude)).setText(longitudeString);
-        mView.findViewById(R.id.addButton).setOnClickListener(v -> {
-            searchActivity.addLocationToTrip(location);
-        });
+        mView.findViewById(R.id.addButton).setOnClickListener(v -> searchActivity.addLocationToTrip(location));
     }
 
     @Override

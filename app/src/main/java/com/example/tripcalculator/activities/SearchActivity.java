@@ -59,6 +59,7 @@ public class SearchActivity extends AppCompatActivity {
     ActivitySearchBinding binding;
     SearchResultFragment searchResultFragment;
     MapFragment mapFragment;
+    MenuItem searchMenuItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +114,7 @@ public class SearchActivity extends AppCompatActivity {
         inflater.inflate(R.menu.options_menu, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchMenuItem = menu.findItem(R.id.search);
         searchView =  (SearchView) searchMenuItem.getActionView();
         if (searchManager != null){
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -122,24 +123,18 @@ public class SearchActivity extends AppCompatActivity {
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                fragmentTransaction.show(searchResultFragment).commit();
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                closeSearch();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                fragmentTransaction.hide(searchResultFragment).commit();
                 return true;
-            }
-        });
-        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-                    fragmentTransaction.show(searchResultFragment).commit();
-                }
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -192,19 +187,13 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void closeSearch(){
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        fragmentTransaction.hide(searchResultFragment).commit();
-    }
-
     public void setSearchResult(List<Location> locations){
         Utilities.hideKeyboard(this);
         mapFragment.setSearchLocationMarkers(locations);
     }
 
     public void focusOn(Location location){
-        closeSearch();
+        searchMenuItem.collapseActionView();
         mapFragment.focusOn(location);
     }
 

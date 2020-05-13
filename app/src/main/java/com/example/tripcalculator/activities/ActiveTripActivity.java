@@ -23,6 +23,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.Utility.DatabaseQueryHelper;
+import com.example.tripcalculator.Utility.Utilities;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ActivityActiveTripBinding;
@@ -33,6 +35,7 @@ import com.example.tripcalculator.viewmodel.LocationViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class ActiveTripActivity extends AppCompatActivity {
 
@@ -103,7 +106,9 @@ public class ActiveTripActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.details){
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.show(summaryFragment);
+            fragmentTransaction.addToBackStack("showSummaryFragment");
             fragmentTransaction.commit();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -115,6 +120,11 @@ public class ActiveTripActivity extends AppCompatActivity {
         if (connectivityManager != null) {
             connectivityManager.unregisterNetworkCallback(networkCallback);
         }
+    }
+
+    public void setLocationAsPassed(Location passedLocation){
+        passedLocation.IsPassed = true;
+        DatabaseQueryHelper.update(passedLocation, getApplicationContext());
     }
 
     private void setAnimations(){

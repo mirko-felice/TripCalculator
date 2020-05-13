@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,13 +57,15 @@ public class NextTripsFragment extends Fragment {
         binding.recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
-        /*viewModel.getActiveTrip().observe(getViewLifecycleOwner(), trip -> {
+        LiveData<Trip> activeTrip = viewModel.getActiveTrip();
+        activeTrip.observe(getViewLifecycleOwner(), trip -> {
             if(trip != null){
                 Intent intent = new Intent(getContext(), ActiveTripActivity.class);
                 intent.putExtra("TripId", trip.TripId);
                 startActivity(intent);
+                activeTrip.removeObservers(getViewLifecycleOwner());
             }
-        });*/
+        });
         viewModel.getTrips().observe(getViewLifecycleOwner(), trips -> {
             adapter.updateTrips(trips);
         });

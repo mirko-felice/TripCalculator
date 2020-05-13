@@ -67,6 +67,7 @@ public class SummaryFragment extends Fragment {
             AppDatabase.getInstance(requireContext()).tripDao().getTripFromId(tripId).observe(getViewLifecycleOwner(), trip -> {
                 trip.IsEnded = true;
                 trip.IsActive = false;
+                trip.EndDate = new Date();
                 DatabaseQueryHelper.update(trip, requireContext());
                 requireActivity().finish();
             });

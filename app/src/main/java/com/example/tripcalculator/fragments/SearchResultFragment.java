@@ -20,15 +20,13 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.databinding.ActivitySearchBinding;
-import com.example.tripcalculator.databinding.SearchResultFragmentBinding;
+import com.example.tripcalculator.databinding.ListFragmentBinding;
 import com.example.tripcalculator.ui.adapters.SearchResultAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,19 +34,19 @@ public class SearchResultFragment extends Fragment {
 
     private final static String TAG = "OSM_REQUEST";
     private RequestQueue requestQueue;
-    SearchResultFragmentBinding binding;
+    ListFragmentBinding binding;
     SearchResultAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = SearchResultFragmentBinding.inflate(inflater, container, false);
+        binding = ListFragmentBinding.inflate(inflater, container, false);
         requestQueue = Volley.newRequestQueue(getContext());
 
         adapter = new SearchResultAdapter(getContext(), (SearchActivity)getActivity());
 
-        binding.searchResultList.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.searchResultList.setAdapter(adapter);
+        binding.itemsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.itemsList.setAdapter(adapter);
         return binding.getRoot();
     }
 
