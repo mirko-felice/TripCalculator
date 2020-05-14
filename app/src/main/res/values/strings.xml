@@ -32,4 +32,7 @@
     <string name="show_reminder">Promemoria</string>
     <string name="show_images">Immagini</string>
     <string name="set_passed">Superato</string>
+    <string name="locations_string">Località</string>
+    <string name="diary_string">Diario</string>
+    <string name="location_menu">Location Menu</string>
 </resources>

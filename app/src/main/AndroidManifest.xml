@@ -22,6 +22,7 @@
         tools:targetApi="n">
         <activity android:name=".activities.TripActivity" />
         <activity android:name=".activities.ActiveTripActivity" />
+        <activity android:name=".activities.PastTripActivity"/>
         <activity
             android:name=".activities.SearchActivity"
             android:launchMode="singleTop">
