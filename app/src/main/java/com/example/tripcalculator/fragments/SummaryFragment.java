@@ -3,6 +3,7 @@ package com.example.tripcalculator.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -13,31 +14,27 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContentResolverCompat;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.Utility.DatabaseQueryHelper;
+import com.example.tripcalculator.Utility.DialogHelper;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.SummaryFragmentBinding;
 import com.example.tripcalculator.ui.adapters.SummaryRecyclerViewAdapter;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
-import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.ContentResolver.EXTRA_SIZE;
 
 public class SummaryFragment extends Fragment {
 
@@ -91,6 +88,7 @@ public class SummaryFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_PHOTO_CODE && resultCode == RESULT_OK) {
@@ -100,15 +98,13 @@ public class SummaryFragment extends Fragment {
                     thumbnail = requireActivity().getContentResolver().loadThumbnail(photoURI, new Size(200,200), null);
                 }
                 binding.imageView.setImageBitmap(thumbnail);
-                JSONObject jsonObject;
-                if(lastLocation.ImgNames == null){
-                    jsonObject = new JSONObject();
-                } else {
-                    jsonObject = new JSONObject(lastLocation.ImgNames);
-                }
-                jsonObject.put(photoURI.toString(), photoURI);
+                if(lastLocation.ImgNames == null)
+                    lastLocation.ImgNames = new ArrayList<>();
+                else
+                    lastLocation.ImgNames = new ArrayList<>(lastLocation.ImgNames);
+                lastLocation.ImgNames.add(photoURI.toString());
                 DatabaseQueryHelper.update(lastLocation, requireContext());
-            } catch (IOException | JSONException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

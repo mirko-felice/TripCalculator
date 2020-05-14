@@ -1,6 +1,7 @@
 package com.example.tripcalculator.ui.adapters;
 
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,9 @@ public class SummaryRecyclerViewAdapter extends RecyclerView.Adapter<SummaryView
         Location location = locations.get(position);
         holder.adjustVisibility(location.IsPassed);
         holder.setName(location.DisplayName);
+        holder.itemView.setOnClickListener(v -> {
+            DialogHelper.showImages(location, fragment.requireContext());
+        });
         holder.itemView.findViewById(R.id.view_reminder).setOnClickListener(v -> {
             //TODO visualizza promemoria
         });

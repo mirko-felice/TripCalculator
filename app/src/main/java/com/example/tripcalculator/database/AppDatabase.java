@@ -11,7 +11,7 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {Trip.class, Location.class}, version = 3)
-@TypeConverters({DateConverter.class})
+@TypeConverters({DateConverter.class, StringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "trip-database";

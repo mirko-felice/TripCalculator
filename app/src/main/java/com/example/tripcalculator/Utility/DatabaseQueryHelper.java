@@ -7,7 +7,7 @@ import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 
 import java.util.concurrent.Executors;
-
+//TODO forse da rifare in 2 repo separati
 public class DatabaseQueryHelper {
 
     public static void insert(Trip trip, Context context){

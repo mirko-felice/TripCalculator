@@ -87,6 +87,8 @@ public class ActiveTripActivity extends AppCompatActivity {
                 while (actualLocationIndex<path.size() && path.get(actualLocationIndex).IsPassed)  actualLocationIndex++;
                 if (actualLocationIndex == path.size()) {
                     actualLocationTextView.setText("Viaggio terminato");
+                } else {
+                    actualLocationTextView.setText(path.get(actualLocationIndex).DisplayName);
                 }
 
                 setAnimations();

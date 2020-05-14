@@ -8,6 +8,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity(foreignKeys = @ForeignKey(entity = Trip.class, childColumns = "TripId", parentColumns = "TripId", onDelete = ForeignKey.CASCADE), indices = @Index(value = {"TripId", "Order"}, unique = true))
@@ -26,7 +27,7 @@ public class Location {
     public String Note;
 
     @Nullable
-    public String ImgNames;
+    public List<String> ImgNames;
 
     @NonNull
     public boolean IsPassed;

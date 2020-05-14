@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup"
+        tools:targetApi="n">
         <activity android:name=".activities.TripActivity" />
         <activity android:name=".activities.ActiveTripActivity" />
         <activity
@@ -39,10 +40,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SettingsActivity" /> <!-- TODO si può togliere questa parte del receiver -->
+        <activity android:name=".activities.SettingsActivity" />
         <receiver
             android:name=".broadcastReceiver.ReminderReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.example.tripcalculator.NOTIFICATION" />
             </intent-filter>
