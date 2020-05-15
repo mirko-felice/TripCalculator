@@ -12,4 +12,9 @@
     <style name="TimePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="android:textColorPrimary">@color/secondaryTextColor</item>
     </style>
+
+    <style name="AlertDialogDarkTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
 </resources>
