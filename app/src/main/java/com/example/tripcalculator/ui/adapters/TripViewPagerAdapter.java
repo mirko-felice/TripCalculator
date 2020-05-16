@@ -17,7 +17,7 @@ public class TripViewPagerAdapter extends FragmentPagerAdapter {
     private List<String> fragmentsTitles;
 
     public TripViewPagerAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         fragments = new ArrayList<>();
         fragments.add(new NextTripsFragment());
         fragments.add(new PastTripsFragment());

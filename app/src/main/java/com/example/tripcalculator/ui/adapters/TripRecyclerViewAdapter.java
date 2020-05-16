@@ -6,7 +6,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.ContactsContract;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,23 +13,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tripcalculator.Utility.DatabaseQueryHelper;
-import com.example.tripcalculator.activities.ActiveTripActivity;
 import com.example.tripcalculator.activities.TripActivity;
+import com.example.tripcalculator.activities.ModifyTripActivity;
 import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.ui.TripViewHolder;
+import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -39,7 +37,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -53,6 +50,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
     private Trip lastTripDismiss;
     private int lastTripDismissPosition;
     private ActionMode actionMode;
+    private TripViewModel tripViewModel;
 
     public TripRecyclerViewAdapter(FragmentActivity activity) {
         this.activity = activity;
@@ -75,7 +73,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Intent intent = new Intent(activity.getApplicationContext(), ReminderReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-
+        tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
         Trip trip = trips.get(position);
         MaterialCardView card = (MaterialCardView) holder.itemView.findViewById(R.id.trip_card);
         tripCards.add(card);
@@ -104,20 +102,21 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
         });
         card.setOnClickListener(v -> {
             if(trip.IsActive){
-                Intent activeTripIntent = new Intent(activity.getApplicationContext(), ActiveTripActivity.class);
+                Intent activeTripIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
                 activeTripIntent.putExtra("TripId", trip.TripId);
                 activity.startActivity(activeTripIntent);
             } else {
-                Intent modifyIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
+                Intent modifyIntent = new Intent(activity.getApplicationContext(), ModifyTripActivity.class);
                 modifyIntent.putExtra("TripId", trip.TripId);
                 activity.startActivity(modifyIntent);
             }
         });
         holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
-            Intent startIntent = new Intent(activity.getApplicationContext(), ActiveTripActivity.class);
+            Intent startIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
             trip.IsActive = true;
             trip.StartDate = new Date();
-            Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(activity.getApplicationContext()).tripDao().updateTrip(trip));
+
+            tripViewModel.updateTrip(trip);
             startIntent.putExtra("TripId", trip.TripId);
             activity.startActivity(startIntent);
             }
@@ -173,7 +172,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
         for (MaterialCardView card : tripCards){
             if(card.isChecked()){
                 Trip trip = trips.get(tripCards.indexOf(card));
-                DatabaseQueryHelper.delete(trip, activity.getApplicationContext());
+                tripViewModel.deleteTrip(trip);
             }
         }
         deselectAllCards();

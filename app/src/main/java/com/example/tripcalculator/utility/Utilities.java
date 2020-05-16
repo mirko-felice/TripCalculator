@@ -1,22 +1,19 @@
-package com.example.tripcalculator.Utility;
+package com.example.tripcalculator.utility;
 
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
+import com.example.tripcalculator.viewmodel.LocationViewModel;
 
-import org.osmdroid.bonuspack.routing.Road;
-import org.osmdroid.util.GeoPoint;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Utilities {
@@ -41,7 +38,8 @@ public class Utilities {
         int tempPosition = firstLocation.Order;
         firstLocation.Order = secondLocation.Order;
         secondLocation.Order = tempPosition;
-        Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(context).locationDao().updateLocation(firstLocation));
-        Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(context).locationDao().updateLocation(secondLocation));
+        LocationViewModel locationViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LocationViewModel.class);
+        locationViewModel.updateLocation(firstLocation);
+        locationViewModel.updateLocation(secondLocation);
     }
 }

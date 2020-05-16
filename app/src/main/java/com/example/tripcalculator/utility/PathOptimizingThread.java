@@ -1,4 +1,4 @@
-package com.example.tripcalculator.Utility;
+package com.example.tripcalculator.utility;
 
 import android.os.AsyncTask;
 

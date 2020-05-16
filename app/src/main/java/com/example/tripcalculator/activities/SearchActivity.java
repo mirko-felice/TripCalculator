@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.app.SearchManager;
@@ -21,16 +22,16 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.Utility.Utilities;
+import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.databinding.ActivitySearchBinding;
+import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.views.MapView;
@@ -198,13 +199,14 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void addLocationToTrip(Location location){
-        LiveData<List<Location>> liveData = AppDatabase.getInstance(this).locationDao().getLocationsFromTrip(tripId);
+        LocationViewModel locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
+        LiveData<List<Location>> liveData = locationViewModel.getLocationsFromTrip(tripId);
         liveData.observe(this, locations -> {
             location.Id = 0;
             location.TripId = tripId;
             location.Order = locations.size() > 0 ? locations.get(locations.size() - 1).Order + 1 : 1;
             location.IsPassed = false;
-            Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(this).locationDao().insertLocation(location));
+            locationViewModel.insertLocation(location);
             liveData.removeObservers(this);
             finish();
         });

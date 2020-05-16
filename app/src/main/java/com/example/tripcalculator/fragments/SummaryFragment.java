@@ -17,15 +17,15 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.tripcalculator.Utility.DatabaseQueryHelper;
-import com.example.tripcalculator.Utility.DialogHelper;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.SummaryFragmentBinding;
 import com.example.tripcalculator.ui.adapters.SummaryRecyclerViewAdapter;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.example.tripcalculator.viewmodel.TripViewModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +46,7 @@ public class SummaryFragment extends Fragment {
     private Uri photoURI;
     private Location lastLocation;
 
-    public SummaryFragment(LocationViewModel locationViewModel, int tripId) {
-        this.locationViewModel = locationViewModel;
+    public SummaryFragment(int tripId) {
         this.tripId = tripId;
     }
 
@@ -59,13 +58,15 @@ public class SummaryFragment extends Fragment {
         binding.summary.setLayoutManager(new LinearLayoutManager(getContext()));
         SummaryRecyclerViewAdapter adapter = new SummaryRecyclerViewAdapter(this);
         binding.summary.setAdapter(adapter);
-        locationViewModel.getLocations().observe(getViewLifecycleOwner(), adapter::updateLocations);
+        locationViewModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
+        locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), adapter::updateLocations);
+        TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         binding.endTripBtn.setOnClickListener(v -> {
-            AppDatabase.getInstance(requireContext()).tripDao().getTripFromId(tripId).observe(getViewLifecycleOwner(), trip -> {
+            tripViewModel.getTripFromId(tripId).observe(getViewLifecycleOwner(), trip -> {
                 trip.IsEnded = true;
                 trip.IsActive = false;
                 trip.EndDate = new Date();
-                DatabaseQueryHelper.update(trip, requireContext());
+                tripViewModel.updateTrip(trip);
                 requireActivity().finish();
             });
         });
@@ -103,7 +104,7 @@ public class SummaryFragment extends Fragment {
                 else
                     lastLocation.ImgNames = new ArrayList<>(lastLocation.ImgNames);
                 lastLocation.ImgNames.add(photoURI.toString());
-                DatabaseQueryHelper.update(lastLocation, requireContext());
+                locationViewModel.updateLocation(lastLocation);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -10,6 +10,9 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(entities = {Trip.class, Location.class}, version = 3)
 @TypeConverters({DateConverter.class, StringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -38,12 +41,18 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final int NUMBER_OF_THREADS = 4;
+    public static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
     public static AppDatabase getInstance(Context context) {
         if(instance == null){
-            instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
-                            .addMigrations(MIGRATION_1_2)
-                            .addMigrations(MIGRATION_2_3)
-                            .build();
+            synchronized (AppDatabase.class) {
+                instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
+                        .addMigrations(MIGRATION_1_2)
+                        .addMigrations(MIGRATION_2_3)
+                        .build();
+            }
         }
         return instance;
     }

@@ -7,13 +7,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.Utility.DialogHelper;
+import com.example.tripcalculator.utility.DialogHelper;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.ui.LocationViewHolder;
+import com.example.tripcalculator.viewmodel.LocationViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,10 +55,10 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
         Location location = locations.get(position);
         holder.setName(location.DisplayName);
         holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> {
-            DialogHelper.showReminderDialog(location, context);
+            DialogHelper.showReminderDialog(location, (FragmentActivity) context);
         });
         holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> {
-            DialogHelper.showSetPreviousDialog(location, context);
+            DialogHelper.showSetPreviousDialog(location, (FragmentActivity) context);
         });
     }
 
@@ -89,7 +94,8 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
         this.alertDialog.show();
     }
     private void deleteItem(){
-        Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(context).locationDao().deleteLocation(lastLocationDismiss));
+        LocationViewModel locationViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LocationViewModel.class);
+        locationViewModel.deleteLocation(lastLocationDismiss);
         notifyItemRemoved(lastLocationDismissPosition);
     }
 }

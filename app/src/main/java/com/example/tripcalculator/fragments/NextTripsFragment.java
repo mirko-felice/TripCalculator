@@ -9,38 +9,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.activities.ActiveTripActivity;
 import com.example.tripcalculator.activities.TripActivity;
-import com.example.tripcalculator.database.AppDatabase;
+import com.example.tripcalculator.activities.ModifyTripActivity;
 import com.example.tripcalculator.database.Trip;
-import com.example.tripcalculator.ui.TripItemTouchHelper;
 import com.example.tripcalculator.databinding.NextTripsFragmentBinding;
 import com.example.tripcalculator.ui.adapters.TripRecyclerViewAdapter;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 
 import java.util.Date;
-import java.util.concurrent.Executors;
 
 public class NextTripsFragment extends Fragment {
 
     private NextTripsFragmentBinding binding;
-    private TripViewModel viewModel;
     private TripRecyclerViewAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = NextTripsFragmentBinding.inflate(inflater, container, false);
+
+        TripViewModel viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
         binding.addTrip.setOnClickListener(v -> {
             Trip trip = new Trip();
             trip.TripId = 0;
@@ -48,19 +44,18 @@ public class NextTripsFragment extends Fragment {
             trip.IsActive = false;
             trip.IsEnded = false;
             trip.InsertDate = new Date();
-            Executors.newSingleThreadExecutor().execute(() -> AppDatabase.getInstance(getContext()).tripDao().insertTrip(trip));
-            Intent intent = new Intent(getContext(), TripActivity.class);
+            viewModel.insertTrip(trip);
+            Intent intent = new Intent(getContext(), ModifyTripActivity.class);
             startActivity(intent);
         });
         adapter = new TripRecyclerViewAdapter(requireActivity());
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
         LiveData<Trip> activeTrip = viewModel.getActiveTrip();
         activeTrip.observe(getViewLifecycleOwner(), trip -> {
             if(trip != null){
-                Intent intent = new Intent(getContext(), ActiveTripActivity.class);
+                Intent intent = new Intent(getContext(), TripActivity.class);
                 intent.putExtra("TripId", trip.TripId);
                 startActivity(intent);
                 activeTrip.removeObservers(getViewLifecycleOwner());
@@ -70,12 +65,6 @@ public class NextTripsFragment extends Fragment {
             adapter.updateTrips(trips);
         });
 
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                adapter.deselectAllCards();
-            }
-        });
         return binding.getRoot();
     }
 

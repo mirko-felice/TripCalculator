@@ -1,17 +1,15 @@
 package com.example.tripcalculator.ui.adapters;
 
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.Utility.DialogHelper;
+import com.example.tripcalculator.utility.DialogHelper;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.SummaryFragment;
 import com.example.tripcalculator.ui.SummaryViewHolder;
@@ -48,11 +46,11 @@ public class SummaryRecyclerViewAdapter extends RecyclerView.Adapter<SummaryView
         });
         holder.itemView.findViewById(R.id.mod_reminder).setOnClickListener(v -> {
             //TODO modifica promemoria
-            DialogHelper.showReminderDialog(location, fragment.requireContext());
+            DialogHelper.showReminderDialog(location, fragment.requireActivity());
         });
         holder.itemView.findViewById(R.id.add_note).setOnClickListener(v -> {
             //TODO aggiungi Nota
-            DialogHelper.showAddNote(location, fragment.requireContext());
+            DialogHelper.showAddNote(location, fragment.requireActivity());
         });
         if(fragment.requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
             holder.itemView.findViewById(R.id.add_photo).setOnClickListener(v -> {

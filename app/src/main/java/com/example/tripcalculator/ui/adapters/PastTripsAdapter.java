@@ -7,15 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.activities.PastTripActivity;
+import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Trip;
-import com.example.tripcalculator.fragments.PastTripLocationsFragment;
 import com.example.tripcalculator.ui.PastTripsViewHolder;
 
 import java.util.ArrayList;
@@ -47,7 +43,7 @@ public class PastTripsAdapter extends RecyclerView.Adapter<PastTripsViewHolder> 
         Trip trip = trips.get(position);
         holder.setData(trip.Name, trip.StartDate.toString(), trip.EndDate.toString());
         holder.itemView.findViewById(R.id.past_trips_card).setOnClickListener(v -> {
-            Intent intent = new Intent(inflater.getContext(), PastTripActivity.class);
+            Intent intent = new Intent(inflater.getContext(), TripActivity.class);
             intent.putExtra("TripId", trip.TripId);
             inflater.getContext().startActivity(intent);
         });
