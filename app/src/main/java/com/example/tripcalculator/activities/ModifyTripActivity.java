@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Trip;
+import com.example.tripcalculator.databinding.ActivityModifyTripBinding;
 import com.example.tripcalculator.databinding.ActivityTripBinding;
 import com.example.tripcalculator.ui.TripItemTouchHelper;
 import com.example.tripcalculator.ui.adapters.LocationRecyclerViewAdapter;
@@ -26,13 +27,13 @@ import java.util.Objects;
 public class ModifyTripActivity extends AppCompatActivity {
 
     private Trip trip;
-    private ActivityTripBinding binding;
+    private ActivityModifyTripBinding binding;
     TripViewModel tripViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityTripBinding.inflate(getLayoutInflater());
+        binding = ActivityModifyTripBinding.inflate(getLayoutInflater());
         binding.locations.setLayoutManager(new LinearLayoutManager(this));
         LocationRecyclerViewAdapter adapter = new LocationRecyclerViewAdapter(this);
         binding.locations.setAdapter(adapter);

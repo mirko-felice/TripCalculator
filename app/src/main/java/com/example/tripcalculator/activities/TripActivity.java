@@ -22,11 +22,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.databinding.ActivityActiveTripBinding;
+import com.example.tripcalculator.databinding.ActivityTripBinding;
 import com.example.tripcalculator.fragments.MapFragment;
-import com.example.tripcalculator.fragments.SummaryFragment;
+import com.example.tripcalculator.fragments.MyFragment;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 
 import java.util.ArrayList;
@@ -35,10 +34,10 @@ import java.util.List;
 public class TripActivity extends AppCompatActivity {
 
     private int tripId = -1;
-    private ActivityActiveTripBinding binding;
+    private ActivityTripBinding binding;
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
-    private SummaryFragment summaryFragment;
+    private MyFragment myFragment;
     private boolean isNetworkConnected = false;
 
     private List<Location> path;
@@ -54,7 +53,7 @@ public class TripActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         Intent intent = getIntent();
         registerNetworkCallback();
-        binding = ActivityActiveTripBinding.inflate(getLayoutInflater());
+        binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -75,9 +74,9 @@ public class TripActivity extends AppCompatActivity {
                 }
 
                 FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-                summaryFragment = new SummaryFragment(tripId);
-                fragmentTransaction1.add(R.id.activity_active_trip_layout, summaryFragment);
-                fragmentTransaction1.hide(summaryFragment);
+                myFragment = new MyFragment(tripId);
+                fragmentTransaction1.add(R.id.activity_active_trip_layout, myFragment);
+                fragmentTransaction1.hide(myFragment);
                 fragmentTransaction1.commit();
 
                 actualLocationTextView = binding.actualLocation;
@@ -106,13 +105,20 @@ public class TripActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.details){
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.show(summaryFragment);
-            fragmentTransaction.addToBackStack("showSummaryFragment");
-            fragmentTransaction.commit();
-
+            if(myFragment.isVisible()){
+                item.setIcon(R.drawable.ic_details);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.hide(myFragment);
+                fragmentTransaction.commit();
+            } else {
+                item.setIcon(R.drawable.ic_map);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.show(myFragment);
+                fragmentTransaction.commit();
+            }
+            return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override

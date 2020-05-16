@@ -8,22 +8,23 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.tripcalculator.fragments.DiaryFragment;
 import com.example.tripcalculator.fragments.PastTripLocationsFragment;
+import com.example.tripcalculator.fragments.SummaryFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PastTripPagerAdapter extends FragmentPagerAdapter {
+public class SummaryViewPagerAdapter extends FragmentPagerAdapter {
 
     List<String> pageTitles;
     List<Fragment> pages;
 
-    public PastTripPagerAdapter(@NonNull FragmentManager fm, int behavior, int tripId) {
-        super(fm, behavior);
+    public SummaryViewPagerAdapter(@NonNull FragmentManager fm, int tripId) {
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         pageTitles = new ArrayList<>();
-        pageTitles.add("Località");
+        pageTitles.add("Riepilogo");
         pageTitles.add("Diario");
         pages = new ArrayList<>();
-        pages.add(new PastTripLocationsFragment(tripId));
+        pages.add(new SummaryFragment(tripId));
         pages.add(new DiaryFragment(tripId));
     }
 
