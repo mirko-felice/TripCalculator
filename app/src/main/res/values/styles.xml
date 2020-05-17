@@ -7,8 +7,12 @@
         <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
         <item name="android:textColorPrimary">@color/primaryTextColor</item>
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name="preferenceTheme">@style/MyPreferenceThemeOverlay</item>
     </style>
 
+    <style name="MyPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
+        <item name="android:textColor">@color/primaryColor</item>
+    </style>
     <style name="TimePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="android:textColorPrimary">@color/secondaryTextColor</item>
     </style>

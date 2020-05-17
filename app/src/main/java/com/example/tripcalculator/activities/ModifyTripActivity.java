@@ -19,6 +19,7 @@ import com.example.tripcalculator.ui.TripItemTouchHelper;
 import com.example.tripcalculator.ui.adapters.LocationRecyclerViewAdapter;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -85,10 +86,15 @@ public class ModifyTripActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    public void onBackPressed() {
+        showDialog();
+    }
+
     private void saveChanges() {
         this.trip.Name = Objects.requireNonNull(binding.tripName.getText()).toString();
         tripViewModel.updateTrip(trip);
-        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Le modifiche sono state salvate.", 1000);
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Le modifiche sono state salvate.", 400);
         snackbar.setAnchorView(binding.addLocationBtn);
         snackbar.show();
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -99,5 +105,14 @@ public class ModifyTripActivity extends AppCompatActivity {
                     finish();
             }
         });
+    }
+
+    private void showDialog(){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle("Attenzione");
+        builder.setMessage("Stai per tornare indietro, vuoi salvare le modifiche al tuo viaggio?");
+        builder.setPositiveButton("Si", (dialog, which) -> saveChanges());
+        builder.setNegativeButton("No", (dialog, which) -> super.onBackPressed());
+        builder.show();
     }
 }

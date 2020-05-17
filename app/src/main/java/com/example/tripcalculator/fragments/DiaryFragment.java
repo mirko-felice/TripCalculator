@@ -28,7 +28,7 @@ public class DiaryFragment extends Fragment {
         DiaryLayoutBinding binding = DiaryLayoutBinding.inflate(inflater, container, false);
         TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         tripViewModel.getTripFromId(tripId).observe(getViewLifecycleOwner(), trip -> {
-            binding.diaryTitle.setText(trip.Name);
+            //binding.diaryHeader.setHint(trip.Name);
             binding.diaryContent.setText(trip.Diary);
         });
         return binding.getRoot();

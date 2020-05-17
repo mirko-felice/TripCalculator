@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <TextView
+   <!-- <TextView
         android:id="@+id/diary_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,11 +15,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/diary_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/diary_title" />
+        app:layout_constraintTop_toBottomOf="@+id/diary_title"
+        android:inputType="textMultiLine"
+        android:minLines="5"
+        android:gravity="start|top"
+        android:textColor="@color/primaryColor"
+        android:padding="20dp"/>
+-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/diary_header"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/diary_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:enabled="true"
+            android:gravity="start|top"
+            android:hint="Scrivi il diario del tuo viaggio"
+            android:inputType="textMultiLine"
+            android:minLines="5"
+            android:text="prova" />
+    </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

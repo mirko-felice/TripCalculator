@@ -151,6 +151,10 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
             datePicker.addOnCancelListener(dialog -> showSnack());
             datePicker.show(activity.getSupportFragmentManager(), datePicker.toString());
         });
+
+        if(trip.IsActive){
+            holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
+        }
     }
     
     private void showSnack(){

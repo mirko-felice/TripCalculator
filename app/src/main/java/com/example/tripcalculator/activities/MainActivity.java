@@ -17,6 +17,7 @@ import com.example.tripcalculator.databinding.ActivityMainBinding;
 import com.example.tripcalculator.fragments.NextTripsFragment;
 import com.example.tripcalculator.ui.adapters.TripViewPagerAdapter;
 
+import java.util.Locale;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = binding.viewPager;
         adapter = new TripViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+        Locale.setDefault(Locale.ITALY);
     }
 
     @Override
