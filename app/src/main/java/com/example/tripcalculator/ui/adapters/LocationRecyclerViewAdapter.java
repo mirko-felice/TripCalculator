@@ -60,6 +60,9 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
         holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> {
             DialogHelper.showSetPreviousDialog(location, (FragmentActivity) context);
         });
+        if (position > 0){
+            holder.itemView.findViewById(R.id.divider).setVisibility(View.GONE);
+        }
     }
 
     @Override

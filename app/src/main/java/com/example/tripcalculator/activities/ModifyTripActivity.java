@@ -30,33 +30,31 @@ public class ModifyTripActivity extends AppCompatActivity {
     private Trip trip;
     private ActivityModifyTripBinding binding;
     TripViewModel tripViewModel;
+    private LocationViewModel locationViewModel;
+    private LocationRecyclerViewAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityModifyTripBinding.inflate(getLayoutInflater());
         binding.locations.setLayoutManager(new LinearLayoutManager(this));
-        LocationRecyclerViewAdapter adapter = new LocationRecyclerViewAdapter(this);
+        adapter = new LocationRecyclerViewAdapter(this);
         binding.locations.setAdapter(adapter);
         tripViewModel = new ViewModelProvider(this).get(TripViewModel.class);
         Intent searchIntent = new Intent(this, SearchActivity.class);
 
-        LocationViewModel locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
+        locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
 
         Intent intent = getIntent();
         if(intent.hasExtra("TripId")){
             tripViewModel.getTripFromId(intent.getIntExtra("TripId", -1)).observe(this, trip1 -> {
                 this.trip = trip1;
-                binding.tripName.setText(trip.Name);
-                locationViewModel.getLocationsFromTrip(trip.TripId).observe(this, adapter::updateLocations);
-                searchIntent.putExtra("TripId", trip.TripId);
+                initActivity(searchIntent);
             });
         } else {
             tripViewModel.getLastInsertedTrip().observe(this, trip -> {
                 this.trip = trip;
-                binding.tripName.setText(trip.Name);
-                locationViewModel.getLocationsFromTrip(trip.TripId).observe(this, adapter::updateLocations);
-                searchIntent.putExtra("TripId", trip.TripId);
+                initActivity(searchIntent);
             });
         }
 
@@ -89,6 +87,20 @@ public class ModifyTripActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         showDialog();
+    }
+
+    private void initActivity(Intent searchIntent){
+        binding.tripName.setText(trip.Name);
+        locationViewModel.getLocationsFromTrip(trip.TripId).observe(this, locations -> {
+            if (locations.size() == 0){
+                binding.addLocationBtn.setText(getString(R.string.add_start_point));
+            } else {
+                if (locations.size() > 1)
+                    adapter.updateLocations(locations.subList(1, locations.size()));
+                binding.addLocationBtn.setText(getString(R.string.add_location));
+            }
+        });
+        searchIntent.putExtra("TripId", trip.TripId);
     }
 
     private void saveChanges() {

@@ -1,6 +1,7 @@
 package com.example.tripcalculator.ui;
 
 import android.app.Activity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -29,6 +30,11 @@ public class ActiveTripLocationInfoWindow extends MarkerInfoWindow {
         String longitude = tripActivity.getString(R.string.longitude_n, location.Longitude);
         ((TextView)mView.findViewById(R.id.active_trip_location_latitude)).setText(latitude);
         ((TextView)mView.findViewById(R.id.active_trip_location_longitude)).setText(longitude);
-        ((Button)mView.findViewById(R.id.active_trip_location_passed_btn)).setOnClickListener(v -> tripActivity.setLocationAsPassed(location));
+        if (location.IsPassed)
+            mView.findViewById(R.id.active_trip_location_passed_btn).setVisibility(View.GONE);
+        ((Button)mView.findViewById(R.id.active_trip_location_passed_btn)).setOnClickListener(v -> {
+            tripActivity.setLocationAsPassed(location);
+            v.setVisibility(View.GONE);
+        });
     }
 }
