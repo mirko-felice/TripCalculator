@@ -38,4 +38,7 @@
     <string name="location_menu">Location Menu</string>
     <string name="close">Chiudi</string>
     <string name="start_location">Località di partenza</string>
+    <string name="show_all_markers">Show all markers</string>
+    <string name="rotate_to_north">Rotate the map to north</string>
+    <string name="clear_all_markers">Clear all markers</string>
 </resources>

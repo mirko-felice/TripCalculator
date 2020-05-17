@@ -95,8 +95,7 @@ public class ModifyTripActivity extends AppCompatActivity {
             if (locations.size() == 0){
                 binding.addLocationBtn.setText(getString(R.string.add_start_point));
             } else {
-                if (locations.size() > 1)
-                    adapter.updateLocations(locations.subList(1, locations.size()));
+                adapter.updateLocations(locations);
                 binding.addLocationBtn.setText(getString(R.string.add_location));
             }
         });
