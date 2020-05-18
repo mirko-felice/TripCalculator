@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -68,7 +69,8 @@ public class TripActivity extends BaseActivity {
             tripId = intent.getIntExtra("TripId", -1);
 
             locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
-            locationViewModel.getLocationsFromTrip(tripId).observe(this, locations -> {
+            LiveData<List<Location>> locationsLiveData = locationViewModel.getLocationsFromTrip(tripId);
+            locationsLiveData.observe(this, locations -> {
                 for (Location location : locations){
                     path.add(location);
                 }
@@ -98,6 +100,7 @@ public class TripActivity extends BaseActivity {
 
                 mapFragment.setPath(path);
                 mapFragment.showActualRoad();
+                locationsLiveData.removeObservers(this);
             });
         }
     }

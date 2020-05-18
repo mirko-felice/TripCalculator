@@ -62,7 +62,6 @@ public class MapFragment extends MapViewFragment {
     //SEARCH
     private RequestQueue requestQueue;
     private List<Marker> markers;
-    private List<GeoPoint> searchResultPoints;
     //ROAD
     private List<Location> path = null;
     private int nextLocationIndex = 0;
@@ -163,7 +162,6 @@ public class MapFragment extends MapViewFragment {
         int i = 0;
         for (Location location : locations) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
-            searchResultPoints.add(point);
             Marker marker = new Marker(map);
             markers.add(marker);
             marker.setPosition(point);

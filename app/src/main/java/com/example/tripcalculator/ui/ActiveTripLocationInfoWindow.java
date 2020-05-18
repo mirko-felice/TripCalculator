@@ -41,6 +41,6 @@ public class ActiveTripLocationInfoWindow extends MarkerInfoWindow {
     }
 
     public void passLocation(){
-        ((Button)mView.findViewById(R.id.active_trip_location_passed_btn)).callOnClick();
+        ((Button)mView.findViewById(R.id.active_trip_location_passed_btn)).performClick();
     }
 }
