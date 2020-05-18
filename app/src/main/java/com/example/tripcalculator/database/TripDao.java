@@ -13,26 +13,26 @@ import java.util.List;
 public interface TripDao {
 
     @Query("SELECT * FROM Trip where IsEnded = 0 ORDER BY StartDate ")
-    public LiveData<List<Trip>> getAllTrips();
+    LiveData<List<Trip>> getAllTrips();
 
     @Query("SELECT * FROM Trip where TripId = :tripId")
-    public LiveData<Trip> getTripFromId(int tripId);
+    LiveData<Trip> getTripFromId(int tripId);
 
     @Query("SELECT * FROM Trip where IsEnded = 1")
-    public LiveData<List<Trip>> getEndedTrips();
+    LiveData<List<Trip>> getEndedTrips();
 
     @Query("SELECT * FROM Trip order by InsertDate DESC limit 1")
-    public LiveData<Trip> getLastInsertedTrip();
+    LiveData<Trip> getLastInsertedTrip();
 
     @Query("SELECT * FROM Trip where IsActive = 1")
-    public LiveData<Trip> getActiveTrip();
+    LiveData<Trip> getActiveTrip();
 
     @Insert
-    public void insertTrip(Trip trip);
+    void insertTrip(Trip trip);
 
     @Update
-    public void updateTrip(Trip trip);
+    void updateTrip(Trip trip);
 
     @Delete
-    public int deleteTrip(Trip trip);
+    void deleteTrip(Trip trip);
 }

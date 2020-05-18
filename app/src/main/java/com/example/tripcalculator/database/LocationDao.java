@@ -13,20 +13,20 @@ import java.util.List;
 public interface LocationDao {
 
     @Query("SELECT * FROM Location where Id = :id")
-    public LiveData<Location> getLocationFromId(long id);
+    LiveData<Location> getLocationFromId(long id);
 
     @Query("SELECT * FROM Location where TripId = :tripId")
-    public LiveData<List<Location>> getLocationsFromTrip(int tripId);
+    LiveData<List<Location>> getLocationsFromTrip(int tripId);
 
     @Query("SELECT * FROM Location where TripId = :tripId and Id != :id and PreviousId is null")
-    public LiveData<List<Location>> getPossiblePreviousLocations(int tripId, long id);
+    LiveData<List<Location>> getPossiblePreviousLocations(int tripId, long id);
 
     @Insert
-    public void insertLocation(Location location);
+    void insertLocation(Location location);
 
     @Update
-    public void updateLocation(Location location);
+    void updateLocation(Location location);
 
     @Delete
-    public void deleteLocation(Location location);
+    void deleteLocation(Location location);
 }

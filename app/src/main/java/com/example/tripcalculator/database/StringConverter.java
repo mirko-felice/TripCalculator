@@ -7,7 +7,7 @@ import androidx.room.TypeConverter;
 import java.util.Arrays;
 import java.util.List;
 
-public class StringConverter {
+class StringConverter {
 
     private static final String SEPARATOR = ",";
 

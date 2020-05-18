@@ -14,7 +14,7 @@ public class Trip {
     public int TripId;
 
     @NonNull
-    public String Name;
+    public String Name = "";
 
     @Nullable
     public String Diary;
@@ -30,5 +30,5 @@ public class Trip {
     public Date EndDate;
 
     @NonNull
-    public Date InsertDate;
+    public Date InsertDate = new Date();
 }

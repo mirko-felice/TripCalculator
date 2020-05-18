@@ -30,7 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultFragment extends Fragment {
+public class SearchResultFragment extends MapViewFragment {
 
     private final static String TAG = "OSM_REQUEST";
     private RequestQueue requestQueue;
@@ -41,7 +41,6 @@ public class SearchResultFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = ListFragmentBinding.inflate(inflater, container, false);
-        requestQueue = Volley.newRequestQueue(getContext());
 
         adapter = new SearchResultAdapter(getContext(), (SearchActivity)getActivity());
 
@@ -61,36 +60,9 @@ public class SearchResultFragment extends Fragment {
         binding = null;
     }
 
-    private void createRequest(String place){
-        String url = "https://nominatim.openstreetmap.org/search?q=" + place + "&format=json";
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    List<Location> locations = new ArrayList<>();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject singleAddress = response.getJSONObject(i);
-                        Location location = new Location();
-                        location.DisplayName = singleAddress.get("display_name").toString();
-                        location.Latitude = Double.parseDouble(singleAddress.get("lat").toString());
-                        location.Longitude = Double.parseDouble(singleAddress.get("lon").toString());
-                        locations.add(location);
-                    }
-                    adapter.setLocations(locations);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("SEARCH", error.toString());
-            }
-        });
-
-        jsonArrayRequest.setTag(TAG);
-        requestQueue.add(jsonArrayRequest);
+    @Override
+    protected void afterResponse(List<Location> locations) {
+        adapter.setLocations(locations);
     }
 
     public Location getLocation(int position){

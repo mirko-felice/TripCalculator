@@ -12,40 +12,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/animator"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/location_view_pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/left_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/prev_location"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_left" />
-
-            <TextView
-                android:id="@+id/actual_location"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/right_arrow"
-                app:layout_constraintStart_toEndOf="@+id/left_arrow"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/right_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/next_location"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_right" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_layout"

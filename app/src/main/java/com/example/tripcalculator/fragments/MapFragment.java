@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends MapViewFragment {
 
     private final static String TAG = "OSM_REQUEST";
     private MapView map;
@@ -290,35 +290,8 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private void createRequest(String place){
-        String url = "https://nominatim.openstreetmap.org/search?q=" + place + "&format=json";
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    List<Location> locations = new ArrayList<>();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject singleAddress = response.getJSONObject(i);
-                        Location location = new Location();
-                        location.DisplayName = singleAddress.get("display_name").toString();
-                        location.Latitude = Double.parseDouble(singleAddress.get("lat").toString());
-                        location.Longitude = Double.parseDouble(singleAddress.get("lon").toString());
-                        locations.add(location);
-                    }
-                    setSearchLocationMarkers(locations);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("SEARCH", error.toString());
-            }
-        });
-
-        jsonArrayRequest.setTag(TAG);
-        requestQueue.add(jsonArrayRequest);
+    @Override
+    protected void afterResponse(List<Location> locations) {
+        setSearchLocationMarkers(locations);
     }
 }

@@ -7,7 +7,7 @@
 
         <SwitchPreferenceCompat
             app:title="Tema Scuro"
-            app:key="theme"
+            app:key="dark_theme"
             app:defaultValue="true"
             app:allowDividerBelow="true"/>
 

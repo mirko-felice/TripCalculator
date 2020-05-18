@@ -6,9 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.repo.LocationRepository;
 
 import java.util.List;

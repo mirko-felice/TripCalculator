@@ -20,18 +20,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ActivityTripBinding;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.MyFragment;
+import com.example.tripcalculator.ui.adapters.LocationViewPagerAdapter;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TripActivity extends AppCompatActivity {
+public class TripActivity extends BaseActivity {
 
     private int tripId = -1;
     private ActivityTripBinding binding;
@@ -61,8 +63,10 @@ public class TripActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.fragment_layout, mapFragment);
         fragmentTransaction.commit();
 
+        ViewPager2 viewPager = binding.locationViewPager;
         if (intent.hasExtra("TripId")){
             tripId = intent.getIntExtra("TripId", -1);
+
             locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
             locationViewModel.getLocationsFromTrip(tripId).observe(this, locations -> {
                 for (Location location : locations){
@@ -79,16 +83,18 @@ public class TripActivity extends AppCompatActivity {
                 fragmentTransaction1.hide(myFragment);
                 fragmentTransaction1.commit();
 
-                actualLocationTextView = binding.actualLocation;
+                LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(this, locations);
+                viewPager.setAdapter(adapter);
+                /*actualLocationTextView = binding.actualLocation;
                 actualLocationIndex = 0;
                 while (actualLocationIndex<path.size() && path.get(actualLocationIndex).IsPassed)  actualLocationIndex++;
                 if (actualLocationIndex == path.size()) {
                     actualLocationTextView.setText("Viaggio terminato");
                 } else {
                     actualLocationTextView.setText(path.get(actualLocationIndex).DisplayName);
-                }
+                }*/
 
-                setAnimations();
+                //setAnimations();
 
                 mapFragment.setPath(path);
                 mapFragment.showActualRoad();
@@ -135,7 +141,7 @@ public class TripActivity extends AppCompatActivity {
         locationViewModel.updateLocation(passedLocation);
     }
 
-    private void setAnimations(){
+    /*private void setAnimations(){
         Animation leftAnimation = AnimationUtils.loadAnimation(this, R.anim.left_slide);
         Animation rightAnimation = AnimationUtils.loadAnimation(this, R.anim.right_slide);
 
@@ -178,7 +184,7 @@ public class TripActivity extends AppCompatActivity {
                 rightAnimation.start();
             }
         });
-    }
+    }*/
 
     private void registerNetworkCallback(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService((Context.CONNECTIVITY_SERVICE));
