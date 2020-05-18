@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.ActivityModifyTripBinding;
 import com.example.tripcalculator.databinding.ActivityTripBinding;
 import com.example.tripcalculator.ui.TripItemTouchHelper;
 import com.example.tripcalculator.ui.adapters.LocationRecyclerViewAdapter;
+import com.example.tripcalculator.utility.PathOptimizingThread;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -61,7 +63,7 @@ public class ModifyTripActivity extends AppCompatActivity {
         binding.addLocationBtn.setOnClickListener(v -> {
             startActivity(searchIntent);
         });
-        binding.optimizeBtn.setOnClickListener(v -> {}); //TODO Aggiungere ottimizzazione
+         //TODO Aggiungere ottimizzazione
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TripItemTouchHelper(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT, adapter));
         itemTouchHelper.attachToRecyclerView(binding.locations);
@@ -98,6 +100,9 @@ public class ModifyTripActivity extends AppCompatActivity {
                 adapter.updateLocations(locations);
                 binding.addLocationBtn.setText(getString(R.string.add_location));
             }
+            binding.optimizeBtn.setOnClickListener(v -> {
+                new PathOptimizingThread(this, adapter).execute(locations.toArray(new Location[0]));
+            });
         });
         searchIntent.putExtra("TripId", trip.TripId);
     }

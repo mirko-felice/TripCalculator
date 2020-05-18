@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Trip.class, Location.class}, version = 3)
+@Database(entities = {Trip.class, Location.class}, version = 4)
 @TypeConverters({DateConverter.class, StringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -40,6 +40,12 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_Location_TripId_Order` ON `Location` (`TripId`, `Order`)");
         }
     };
+    private static Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DROP INDEX `index_Location_TripId_Order`");
+        }
+    };
 
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
@@ -51,6 +57,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
                         .addMigrations(MIGRATION_1_2)
                         .addMigrations(MIGRATION_2_3)
+                        .addMigrations(MIGRATION_3_4)
                         .build();
             }
         }

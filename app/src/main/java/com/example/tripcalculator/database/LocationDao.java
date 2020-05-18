@@ -15,7 +15,7 @@ public interface LocationDao {
     @Query("SELECT * FROM Location where Id = :id")
     LiveData<Location> getLocationFromId(long id);
 
-    @Query("SELECT * FROM Location where TripId = :tripId")
+    @Query("SELECT * FROM Location where TripId = :tripId ORDER BY `Order` ASC")
     LiveData<List<Location>> getLocationsFromTrip(int tripId);
 
     @Query("SELECT * FROM Location where TripId = :tripId and Id != :id and PreviousId is null")

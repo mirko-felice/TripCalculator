@@ -99,6 +99,15 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
     private void deleteItem(){
         LocationViewModel locationViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LocationViewModel.class);
         locationViewModel.deleteLocation(lastLocationDismiss);
+        for(Location location: locations){
+            if (location.Order > lastLocationDismissPosition){
+                location.Order--;
+                locationViewModel.updateLocation(location);
+            }
+            if (location.PreviousId != null && location.PreviousId == lastLocationDismiss.Id){
+                location.PreviousId = null;
+            }
+        }
         notifyItemRemoved(lastLocationDismissPosition);
     }
 }

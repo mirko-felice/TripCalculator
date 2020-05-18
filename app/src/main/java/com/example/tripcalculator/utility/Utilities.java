@@ -23,17 +23,6 @@ public class Utilities {
         ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static List<Location> optimizePath(List<Location> path) {
-        PathOptimizingThread optimizingThread = new PathOptimizingThread();
-        optimizingThread.execute(path.toArray(new Location[path.size()]));
-        try {
-            path = optimizingThread.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return path;
-    }
-
     public static void swapLocations(Context context, Location firstLocation, Location secondLocation){
         int tempPosition = firstLocation.Order;
         firstLocation.Order = secondLocation.Order;

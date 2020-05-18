@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(foreignKeys = @ForeignKey(entity = Trip.class, childColumns = "TripId", parentColumns = "TripId", onDelete = ForeignKey.CASCADE), indices = @Index(value = {"TripId", "Order"}, unique = true))
+@Entity(foreignKeys = @ForeignKey(entity = Trip.class, childColumns = "TripId", parentColumns = "TripId", onDelete = ForeignKey.CASCADE))
 public class Location {
 
     @PrimaryKey(autoGenerate = true)
