@@ -1,10 +1,12 @@
 package com.example.tripcalculator.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,33 +14,26 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
 import com.example.tripcalculator.ui.ActiveTripLocationInfoWindow;
 import com.example.tripcalculator.ui.LocationInfoWindow;
+import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
-import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -46,7 +41,6 @@ import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
@@ -58,24 +52,27 @@ import java.util.concurrent.ExecutionException;
 
 public class MapFragment extends MapViewFragment {
 
+    private final static float DISTANCE_DELTA = 200F;
+    private final static String PROVIDER = "USER";
     private final static String TAG = "OSM_REQUEST";
+    private static final int REQUEST_LOCATION_PERMISSIONS = 0;
     private MapView map;
     private MyLocationNewOverlay mLocationOverlay;
     private MapFragmentBinding binding;
     //SEARCH
-    RequestQueue requestQueue;
+    private RequestQueue requestQueue;
     private List<Marker> markers;
-    private ArrayList<GeoPoint> searchResultPoints;
-    private Overlay overlay;
+    private List<GeoPoint> searchResultPoints;
     //ROAD
     private List<Location> path = null;
+    private int nextLocationIndex = 0;
+    private boolean hasPermissions = false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         requestQueue = Volley.newRequestQueue(getContext());
         markers = new ArrayList<>();
-        searchResultPoints = new ArrayList<>();
         Context context = getContext();
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
 
@@ -94,13 +91,9 @@ public class MapFragment extends MapViewFragment {
         GeoPoint startPoint = new GeoPoint(48.8583, 2.2944);
         mapController.setCenter(startPoint);
 
-        this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), map);
-        this.mLocationOverlay.enableMyLocation();
-        map.getOverlays().add(this.mLocationOverlay);
-
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-        overlay = new Overlay() {
+        Overlay overlay = new Overlay() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e, MapView mapView) {
                 if (path == null) {
@@ -115,6 +108,14 @@ public class MapFragment extends MapViewFragment {
         };
 
         initMapLayout();
+        checkPermissions();
+
+        if (hasPermissions){
+            this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), map);
+            this.mLocationOverlay.enableMyLocation();
+            map.getOverlays().add(this.mLocationOverlay);
+        }
+
         map.getOverlays().add(overlay);
         return binding.getRoot();
     }
@@ -137,13 +138,11 @@ public class MapFragment extends MapViewFragment {
             map.getOverlays().remove(marker);
         }
         markers.clear();
-        searchResultPoints.clear();
     }
 
     public void setSearchLocationMarkers(List<Location> locations) {
         for (Location location : locations) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
-            searchResultPoints.add(point);
             Marker marker = new Marker(map);
             markers.add(marker);
             marker.setPosition(point);
@@ -155,7 +154,13 @@ public class MapFragment extends MapViewFragment {
         focusOn(locations.get(0));
     }
 
-    public void setPathLocationMarkers(List<Location> locations) {
+    public void updatePassedLocation(int index){
+        path.get(index).IsPassed = true;
+        showActualRoad();
+    }
+
+    private void setPathLocationMarkers(List<Location> locations) {
+        int i = 0;
         for (Location location : locations) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
             searchResultPoints.add(point);
@@ -163,9 +168,10 @@ public class MapFragment extends MapViewFragment {
             markers.add(marker);
             marker.setPosition(point);
             marker.setTitle(location.DisplayName);
-            MarkerInfoWindow infoWindow = new ActiveTripLocationInfoWindow(map, location, getActivity());
+            MarkerInfoWindow infoWindow = new ActiveTripLocationInfoWindow(map, i, location, getActivity());
             marker.setInfoWindow(infoWindow);
             map.getOverlays().add(marker);
+            i++;
         }
     }
 
@@ -195,12 +201,8 @@ public class MapFragment extends MapViewFragment {
     }
 
     public void showActualRoad() {
-        ArrayList<GeoPoint> allWaypoints = new ArrayList<>();
-        for (Location location : path) {
-            allWaypoints.add(new GeoPoint(location.Latitude, location.Longitude));
-        }
         ShowRoadTask showRoadTask = new ShowRoadTask(getContext());
-        showRoadTask.execute(path.toArray(new Location[path.size()]));
+        showRoadTask.execute(path.toArray(new Location[0]));
 
         try {
             List<Polyline> polylines = showRoadTask.get();
@@ -218,11 +220,61 @@ public class MapFragment extends MapViewFragment {
             int i = 0;
             for (; i < path.size() && path.get(i).IsPassed; i++);
             if (i < path.size()){
-                focusOn(path.get(i));
+                nextLocationIndex = i;
+                focusOn(path.get(nextLocationIndex));
             }
+            if (hasPermissions)
+                startNavigation();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void checkPermissions(){
+        Context context = getContext();
+        FragmentActivity activity = getActivity();
+        if (context == null || activity == null){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
+            } else {
+                hasPermissions = true;
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
+            } else {
+                hasPermissions = true;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSIONS){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                hasPermissions = true;
+            }else{
+                Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.map_fragment), "Permessi negati!\nLa tua posizione non può essere visualizzata sulla mappa!\nL'arrivo dovrà essere indicato manualmente!", Snackbar.LENGTH_LONG);
+            }
+        }
+    }
+
+    private void startNavigation(){
+        mLocationOverlay.getMyLocationProvider().startLocationProvider((location, source) -> {
+            android.location.Location nextLocation = new android.location.Location(PROVIDER);
+            nextLocation.setLatitude(path.get(nextLocationIndex).Latitude);
+            nextLocation.setLongitude(path.get(nextLocationIndex).Longitude);
+            if (location.distanceTo(nextLocation) < DISTANCE_DELTA){
+                ((ActiveTripLocationInfoWindow)markers.get(nextLocationIndex).getInfoWindow()).passLocation();
+                mLocationOverlay.getMyLocationProvider().stopLocationProvider();
+            }
+        });
     }
 
     private static class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
@@ -270,23 +322,6 @@ public class MapFragment extends MapViewFragment {
                 polylines.add(1, roadToDoOverlay);
             }
            return polylines;
-        }
-    }
-
-    private class DistanceChecker extends AsyncTask<GeoPoint, Void, Void>{
-
-        final private double CHECK_DISTANCE = 500.0;
-
-        @Override
-        protected Void doInBackground(GeoPoint... geoPoints) {
-            try {
-                while (CHECK_DISTANCE > geoPoints[0].distanceToAsDouble(geoPoints[1])){
-                        this.wait(2000);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
         }
     }
 

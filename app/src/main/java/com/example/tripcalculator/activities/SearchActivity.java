@@ -226,7 +226,7 @@ public class SearchActivity extends AppCompatActivity {
         isLocationAllowed = false;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
-        }else {
+        } else {
             isLocationAllowed = true;
         }
 

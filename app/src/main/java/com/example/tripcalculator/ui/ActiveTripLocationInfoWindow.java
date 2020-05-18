@@ -14,11 +14,13 @@ import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 
 public class ActiveTripLocationInfoWindow extends MarkerInfoWindow {
 
-    TripActivity tripActivity;
-    Location location;
+    private TripActivity tripActivity;
+    private int myIndex;
+    private Location location;
 
-    public ActiveTripLocationInfoWindow(MapView mapView, Location location, Activity activeTripActivity) {
+    public ActiveTripLocationInfoWindow(MapView mapView, int myIndex, Location location, Activity activeTripActivity) {
         super(R.layout.active_trip_location_infowindow, mapView);
+        this.myIndex = myIndex;
         this.location = location;
         this.tripActivity = (TripActivity) activeTripActivity;
     }
@@ -33,8 +35,12 @@ public class ActiveTripLocationInfoWindow extends MarkerInfoWindow {
         if (location.IsPassed)
             mView.findViewById(R.id.active_trip_location_passed_btn).setVisibility(View.GONE);
         ((Button)mView.findViewById(R.id.active_trip_location_passed_btn)).setOnClickListener(v -> {
-            tripActivity.setLocationAsPassed(location);
+            tripActivity.setLocationAsPassed(myIndex);
             v.setVisibility(View.GONE);
         });
+    }
+
+    public void passLocation(){
+        ((Button)mView.findViewById(R.id.active_trip_location_passed_btn)).callOnClick();
     }
 }

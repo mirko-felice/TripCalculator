@@ -136,9 +136,10 @@ public class TripActivity extends BaseActivity {
         }
     }
 
-    public void setLocationAsPassed(Location passedLocation){
-        passedLocation.IsPassed = true;
-        locationViewModel.updateLocation(passedLocation);
+    public void setLocationAsPassed(int index){
+        path.get(index).IsPassed = true;
+        locationViewModel.updateLocation(path.get(index));
+        mapFragment.updatePassedLocation(index);
     }
 
     /*private void setAnimations(){
