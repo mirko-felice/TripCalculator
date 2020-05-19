@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Trip;
-import com.example.tripcalculator.ui.PastTripsViewHolder;
+import com.example.tripcalculator.ui.recyclerview.viewholders.PastTripsViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

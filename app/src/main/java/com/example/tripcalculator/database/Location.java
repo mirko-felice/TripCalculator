@@ -7,9 +7,10 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity(foreignKeys = @ForeignKey(entity = Trip.class, childColumns = "TripId", parentColumns = "TripId", onDelete = ForeignKey.CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = Trip.class, childColumns = "TripId", parentColumns = "TripId", onDelete = ForeignKey.CASCADE), indices = {@Index(value = { "TripId" })})
 public class Location {
 
     @PrimaryKey(autoGenerate = true)
@@ -22,8 +23,7 @@ public class Location {
     @Nullable
     public String Note;
 
-    @Nullable
-    public List<String> ImgNames;
+    public List<String> ImgNames = new ArrayList<>();
 
     public boolean IsPassed;
 

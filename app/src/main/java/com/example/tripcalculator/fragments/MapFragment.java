@@ -150,7 +150,9 @@ public class MapFragment extends MapViewFragment {
             marker.setInfoWindow(infoWindow);
             map.getOverlays().add(marker);
         }
-        focusOn(locations.get(0));
+        if (locations.size() > 0){
+            focusOn(locations.get(0));
+        }
     }
 
     public void updatePassedLocation(int index){
@@ -306,7 +308,7 @@ public class MapFragment extends MapViewFragment {
             List<Polyline> polylines = new ArrayList<>();
             polylines.add(null);
             polylines.add(null);
-            if (passedWaypoints.size() > 0) {
+            if (passedWaypoints.size() > 1) {
                 Road passedRoad = roadManager.getRoad(passedWaypoints);
                 if (passedRoad.mStatus == Road.STATUS_OK) {
                     Polyline passedRoadOverlay = RoadManager.buildRoadOverlay(passedRoad, Color.GREEN, 4f);
@@ -315,9 +317,10 @@ public class MapFragment extends MapViewFragment {
             }
             if (nextWaypoints.size() > 0) {
                 Road roadToDo = roadManager.getRoad(nextWaypoints);
-
-                Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.BLACK, 4f);
-                polylines.add(1, roadToDoOverlay);
+                if (roadToDo.mStatus == Road.STATUS_OK) {
+                    Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.BLACK, 4f);
+                    polylines.add(1, roadToDoOverlay);
+                }
             }
            return polylines;
         }

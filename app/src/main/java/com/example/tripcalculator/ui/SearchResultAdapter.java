@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.ui.SearchViewHolder;
+import com.example.tripcalculator.ui.recyclerview.viewholders.SearchViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +50,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
         Location location = result.get(position);
-        TextView element = (TextView) holder.itemView.findViewById(R.id.result_location);
-        element.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.focusOn(result.get(position));
-            }
-        });
+        TextView element = holder.itemView.findViewById(R.id.result_location);
+        element.setOnClickListener(v -> activity.focusOn(result.get(position)));
         element.setText(location.DisplayName);
     }
 

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">TripCalculator</string>
     <string name="next_trips">Next Trips</string>
-    <string name="past_trips">Hisyory</string>
+    <string name="past_trips">History</string>
     <string name="app_label">Cerca luogo</string>
     <string name="search_title">Ricerca</string>
     <string name="welcome_locations">Qui puoi controllare le singole località del tuo viaggio, prova ad aggiungere, cancellare o modificare!</string>
@@ -39,4 +39,6 @@
     <string name="location_menu">Location Menu</string>
     <string name="close">Chiudi</string>
     <string name="start_location">Località di partenza</string>
+    <string name="summary_tab_label">Summary</string>
+    <string name="diary_tab_label">Diary</string>
 </resources>

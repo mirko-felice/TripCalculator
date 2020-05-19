@@ -10,13 +10,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
@@ -27,8 +23,9 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ActivityTripBinding;
 import com.example.tripcalculator.fragments.MapFragment;
-import com.example.tripcalculator.fragments.MyFragment;
-import com.example.tripcalculator.ui.adapters.LocationViewPagerAdapter;
+import com.example.tripcalculator.fragments.SummaryTripFragment;
+import com.example.tripcalculator.ui.viewpager.LocationViewPagerAdapter;
+import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 
 import java.util.ArrayList;
@@ -40,13 +37,10 @@ public class TripActivity extends BaseActivity {
     private ActivityTripBinding binding;
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
-    private MyFragment myFragment;
+    private SummaryTripFragment myFragment;
     private boolean isNetworkConnected = false;
 
     private List<Location> path;
-    private TextView actualLocationTextView;
-    private int actualLocationIndex;
-
     private LocationViewModel locationViewModel;
 
     @Override
@@ -63,41 +57,35 @@ public class TripActivity extends BaseActivity {
         mapFragment = new MapFragment();
         fragmentTransaction.add(R.id.fragment_layout, mapFragment);
         fragmentTransaction.commit();
-
+        //TODO focus quando cambia pagina
         ViewPager2 viewPager = binding.locationViewPager;
+        viewPager.setVisibility(View.GONE);
         if (intent.hasExtra("TripId")){
             tripId = intent.getIntExtra("TripId", -1);
 
             locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
             LiveData<List<Location>> locationsLiveData = locationViewModel.getLocationsFromTrip(tripId);
             locationsLiveData.observe(this, locations -> {
-                for (Location location : locations){
-                    path.add(location);
-                }
-                if (path.size() == 0){
-                    finish();
-                    return;
-                }
+                path.addAll(locations);
 
                 FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-                myFragment = new MyFragment(tripId);
+                myFragment = new SummaryTripFragment(tripId);
                 fragmentTransaction1.add(R.id.activity_active_trip_layout, myFragment);
                 fragmentTransaction1.hide(myFragment);
                 fragmentTransaction1.commit();
 
                 LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(this, locations);
                 viewPager.setAdapter(adapter);
-                /*actualLocationTextView = binding.actualLocation;
-                actualLocationIndex = 0;
-                while (actualLocationIndex<path.size() && path.get(actualLocationIndex).IsPassed)  actualLocationIndex++;
-                if (actualLocationIndex == path.size()) {
-                    actualLocationTextView.setText("Viaggio terminato");
-                } else {
-                    actualLocationTextView.setText(path.get(actualLocationIndex).DisplayName);
-                }*/
-
-                //setAnimations();
-
+                viewPager.setUserInputEnabled(false);
+                viewPager.setVisibility(View.VISIBLE);
+                for (Location location: locations){
+                    if(!location.IsPassed){
+                        viewPager.setCurrentItem(locations.indexOf(location), true);
+                        break;
+                    }
+                }
+                binding.slideLeft.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true));
+                binding.slideRight.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() == locations.size() - 1 ? locations.size() - 1: viewPager.getCurrentItem() + 1, true));
                 mapFragment.setPath(path);
                 mapFragment.showActualRoad();
                 locationsLiveData.removeObservers(this);
@@ -107,7 +95,7 @@ public class TripActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.active_trip_menu, menu);
+        getMenuInflater().inflate(R.menu.trip, menu);
         return true;
     }
 
@@ -116,14 +104,10 @@ public class TripActivity extends BaseActivity {
         if (item.getItemId() == R.id.details){
             if(myFragment.isVisible()){
                 item.setIcon(R.drawable.ic_details);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.hide(myFragment);
-                fragmentTransaction.commit();
+                fragmentManager.beginTransaction().hide(myFragment).commit();
             } else {
                 item.setIcon(R.drawable.ic_map);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.show(myFragment);
-                fragmentTransaction.commit();
+                fragmentManager.beginTransaction().show(myFragment).commit();
             }
             return true;
         }
@@ -143,52 +127,8 @@ public class TripActivity extends BaseActivity {
         path.get(index).IsPassed = true;
         locationViewModel.updateLocation(path.get(index));
         mapFragment.updatePassedLocation(index);
+        Utilities.createLocationNotification(getApplicationContext(), path.get(index));
     }
-
-    /*private void setAnimations(){
-        Animation leftAnimation = AnimationUtils.loadAnimation(this, R.anim.left_slide);
-        Animation rightAnimation = AnimationUtils.loadAnimation(this, R.anim.right_slide);
-
-        leftAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                actualLocationIndex = (actualLocationIndex + path.size() - 1) % path.size();
-                actualLocationTextView.setText(path.get(actualLocationIndex).DisplayName);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        rightAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                actualLocationIndex = actualLocationIndex + 1 % path.size();
-                actualLocationTextView.setText(path.get(actualLocationIndex).DisplayName);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-
-        binding.leftArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                leftAnimation.start();
-            }
-        });
-        binding.rightArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rightAnimation.start();
-            }
-        });
-    }*/
 
     private void registerNetworkCallback(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService((Context.CONNECTIVITY_SERVICE));

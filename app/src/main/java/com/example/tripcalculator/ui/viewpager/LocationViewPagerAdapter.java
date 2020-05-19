@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui.viewpager;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

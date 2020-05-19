@@ -1,6 +1,5 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui.recyclerview.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,35 +7,36 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.utility.DialogHelper;
-import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.ui.LocationViewHolder;
+import com.example.tripcalculator.ui.ItemTouchHelperAdapter;
+import com.example.tripcalculator.ui.recyclerview.viewholders.LocationViewHolder;
+import com.example.tripcalculator.utility.DialogHelper;
+import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
 
-public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationViewHolder> implements ItemTouchHelperAdapter {
+import okhttp3.internal.Util;
 
+public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> implements ItemTouchHelperAdapter {
+
+    private static final String DIALOG_TITLE = "Sei sicuro di voler eliminare la destinazione?";
     private List<Location> locations = new ArrayList<>();
-    private Context context;
+    private AppCompatActivity activity;
     private AlertDialog alertDialog;
     private Location lastLocationDismiss;
     private int lastLocationDismissPosition;
 
-    public LocationRecyclerViewAdapter(Context context) {
-        this.context = context;
-        this.alertDialog = new AlertDialog.Builder(context, R.style.Theme_MaterialComponents_Light_Dialog)
-                .setTitle("Sei sicuro di voler eliminare la destinazione?")
+    public LocationAdapter(AppCompatActivity activity) {
+        this.activity = activity;
+        this.alertDialog = new AlertDialog.Builder(activity.getApplicationContext(), R.style.Theme_MaterialComponents_Light_Dialog)
+                .setTitle(DIALOG_TITLE)
                 .setPositiveButton("SI", (dialog, which) -> deleteItem())
                 .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
                 .setOnDismissListener(dialog -> notifyDataSetChanged())
@@ -46,7 +46,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
     @NonNull
     @Override
     public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View locationView = LayoutInflater.from(context).inflate(R.layout.location_view, parent, false);
+        View locationView = LayoutInflater.from(activity.getApplicationContext()).inflate(R.layout.location_view, parent, false);
         return new LocationViewHolder(locationView);
     }
 
@@ -54,13 +54,9 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         Location location = locations.get(position);
         holder.setName(location.DisplayName);
-        holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> {
-            DialogHelper.showReminderDialog(location, (FragmentActivity) context);
-        });
-        holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> {
-            DialogHelper.showSetPreviousDialog(location, (FragmentActivity) context);
-        });
-        if (position > 0){
+        holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> DialogHelper.showReminderDialog(location, activity));
+        holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
+        if (position > 0) {
             holder.itemView.findViewById(R.id.divider).setVisibility(View.GONE);
         }
     }
@@ -77,15 +73,6 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(locations, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(locations, i, i - 1);
-            }
-        }
         notifyItemMoved(fromPosition, toPosition);
         return true;
     }
@@ -96,8 +83,25 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationVi
         lastLocationDismissPosition = position;
         this.alertDialog.show();
     }
+
+    @Override
+    public void moveLocation(int from, int to) {
+        if (from < to){
+            for (int i = from; i < to; i++){
+                Utilities.swapLocations(activity, locations.get(i), locations.get(i + 1));
+                Collections.swap(locations, i, i+ 1);
+            }
+        } else {
+            for (int i = from; i > to; i--){
+                Utilities.swapLocations(activity, locations.get(i), locations.get(i - 1));
+                Collections.swap(locations, i , i- 1);
+            }
+        }
+    }
+
+
     private void deleteItem(){
-        LocationViewModel locationViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LocationViewModel.class);
+        LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.deleteLocation(lastLocationDismiss);
         for(Location location: locations){
             if (location.Order > lastLocationDismissPosition){

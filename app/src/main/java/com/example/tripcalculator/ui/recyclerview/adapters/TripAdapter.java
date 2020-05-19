@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui.recyclerview.adapters;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -16,8 +16,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,9 +25,10 @@ import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.activities.ModifyTripActivity;
 import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.database.AppDatabase;
+import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
-import com.example.tripcalculator.ui.TripViewHolder;
+import com.example.tripcalculator.ui.recyclerview.viewholders.TripViewHolder;
+import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -39,9 +40,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
 
-public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder> {
+public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
     private FragmentActivity activity;
     private List<Trip> trips = new ArrayList<>();
@@ -51,9 +51,11 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
     private int lastTripDismissPosition;
     private ActionMode actionMode;
     private TripViewModel tripViewModel;
+    private boolean isTripActive;
 
-    public TripRecyclerViewAdapter(FragmentActivity activity) {
+    public TripAdapter(FragmentActivity activity, boolean isTripActive) {
         this.activity = activity;
+        this.isTripActive = isTripActive;
         this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
                 .setTitle("Sei sicuro di voler eliminare i viaggi selezionati?")
                 .setPositiveButton("SI", (dialog, which) -> deleteItems())
@@ -72,9 +74,11 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Intent intent = new Intent(activity.getApplicationContext(), ReminderReceiver.class);
+        Trip trip = trips.get(position);
+        intent.putExtra("TripName", trip.Name);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
-        Trip trip = trips.get(position);
+
         MaterialCardView card = (MaterialCardView) holder.itemView.findViewById(R.id.trip_card);
         tripCards.add(card);
         holder.setName(trip.Name);
@@ -152,11 +156,22 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
             datePicker.show(activity.getSupportFragmentManager(), datePicker.toString());
         });
 
-        if(trip.IsActive){
+        LiveData<List<Location>> locationLiveData = new ViewModelProvider(activity).get(LocationViewModel.class).getLocationsFromTrip(trip.TripId);
+        locationLiveData.observe(activity, locations -> {
+            if (locations.size() < 2) {
+                holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
+                holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
+            }
+            locationLiveData.removeObservers(activity);
+        });
+        if (isTripActive){
             holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
         }
+        if (trip.IsActive){
+            holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
+        }
     }
-    
+
     private void showSnack(){
         Snackbar.make(activity.findViewById(R.id.coordinator_layout),"Sorry", Snackbar.LENGTH_LONG).show();
     }
@@ -193,7 +208,7 @@ public class TripRecyclerViewAdapter extends RecyclerView.Adapter<TripViewHolder
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.delete_menu, menu);
+            inflater.inflate(R.menu.delete, menu);
             return true;
         }
 

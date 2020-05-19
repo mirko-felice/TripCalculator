@@ -41,4 +41,6 @@
     <string name="show_all_markers">Show all markers</string>
     <string name="rotate_to_north">Rotate the map to north</string>
     <string name="clear_all_markers">Clear all markers</string>
+    <string name="summary_tab_label">Riepilogo</string>
+    <string name="diary_tab_label">Diario</string>
 </resources>

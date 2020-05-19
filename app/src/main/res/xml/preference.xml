@@ -15,9 +15,10 @@
             app:title="Lingua"
             app:entries="@array/languages"
             app:entryValues="@array/languages_index"
-            app:defaultValue="Italiano"
+            app:defaultValue="0"
             app:key="language"
-            app:icon="@drawable/ic_language_light"/>
+            app:icon="@drawable/ic_language_light"
+            app:summary="%s"/>
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:key="time_format"

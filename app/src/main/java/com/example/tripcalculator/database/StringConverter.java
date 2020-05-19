@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.room.TypeConverter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,11 +14,11 @@ class StringConverter {
 
     @TypeConverter
     public static List<String> fromString(String string) {
-        return string == null ? null : Arrays.asList(string.split(SEPARATOR));
+        return string.isEmpty() ? new ArrayList<>() : Arrays.asList(string.split(SEPARATOR));
     }
 
     @TypeConverter
     public static String fromStringArray(List<String> array) {
-        return array == null ? null : TextUtils.join(SEPARATOR, array);
+        return TextUtils.join(SEPARATOR, array);
     }
 }

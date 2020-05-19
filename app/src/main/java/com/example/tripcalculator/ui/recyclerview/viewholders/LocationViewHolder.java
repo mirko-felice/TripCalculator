@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui;
+package com.example.tripcalculator.ui.recyclerview.viewholders;
 
 import android.view.View;
 import android.widget.TextView;

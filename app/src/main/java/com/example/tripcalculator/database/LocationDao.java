@@ -12,9 +12,6 @@ import java.util.List;
 @Dao
 public interface LocationDao {
 
-    @Query("SELECT * FROM Location where Id = :id")
-    LiveData<Location> getLocationFromId(long id);
-
     @Query("SELECT * FROM Location where TripId = :tripId ORDER BY `Order` ASC")
     LiveData<List<Location>> getLocationsFromTrip(int tripId);
 

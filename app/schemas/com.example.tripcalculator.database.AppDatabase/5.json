@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "f75e9f664a2ee5b467ca10209ab16958",
+    "version": 5,
+    "identityHash": "6ac0436f3e6c21e132066bfd8b577794",
     "entities": [
       {
         "tableName": "Trip",
@@ -146,11 +146,11 @@
         "indices": [
           {
             "name": "index_Location_TripId",
-            "unique": true,
+            "unique": false,
             "columnNames": [
               "TripId"
             ],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Location_TripId` ON `${TABLE_NAME}` (`TripId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Location_TripId` ON `${TABLE_NAME}` (`TripId`)"
           }
         ],
         "foreignKeys": [
@@ -171,7 +171,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f75e9f664a2ee5b467ca10209ab16958')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6ac0436f3e6c21e132066bfd8b577794')"
     ]
   }
 }

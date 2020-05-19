@@ -21,22 +21,21 @@ import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.activities.ModifyTripActivity;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.NextTripsFragmentBinding;
-import com.example.tripcalculator.ui.adapters.TripRecyclerViewAdapter;
+import com.example.tripcalculator.ui.recyclerview.adapters.TripAdapter;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 
 import java.util.Date;
 
 public class NextTripsFragment extends Fragment {
 
-    private NextTripsFragmentBinding binding;
-    private TripRecyclerViewAdapter adapter;
+    private TripAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = NextTripsFragmentBinding.inflate(inflater, container, false);
+        NextTripsFragmentBinding binding = NextTripsFragmentBinding.inflate(inflater, container, false);
 
-        TripViewModel viewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(TripViewModel.class);
+        TripViewModel viewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         binding.addTrip.setOnClickListener(v -> {
             Trip trip = new Trip();
             trip.TripId = 0;
@@ -48,9 +47,9 @@ public class NextTripsFragment extends Fragment {
             Intent intent = new Intent(getContext(), ModifyTripActivity.class);
             startActivity(intent);
         });
-        adapter = new TripRecyclerViewAdapter(requireActivity());
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.setVisibility(View.GONE);
 
         LiveData<Trip> activeTrip = viewModel.getActiveTrip();
         activeTrip.observe(getViewLifecycleOwner(), trip -> {
@@ -61,7 +60,18 @@ public class NextTripsFragment extends Fragment {
                 activeTrip.removeObservers(getViewLifecycleOwner());
             }
         });
+
         viewModel.getTrips().observe(getViewLifecycleOwner(), trips -> {
+            boolean isTripActive = false;
+            for(Trip trip: trips){
+                if (trip.IsActive) {
+                    isTripActive = true;
+                    break;
+                }
+            }
+            adapter = new TripAdapter(requireActivity(), isTripActive);
+            binding.recyclerView.setAdapter(adapter);
+            binding.recyclerView.setVisibility(View.VISIBLE);
             adapter.updateTrips(trips);
         });
 
@@ -70,7 +80,7 @@ public class NextTripsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.delete_menu, menu);
+        inflater.inflate(R.menu.delete, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -82,13 +92,8 @@ public class NextTripsFragment extends Fragment {
         }
         return false;
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
 
-    public TripRecyclerViewAdapter getAdapter() {
+    public TripAdapter getAdapter() {
         return adapter;
     }
 }

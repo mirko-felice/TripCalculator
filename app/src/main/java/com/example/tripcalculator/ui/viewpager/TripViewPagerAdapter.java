@@ -1,7 +1,8 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui.viewpager;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -25,8 +26,8 @@ public class TripViewPagerAdapter extends FragmentPagerAdapter {
         fragments.add(new NextTripsFragment());
         fragments.add(new PastTripsFragment());
         fragmentsTitles = new ArrayList<>();
-        fragmentsTitles.add(context.getString(R.string.next_trips));
-        fragmentsTitles.add(context.getString(R.string.past_trips));
+        fragmentsTitles.add(context.getApplicationContext().getString(R.string.next_trips));
+        fragmentsTitles.add(context.getApplicationContext().getString(R.string.past_trips));
     }
 
     @Nullable
@@ -35,6 +36,7 @@ public class TripViewPagerAdapter extends FragmentPagerAdapter {
         return fragmentsTitles.get(position);
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         return fragments.get(position);

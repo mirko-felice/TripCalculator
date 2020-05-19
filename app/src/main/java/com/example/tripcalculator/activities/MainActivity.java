@@ -1,23 +1,24 @@
 package com.example.tripcalculator.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.viewpager.widget.ViewPager;
+import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.databinding.ActivityMainBinding;
-import com.example.tripcalculator.ui.adapters.TripViewPagerAdapter;
+import com.example.tripcalculator.ui.viewpager.TripViewPagerAdapter;
 
+import java.lang.reflect.Array;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends BaseActivity {
 
@@ -26,14 +27,14 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getApplication().setTheme(R.style.AppTheme);
         //TODO ogni activity dovrà fare questo on resume
-        AppCompatDelegate.setDefaultNightMode(getPreferences(MODE_PRIVATE).getBoolean("dark_theme", true) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
-        com.example.tripcalculator.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
-        ViewPager viewPager;
-        viewPager = binding.viewPager;
-        TripViewPagerAdapter adapter = new TripViewPagerAdapter(getSupportFragmentManager(), this);
-        viewPager.setAdapter(adapter);
+        AppCompatDelegate.setDefaultNightMode(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLocale(PreferenceManager.getDefaultSharedPreferences(this).getString("language", "0").equals("0")? Locale.ITALIAN : Locale.ENGLISH);
+        getBaseContext().getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        binding.viewPager.setAdapter(new TripViewPagerAdapter(getSupportFragmentManager(), this));
+        setContentView(binding.getRoot());
     }
 
     @Override
@@ -49,11 +50,5 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        AppDatabase.getInstance(this).close();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui;
+package com.example.tripcalculator.ui.recyclerview.viewholders;
 
 import android.view.View;
 import android.widget.TextView;
@@ -11,6 +11,7 @@ import com.example.tripcalculator.R;
 public class SearchViewHolder extends RecyclerView.ViewHolder {
 
     private TextView location;
+
     public SearchViewHolder(@NonNull View itemView) {
         super(itemView);
         location = itemView.findViewById(R.id.result_location);

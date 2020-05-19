@@ -39,4 +39,6 @@
     <string name="location_menu">Location Menu</string>
     <string name="close">Chiudi</string>
     <string name="start_location">Località di partenza</string>
+    <string name="summary_tab_label">Riepilogo</string>
+    <string name="diary_tab_label">Diario</string>
 </resources>

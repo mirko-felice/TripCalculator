@@ -17,13 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
+import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.SummaryFragmentBinding;
-import com.example.tripcalculator.ui.adapters.SummaryRecyclerViewAdapter;
+import com.example.tripcalculator.ui.recyclerview.adapters.SummaryAdapter;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 
@@ -56,18 +57,20 @@ public class SummaryFragment extends Fragment {
         binding = SummaryFragmentBinding.inflate(inflater, container, false);
 
         binding.summary.setLayoutManager(new LinearLayoutManager(getContext()));
-        SummaryRecyclerViewAdapter adapter = new SummaryRecyclerViewAdapter(this);
+        SummaryAdapter adapter = new SummaryAdapter(this);
         binding.summary.setAdapter(adapter);
         locationViewModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
         locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), adapter::updateLocations);
         TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         binding.endTripBtn.setOnClickListener(v -> {
-            tripViewModel.getTripFromId(tripId).observe(getViewLifecycleOwner(), trip -> {
+            LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
+            tripLiveData.observe(getViewLifecycleOwner(), trip -> {
                 trip.IsEnded = true;
                 trip.IsActive = false;
                 trip.EndDate = new Date();
                 tripViewModel.updateTrip(trip);
                 requireActivity().finish();
+                tripLiveData.removeObservers(getViewLifecycleOwner());
             });
         });
         return binding.getRoot();
@@ -98,11 +101,6 @@ public class SummaryFragment extends Fragment {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     thumbnail = requireActivity().getContentResolver().loadThumbnail(photoURI, new Size(200,200), null);
                 }
-                binding.imageView.setImageBitmap(thumbnail);
-                if(lastLocation.ImgNames == null)
-                    lastLocation.ImgNames = new ArrayList<>();
-                else
-                    lastLocation.ImgNames = new ArrayList<>(lastLocation.ImgNames);
                 lastLocation.ImgNames.add(photoURI.toString());
                 locationViewModel.updateLocation(lastLocation);
             } catch (IOException e) {

@@ -18,10 +18,6 @@ public class LocationRepository {
         locationDao = AppDatabase.getInstance(application).locationDao();
     }
 
-    public LiveData<Location> getLocationFromId(long locationId) {
-        return locationDao.getLocationFromId(locationId);
-    }
-
     public LiveData<List<Location>> getLocationsFromTrip(int tripId) {
         return locationDao.getLocationsFromTrip(tripId);
     }

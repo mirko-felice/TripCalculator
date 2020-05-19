@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui.adapters;
+package com.example.tripcalculator.ui.recyclerview.adapters;
 
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
@@ -12,17 +12,17 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.utility.DialogHelper;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.SummaryFragment;
-import com.example.tripcalculator.ui.SummaryViewHolder;
+import com.example.tripcalculator.ui.recyclerview.viewholders.SummaryViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SummaryRecyclerViewAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
+public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
 
     private List<Location> locations = new ArrayList<>();
     private SummaryFragment fragment;
 
-    public SummaryRecyclerViewAdapter(SummaryFragment fragment) {
+    public SummaryAdapter(SummaryFragment fragment) {
         this.fragment = fragment;
     }
 

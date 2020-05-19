@@ -26,7 +26,6 @@ import android.widget.SearchView;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.utility.Utilities;
-import com.example.tripcalculator.database.AppDatabase;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
@@ -37,8 +36,8 @@ import com.google.android.material.snackbar.Snackbar;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -61,6 +60,8 @@ public class SearchActivity extends AppCompatActivity {
     SearchResultFragment searchResultFragment;
     MapFragment mapFragment;
     MenuItem searchMenuItem;
+    private List<Location> locations = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,13 +73,15 @@ public class SearchActivity extends AppCompatActivity {
                 .setAction("Impostazioni", (v) -> { setSettingsIntent(); });
 
         fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         searchResultFragment = new SearchResultFragment();
         mapFragment = new MapFragment();
-        fragmentTransaction.add(R.id.search_layout, mapFragment);
-        fragmentTransaction.add(R.id.search_layout, searchResultFragment);
-        fragmentTransaction.hide(searchResultFragment);
-        fragmentTransaction.commit();
+        fragmentManager.beginTransaction()
+                        .add(R.id.search_layout, mapFragment)
+                        .add(R.id.search_layout, searchResultFragment)
+                        .hide(searchResultFragment)
+                        .commit();
+
         Intent intent = getIntent();
         if (intent.hasExtra("TripId")){
             this.tripId = intent.getIntExtra("TripId", -1);
@@ -112,7 +115,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
+        inflater.inflate(R.menu.search, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
@@ -163,6 +166,10 @@ public class SearchActivity extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
             fragmentTransaction.show(searchResultFragment).commit();
+            if(locations.size() == 0){
+                searchView.requestFocus();
+                Utilities.showKeyboard(this, searchView);
+            }
             return true;
         }
         return false;
@@ -191,6 +198,7 @@ public class SearchActivity extends AppCompatActivity {
     public void setSearchResult(List<Location> locations){
         Utilities.hideKeyboard(this);
         mapFragment.setSearchLocationMarkers(locations);
+        this.locations = locations;
     }
 
     public void focusOn(Location location){
