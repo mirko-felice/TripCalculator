@@ -21,7 +21,7 @@ public abstract class MapViewFragment extends Fragment {
 
     void createRequest(String place){
         String url = "https://nominatim.openstreetmap.org/search?q=" + place + "&format=json";
-
+        LoaderFragment loaderFragment = new LoaderFragment(requireActivity().findViewById(android.R.id.content));
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, response -> {
             try {
                 List<Location> locations = new ArrayList<>();
@@ -34,6 +34,7 @@ public abstract class MapViewFragment extends Fragment {
                     locations.add(location);
                 }
                 afterResponse(locations);
+                loaderFragment.dismiss();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -41,6 +42,7 @@ public abstract class MapViewFragment extends Fragment {
 
         jsonArrayRequest.setTag(TAG);
         Volley.newRequestQueue(requireContext()).add(jsonArrayRequest);
+        loaderFragment.show(requireActivity().getSupportFragmentManager(), "loader");
     }
 
     protected abstract void afterResponse(List<Location> locations);

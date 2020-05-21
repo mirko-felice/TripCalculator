@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -19,6 +17,7 @@ import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.ActivityModifyTripBinding;
 import com.example.tripcalculator.ui.TripItemTouchHelper;
 import com.example.tripcalculator.ui.recyclerview.adapters.LocationAdapter;
+import com.example.tripcalculator.utility.IOptimizeCallback;
 import com.example.tripcalculator.utility.PathOptimizingThread;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
@@ -30,7 +29,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 import java.util.Objects;
 
-public class ModifyTripActivity extends AppCompatActivity implements IOptimizeCallback {
+public class ModifyTripActivity extends BaseActivity implements IOptimizeCallback {
 
     private Trip trip;
     private ActivityModifyTripBinding binding;
@@ -68,7 +67,7 @@ public class ModifyTripActivity extends AppCompatActivity implements IOptimizeCa
                     adapter.updateLocations(locations);
                     binding.addLocationBtn.setText(getString(R.string.add_location));
                 }
-                binding.optimizeBtn.setOnClickListener(v -> new PathOptimizingThread(this, this).execute(locations.toArray(new Location[0])));
+                binding.optimizeBtn.setOnClickListener(v -> new PathOptimizingThread(this,this).execute(locations.toArray(new Location[0])));
                Utilities.hideKeyboard(this);
             });
             searchIntent.putExtra("TripId", trip.TripId);
@@ -100,11 +99,15 @@ public class ModifyTripActivity extends AppCompatActivity implements IOptimizeCa
 
     @Override
     public void onBackPressed() {
-        showDialog();
+        if (!trip.Name.equals(Objects.requireNonNull(binding.tripName.getText()).toString())){
+            showDialog();
+        } else {
+            tripViewModel.updateTrip(trip);
+            super.onBackPressed();
+        }
     }
 
     private void saveChanges() {
-        //TODO rivedere la logica del salvataggio
         this.trip.Name = Objects.requireNonNull(binding.tripName.getText()).toString();
         tripViewModel.updateTrip(trip);
         Snackbar snackbar = Snackbar.make(binding.getRoot(), "Le modifiche sono state salvate.", 400);

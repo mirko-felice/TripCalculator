@@ -1,12 +1,20 @@
 package com.example.tripcalculator.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +23,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.location.LocationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
@@ -22,6 +31,7 @@ import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
 import com.example.tripcalculator.ui.ActiveTripLocationInfoWindow;
 import com.example.tripcalculator.ui.LocationInfoWindow;
+import com.example.tripcalculator.utility.ShowRoadTask;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.api.IMapController;
@@ -60,7 +70,9 @@ public class MapFragment extends MapViewFragment {
     private List<Location> path = null;
     private int nextLocationIndex = 0;
     private boolean hasPermissions = false;
+    private IMapController mapController;
 
+    @SuppressLint("MissingPermission")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,11 +90,24 @@ public class MapFragment extends MapViewFragment {
         mRotationGestureOverlay.setEnabled(true);
         map.getOverlays().add(mRotationGestureOverlay);
 
-        IMapController mapController = map.getController();
+        mapController = map.getController();
         mapController.setZoom(9.5);
-        GeoPoint startPoint = new GeoPoint(48.8583, 2.2944);
-        mapController.setCenter(startPoint);
+        binding.checkPositionBtn.setVisibility(View.VISIBLE);
+        binding.myPositionBtn.setVisibility(View.GONE);
+        GeoPoint startPoint;
+        checkPermissions();
+        GpsMyLocationProvider provider = new GpsMyLocationProvider(requireContext());
+        mLocationOverlay = new MyLocationNewOverlay(provider, map);
 
+        if(hasPermissions){
+
+            mLocationOverlay.enableMyLocation();
+            map.getOverlayManager().add(mLocationOverlay);
+            startPoint = mLocationOverlay.getMyLocation();
+        } else {
+            startPoint = new GeoPoint(48.8583, 2.2944);
+        }
+        mapController.setCenter(startPoint);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
         Overlay overlay = new Overlay() {
@@ -102,6 +127,18 @@ public class MapFragment extends MapViewFragment {
         initMapLayout();
 
         map.getOverlays().add(overlay);
+        binding.checkPositionBtn.setOnClickListener(v -> {
+            if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                checkPermissions();
+            } else {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", requireActivity().getPackageName(), null));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        binding.myPositionBtn.setOnClickListener(v -> {
+            mapController.setCenter(mLocationOverlay.getMyLocation());
+        });
         return binding.getRoot();
     }
 
@@ -109,12 +146,14 @@ public class MapFragment extends MapViewFragment {
     public void onResume() {
         super.onResume();
         map.onResume();
+        mLocationOverlay.enableMyLocation();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         map.onPause();
+        mLocationOverlay.disableMyLocation();
     }
 
     public void clearMarkers() {
@@ -160,10 +199,7 @@ public class MapFragment extends MapViewFragment {
             i++;
         }
 
-        checkPermissions();
-
         if (hasPermissions){
-            this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), map);
             this.mLocationOverlay.enableMyLocation();
             map.getOverlays().add(this.mLocationOverlay);
         }
@@ -180,8 +216,10 @@ public class MapFragment extends MapViewFragment {
         for (Marker marker : markers){
             points.add(marker.getPosition());
         }
-        Road road = new Road(points);
-        map.zoomToBoundingBox(road.mBoundingBox, true);
+        if(points.size() > 0) {
+            Road road = new Road(points);
+            map.zoomToBoundingBox(road.mBoundingBox, true);
+        }
     }
 
     public void focusOn(Location location) {
@@ -196,7 +234,7 @@ public class MapFragment extends MapViewFragment {
 
     public void showActualRoad() {
         RoadManager roadManager = new OSRMRoadManager(requireContext());
-        ShowRoadTask showRoadTask = new ShowRoadTask(roadManager);
+        ShowRoadTask showRoadTask = new ShowRoadTask(roadManager, requireActivity());
         showRoadTask.execute(path.toArray(new Location[0]));
 
         try {
@@ -229,10 +267,12 @@ public class MapFragment extends MapViewFragment {
     private void checkPermissions(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
+                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    //ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
             } else {
+                binding.checkPositionBtn.setVisibility(View.GONE);
+                binding.myPositionBtn.setVisibility(View.VISIBLE);
                 hasPermissions = true;
             }
         } else {
@@ -240,6 +280,8 @@ public class MapFragment extends MapViewFragment {
                     ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
             } else {
+                binding.checkPositionBtn.setVisibility(View.GONE);
+                binding.myPositionBtn.setVisibility(View.VISIBLE);
                 hasPermissions = true;
             }
         }
@@ -250,6 +292,8 @@ public class MapFragment extends MapViewFragment {
         if (requestCode == REQUEST_LOCATION_PERMISSIONS){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 hasPermissions = true;
+                binding.checkPositionBtn.setVisibility(View.GONE);
+                binding.myPositionBtn.setVisibility(View.VISIBLE);
             }else{
                 Snackbar.make(requireActivity().findViewById(R.id.map_fragment), "Permessi negati!\nLa tua posizione non può essere visualizzata sulla mappa!\nL'arrivo dovrà essere indicato manualmente!", Snackbar.LENGTH_LONG).show();
             }
@@ -266,54 +310,6 @@ public class MapFragment extends MapViewFragment {
                 mLocationOverlay.getMyLocationProvider().stopLocationProvider();
             }
         });
-    }
-
-    private static class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
-
-        private RoadManager roadManager;
-
-        private ShowRoadTask(RoadManager roadManager){
-            this.roadManager = roadManager;
-        }
-
-        @Override
-        protected List<Polyline> doInBackground(Location... path) {
-            ArrayList<GeoPoint> passedWaypoints = new ArrayList<>();
-            ArrayList<GeoPoint> nextWaypoints = new ArrayList<>();
-            Location prevLocation = null;
-            GeoPoint prevPoint = null;
-            for (Location location : path) {
-                GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
-                if (location.IsPassed) {
-                    passedWaypoints.add(point);
-                } else {
-                    if (prevLocation != null && prevLocation.IsPassed){
-                        nextWaypoints.add(prevPoint);
-                    }
-                    nextWaypoints.add(point);
-                }
-                prevPoint = point;
-                prevLocation = location;
-            }
-            List<Polyline> polylines = new ArrayList<>();
-            polylines.add(null);
-            polylines.add(null);
-            if (passedWaypoints.size() > 1) {
-                Road passedRoad = roadManager.getRoad(passedWaypoints);
-                if (passedRoad.mStatus == Road.STATUS_OK) {
-                    Polyline passedRoadOverlay = RoadManager.buildRoadOverlay(passedRoad, Color.GREEN, 4f);
-                    polylines.add(0, passedRoadOverlay);
-                }
-            }
-            if (nextWaypoints.size() > 0) {
-                Road roadToDo = roadManager.getRoad(nextWaypoints);
-                if (roadToDo.mStatus == Road.STATUS_OK) {
-                    Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.BLACK, 4f);
-                    polylines.add(1, roadToDoOverlay);
-                }
-            }
-           return polylines;
-        }
     }
 
     @Override

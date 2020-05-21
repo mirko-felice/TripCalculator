@@ -41,4 +41,5 @@
     <string name="start_location">Località di partenza</string>
     <string name="summary_tab_label">Riepilogo</string>
     <string name="diary_tab_label">Diario</string>
+    <string name="check_my_position">Fornisci i permessi di localizzazione</string>
 </resources>

@@ -1,19 +1,14 @@
 package com.example.tripcalculator.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
@@ -23,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ActivityTripBinding;
+import com.example.tripcalculator.fragments.LoaderFragment;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SummaryTripFragment;
 import com.example.tripcalculator.ui.viewpager.LocationViewPagerAdapter;
@@ -49,21 +45,22 @@ public class TripActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        netSnackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
         path = new ArrayList<>();
         fragmentManager = getSupportFragmentManager();
         Intent intent = getIntent();
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        netSnackbar = Snackbar.make(binding.getRoot(), "No Connection", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
+        LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
+        loader.show(getSupportFragmentManager(), "loader");
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         mapFragment = new MapFragment();
         fragmentTransaction.add(R.id.fragment_layout, mapFragment);
         fragmentTransaction.commit();
-        //TODO focus quando cambia pagina
         ViewPager2 viewPager = binding.locationViewPager;
         viewPager.setVisibility(View.GONE);
+
         if (intent.hasExtra("TripId")){
             tripId = intent.getIntExtra("TripId", -1);
 
@@ -88,8 +85,15 @@ public class TripActivity extends BaseActivity {
                         break;
                     }
                 }
-                binding.slideLeft.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true));
-                binding.slideRight.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() == locations.size() - 1 ? locations.size() - 1: viewPager.getCurrentItem() + 1, true));
+                //viewPager.setOnClickListener(v -> mapFragment.focusOn(locations.get(viewPager.getCurrentItem())));
+                binding.slideLeft.setOnClickListener(v -> {
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true);
+                    mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
+                });
+                binding.slideRight.setOnClickListener(v -> {
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() == locations.size() - 1 ? locations.size() - 1: viewPager.getCurrentItem() + 1, true);
+                    mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
+                });
                 if (NetUtility.isNetworkConnected()) {
                     mapFragment.setPath(path);
                     mapFragment.showActualRoad();
@@ -97,6 +101,7 @@ public class TripActivity extends BaseActivity {
                     netSnackbar.show();
                 }
                 locationsLiveData.removeObservers(this);
+                loader.dismiss();
             });
         }
     }

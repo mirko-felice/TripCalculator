@@ -26,8 +26,8 @@ public class TripViewPagerAdapter extends FragmentPagerAdapter {
         fragments.add(new NextTripsFragment());
         fragments.add(new PastTripsFragment());
         fragmentsTitles = new ArrayList<>();
-        fragmentsTitles.add(context.getApplicationContext().getString(R.string.next_trips));
-        fragmentsTitles.add(context.getApplicationContext().getString(R.string.past_trips));
+        fragmentsTitles.add(context.getString(R.string.next_trips));
+        fragmentsTitles.add(context.getString(R.string.past_trips));
     }
 
     @Nullable

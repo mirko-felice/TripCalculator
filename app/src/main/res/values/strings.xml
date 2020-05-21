@@ -43,4 +43,6 @@
     <string name="clear_all_markers">Clear all markers</string>
     <string name="summary_tab_label">Riepilogo</string>
     <string name="diary_tab_label">Diario</string>
+    <string name="show_my_position">Mostra la mia posizione</string>
+    <string name="check_my_position">Fornisci i permessi di localizzazione</string>
 </resources>

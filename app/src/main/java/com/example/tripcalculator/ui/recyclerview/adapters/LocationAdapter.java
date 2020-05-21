@@ -35,7 +35,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
 
     public LocationAdapter(AppCompatActivity activity) {
         this.activity = activity;
-        this.alertDialog = new AlertDialog.Builder(activity.getApplicationContext(), R.style.Theme_MaterialComponents_Light_Dialog)
+        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_DayNight_Dialog)
                 .setTitle(DIALOG_TITLE)
                 .setPositiveButton("SI", (dialog, which) -> deleteItem())
                 .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())

@@ -1,4 +1,4 @@
-package com.example.tripcalculator.activities;
+package com.example.tripcalculator.utility;
 
 import com.example.tripcalculator.database.Location;
 

@@ -29,13 +29,32 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
+        android:id="@+id/check_position_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/check_my_position"
+        android:src="@drawable/ic_gps_off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/zoom_out_btn" />
+
+    <ImageButton
+        android:id="@+id/my_position_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/show_my_position"
+        android:src="@drawable/ic_gps_on"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/check_position_btn"
+        android:visibility="gone"/>
+
+    <ImageButton
         android:id="@+id/to_north_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/rotate_to_north"
         android:src="@drawable/ic_rotate_north"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/zoom_out_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/my_position_btn" />
 
     <ImageButton
         android:id="@+id/clear_markers_btn"

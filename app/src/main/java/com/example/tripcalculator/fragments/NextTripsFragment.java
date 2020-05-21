@@ -2,6 +2,7 @@ package com.example.tripcalculator.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,15 +54,15 @@ public class NextTripsFragment extends Fragment {
 
         LiveData<Trip> activeTrip = viewModel.getActiveTrip();
         activeTrip.observe(getViewLifecycleOwner(), trip -> {
+            activeTrip.removeObservers(getViewLifecycleOwner());
             if(trip != null){
                 Intent intent = new Intent(getContext(), TripActivity.class);
                 intent.putExtra("TripId", trip.TripId);
                 startActivity(intent);
-                activeTrip.removeObservers(getViewLifecycleOwner());
             }
         });
 
-        viewModel.getTrips().observe(getViewLifecycleOwner(), trips -> {
+        viewModel.getAllTrips().observe(getViewLifecycleOwner(), trips -> {
             boolean isTripActive = false;
             for(Trip trip: trips){
                 if (trip.IsActive) {

@@ -17,7 +17,7 @@
             app:entryValues="@array/languages_index"
             app:defaultValue="0"
             app:key="language"
-            app:icon="@drawable/ic_language_light"
+            app:icon="@drawable/ic_language"
             app:summary="%s"/>
         <SwitchPreferenceCompat
             app:defaultValue="false"

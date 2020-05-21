@@ -1,39 +1,34 @@
 package com.example.tripcalculator.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.utility.NetUtility;
-import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.database.Location;
+import com.example.tripcalculator.databinding.ActivitySearchBinding;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
-import com.example.tripcalculator.databinding.ActivitySearchBinding;
+import com.example.tripcalculator.utility.NetUtility;
+import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends BaseActivity {
 
     private static final int REQUEST_INTERNET_PERMISSION = 1;
     private SearchView searchView;
@@ -57,7 +52,7 @@ public class SearchActivity extends AppCompatActivity {
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         netSnackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
+                .setAction("Impostazioni", (v) -> NetUtility.setNetSettingsIntent(this));
 
         fragmentManager = getSupportFragmentManager();
 
@@ -163,7 +158,7 @@ public class SearchActivity extends AppCompatActivity {
         return false;
     }
 
-    //TODO Spostare nella mainActivity se serve
+    //TODO Spostare nella splash Activity
     /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -201,7 +196,7 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    //TODO spostare nella mainActivity se serve
+    //TODO Spostare nella splash Activity
     /*private void checkPermissions(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){

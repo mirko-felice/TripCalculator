@@ -3,11 +3,9 @@ package com.example.tripcalculator.utility;
 import android.os.AsyncTask;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.tripcalculator.activities.IOptimizeCallback;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.example.tripcalculator.fragments.LoaderFragment;
 
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
@@ -19,23 +17,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PathOptimizingThread extends AsyncTask<Location, Void, List<Location>> {
+public class PathOptimizingThread extends AsyncTask<Location, Integer, List<Location>> {
 
+    private final LoaderFragment loaderFragment;
     private final IOptimizeCallback callback;
     private WeakReference<AppCompatActivity> activity;
 
     public PathOptimizingThread(AppCompatActivity activity, IOptimizeCallback callback) {
         this.activity = new WeakReference<>(activity);
+        this.loaderFragment = new LoaderFragment(activity.findViewById(android.R.id.content));
         this.callback = callback;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        loaderFragment.show(activity.get().getSupportFragmentManager(), "loader");
     }
 
     @Override
     protected List<Location> doInBackground(Location... locations) {
         List<Location> path = new ArrayList<>(Arrays.asList(locations));
+        List<Location> resultPath = new ArrayList<>();
         if (path.size() > 0){
             List<Location> primaryLocations = new ArrayList<>();
             List<Location> nextLocations = new ArrayList<>();
-            List<Location> resultPath = new ArrayList<>();
+
             resultPath.add(path.get(0));
             path.remove(0);
 
@@ -91,11 +98,12 @@ public class PathOptimizingThread extends AsyncTask<Location, Void, List<Locatio
                 }
             }
         }
-        return path;
+        return resultPath;
     }
 
     @Override
     protected void onPostExecute(List<Location> locations) {
+        loaderFragment.dismiss();
         callback.updateLocations(locations);
     }
 }

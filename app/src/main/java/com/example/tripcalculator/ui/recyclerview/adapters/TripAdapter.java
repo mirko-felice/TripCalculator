@@ -47,8 +47,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     private List<Trip> trips = new ArrayList<>();
     private List<MaterialCardView> tripCards = new ArrayList<>();
     private AlertDialog alertDialog;
-    private Trip lastTripDismiss;
-    private int lastTripDismissPosition;
     private ActionMode actionMode;
     private TripViewModel tripViewModel;
     private boolean isTripActive;

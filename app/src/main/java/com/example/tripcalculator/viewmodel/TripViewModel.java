@@ -20,7 +20,7 @@ public class TripViewModel extends AndroidViewModel {
         repo = new TripRepository(application);
     }
 
-    public LiveData<List<Trip>> getTrips() {
+    public LiveData<List<Trip>> getAllTrips() {
         return repo.getAllTrips();
     }
 

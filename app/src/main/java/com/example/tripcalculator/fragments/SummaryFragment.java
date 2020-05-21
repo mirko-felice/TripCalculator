@@ -62,16 +62,20 @@ public class SummaryFragment extends Fragment {
         locationViewModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
         locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), adapter::updateLocations);
         TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
-        binding.endTripBtn.setOnClickListener(v -> {
-            LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
-            tripLiveData.observe(getViewLifecycleOwner(), trip -> {
-                trip.IsEnded = true;
-                trip.IsActive = false;
-                trip.EndDate = new Date();
-                tripViewModel.updateTrip(trip);
-                requireActivity().finish();
-                tripLiveData.removeObservers(getViewLifecycleOwner());
-            });
+        LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
+        tripLiveData.observe(getViewLifecycleOwner(), trip -> {
+            if(trip.IsEnded){
+                binding.endTripBtn.setVisibility(View.GONE);
+            } else {
+                binding.endTripBtn.setOnClickListener(v -> {
+                    trip.IsEnded = true;
+                    trip.IsActive = false;
+                    trip.EndDate = new Date();
+                    tripViewModel.updateTrip(trip);
+                    requireActivity().finish();
+                    tripLiveData.removeObservers(getViewLifecycleOwner());
+                });
+            }
         });
         return binding.getRoot();
     }
