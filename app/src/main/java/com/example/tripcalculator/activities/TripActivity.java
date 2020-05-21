@@ -13,6 +13,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
@@ -25,8 +26,10 @@ import com.example.tripcalculator.databinding.ActivityTripBinding;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SummaryTripFragment;
 import com.example.tripcalculator.ui.viewpager.LocationViewPagerAdapter;
+import com.example.tripcalculator.utility.NetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +41,7 @@ public class TripActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private SummaryTripFragment myFragment;
-    private boolean isNetworkConnected = false;
+    Snackbar netSnackbar;
 
     private List<Location> path;
     private LocationViewModel locationViewModel;
@@ -46,10 +49,11 @@ public class TripActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        netSnackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
         path = new ArrayList<>();
         fragmentManager = getSupportFragmentManager();
         Intent intent = getIntent();
-        registerNetworkCallback();
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -86,8 +90,12 @@ public class TripActivity extends BaseActivity {
                 }
                 binding.slideLeft.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true));
                 binding.slideRight.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() == locations.size() - 1 ? locations.size() - 1: viewPager.getCurrentItem() + 1, true));
-                mapFragment.setPath(path);
-                mapFragment.showActualRoad();
+                if (NetUtility.isNetworkConnected()) {
+                    mapFragment.setPath(path);
+                    mapFragment.showActualRoad();
+                } else {
+                    netSnackbar.show();
+                }
                 locationsLiveData.removeObservers(this);
             });
         }
@@ -115,47 +123,25 @@ public class TripActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            connectivityManager.unregisterNetworkCallback(networkCallback);
-        }
+    protected void onStart() {
+        super.onStart();
+        NetUtility.registerNetworkCallback(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        NetUtility.unregisterNetworkCallback(this);
     }
 
     public void setLocationAsPassed(int index){
         path.get(index).IsPassed = true;
         locationViewModel.updateLocation(path.get(index));
-        mapFragment.updatePassedLocation(index);
+        if (NetUtility.isNetworkConnected()) {
+            mapFragment.updatePassedLocation(index);
+        } else {
+            netSnackbar.show();
+        }
         Utilities.createLocationNotification(getApplicationContext(), path.get(index));
     }
-
-    private void registerNetworkCallback(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService((Context.CONNECTIVITY_SERVICE));
-
-        if (connectivityManager != null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                connectivityManager.registerDefaultNetworkCallback(networkCallback);
-            } else {
-                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                isNetworkConnected = networkInfo != null && networkInfo.isConnected();
-            }
-        } else {
-            isNetworkConnected = false;
-        }
-    }
-
-    private ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback(){
-        @Override
-        public void onAvailable(@NonNull Network network) {
-            super.onAvailable(network);
-            isNetworkConnected = true;
-        }
-
-        @Override
-        public void onLost(@NonNull Network network) {
-            super.onLost(network);
-            isNetworkConnected = false;
-        }
-    };
 }

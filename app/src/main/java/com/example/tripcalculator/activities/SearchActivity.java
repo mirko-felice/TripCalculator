@@ -13,10 +13,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -25,6 +21,7 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.utility.NetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.MapFragment;
@@ -33,25 +30,16 @@ import com.example.tripcalculator.databinding.ActivitySearchBinding;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private static final int REQUEST_FINE_LOCATION_PERMISSION = 1;
-    private static final int REQUEST_INTERNET_PERMISSION = 2;
-    //map vars
-    private MapView map;
-    private MyLocationNewOverlay mLocationOverlay;
+    private static final int REQUEST_INTERNET_PERMISSION = 1;
     private SearchView searchView;
     //permission vars
-    private static boolean isLocationAllowed = false;
-    private static boolean isNetworkConnected = false;
     FragmentManager fragmentManager;
-    Snackbar snackbar;
+    Snackbar netSnackbar;
 
     //tripId
     private int tripId = -1;
@@ -66,11 +54,10 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        checkPermissions();
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        snackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> { setSettingsIntent(); });
+        netSnackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
 
         fragmentManager = getSupportFragmentManager();
 
@@ -91,24 +78,25 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        registerNetworkCallback();
+        NetUtility.registerNetworkCallback(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            connectivityManager.unregisterNetworkCallback(networkCallback);
-        }
+        NetUtility.unregisterNetworkCallback(this);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            searchResultFragment.executeQueue(query);
+            if (NetUtility.isNetworkConnected()) {
+                String query = intent.getStringExtra(SearchManager.QUERY);
+                searchResultFragment.executeQueue(query);
+            } else {
+                netSnackbar.show();
+            }
         }
     }
 
@@ -175,25 +163,18 @@ public class SearchActivity extends AppCompatActivity {
         return false;
     }
 
-    @Override
+    //TODO Spostare nella mainActivity se serve
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         switch (requestCode){
-            case REQUEST_FINE_LOCATION_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    isLocationAllowed = true;
-                }else{
-                    Snackbar snackbar = Snackbar.make(findViewById(R.id.map_fragment), "Permessi negati!\nLa tua posizione non può essere visualizzata sulla mappa!", Snackbar.LENGTH_LONG);
-                }
-                break;
             case REQUEST_INTERNET_PERMISSION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED){
-                    //TODO modificare "map_fragment" nel frammento alternativo della visualizzazione del percorso
-                    Snackbar snackbar = Snackbar.make(findViewById(R.id.map_fragment), "Impossibile utilizzare la mappa senza l'accesso ad internet!", Snackbar.LENGTH_LONG);
+                    Snackbar.make(findViewById(R.id.map_fragment), "Impossibile utilizzare la mappa senza l'accesso ad internet!", Snackbar.LENGTH_LONG).show();
                 }
                 break;
         }
-    }
+    }*/
 
     public void setSearchResult(List<Location> locations){
         Utilities.hideKeyboard(this);
@@ -220,56 +201,11 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void setSettingsIntent() {
-        Intent intent = new Intent();
-        intent.setAction((Settings.ACTION_WIRELESS_SETTINGS));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        if(intent.resolveActivity(getPackageManager()) != null){
-            startActivity(intent);
-        }
-    }
-
-    private void checkPermissions(){
-        isLocationAllowed = false;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
-        } else {
-            isLocationAllowed = true;
-        }
-
+    //TODO spostare nella mainActivity se serve
+    /*private void checkPermissions(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET}, REQUEST_INTERNET_PERMISSION);
         }
-    }
-
-    private void registerNetworkCallback(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService((Context.CONNECTIVITY_SERVICE));
-
-        if (connectivityManager != null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                connectivityManager.registerDefaultNetworkCallback(networkCallback);
-            } else {
-                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                isNetworkConnected = networkInfo != null && networkInfo.isConnected();
-            }
-        } else {
-            isNetworkConnected = false;
-        }
-    }
-
-    private ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback(){
-        @Override
-        public void onAvailable(@NonNull Network network) {
-            super.onAvailable(network);
-            isNetworkConnected = true;
-        }
-
-        @Override
-        public void onLost(@NonNull Network network) {
-            super.onLost(network);
-            isNetworkConnected = false;
-        }
-    };
+    }*/
 }

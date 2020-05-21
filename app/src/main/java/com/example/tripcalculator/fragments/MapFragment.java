@@ -15,12 +15,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
@@ -54,13 +50,11 @@ public class MapFragment extends MapViewFragment {
 
     private final static float DISTANCE_DELTA = 200F;
     private final static String PROVIDER = "USER";
-    private final static String TAG = "OSM_REQUEST";
     private static final int REQUEST_LOCATION_PERMISSIONS = 0;
     private MapView map;
     private MyLocationNewOverlay mLocationOverlay;
     private MapFragmentBinding binding;
     //SEARCH
-    private RequestQueue requestQueue;
     private List<Marker> markers;
     //ROAD
     private List<Location> path = null;
@@ -70,9 +64,8 @@ public class MapFragment extends MapViewFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        requestQueue = Volley.newRequestQueue(getContext());
         markers = new ArrayList<>();
-        Context context = getContext();
+        Context context = requireContext();
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
 
         binding = MapFragmentBinding.inflate(inflater, container, false);
@@ -100,20 +93,13 @@ public class MapFragment extends MapViewFragment {
                     GeoPoint loc = (GeoPoint) proj.fromPixels((int) e.getX(), (int) e.getY());
                     double longitude = loc.getLongitude();
                     double latitude = loc.getLatitude();
-                    createRequest(String.valueOf(latitude) + " " + String.valueOf(longitude));
+                    createRequest(latitude + " " + longitude);
                 }
                 return true;
             }
         };
 
         initMapLayout();
-        checkPermissions();
-
-        if (hasPermissions){
-            this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), map);
-            this.mLocationOverlay.enableMyLocation();
-            map.getOverlays().add(this.mLocationOverlay);
-        }
 
         map.getOverlays().add(overlay);
         return binding.getRoot();
@@ -173,6 +159,14 @@ public class MapFragment extends MapViewFragment {
             map.getOverlays().add(marker);
             i++;
         }
+
+        checkPermissions();
+
+        if (hasPermissions){
+            this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), map);
+            this.mLocationOverlay.enableMyLocation();
+            map.getOverlays().add(this.mLocationOverlay);
+        }
     }
 
     private void initMapLayout(){
@@ -201,7 +195,8 @@ public class MapFragment extends MapViewFragment {
     }
 
     public void showActualRoad() {
-        ShowRoadTask showRoadTask = new ShowRoadTask(getContext());
+        RoadManager roadManager = new OSRMRoadManager(requireContext());
+        ShowRoadTask showRoadTask = new ShowRoadTask(roadManager);
         showRoadTask.execute(path.toArray(new Location[0]));
 
         try {
@@ -218,7 +213,8 @@ public class MapFragment extends MapViewFragment {
             showAllMarkers();
             binding.clearMarkersBtn.setVisibility(View.GONE);
             int i = 0;
-            for (; i < path.size() && path.get(i).IsPassed; i++);
+            while (i < path.size() && path.get(i).IsPassed)
+                i++;
             if (i < path.size()){
                 nextLocationIndex = i;
                 focusOn(path.get(nextLocationIndex));
@@ -231,23 +227,18 @@ public class MapFragment extends MapViewFragment {
     }
 
     private void checkPermissions(){
-        Context context = getContext();
-        FragmentActivity activity = getActivity();
-        if (context == null || activity == null){
-            return;
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
             } else {
                 hasPermissions = true;
             }
         } else {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
             } else {
                 hasPermissions = true;
             }
@@ -260,7 +251,7 @@ public class MapFragment extends MapViewFragment {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 hasPermissions = true;
             }else{
-                Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.map_fragment), "Permessi negati!\nLa tua posizione non può essere visualizzata sulla mappa!\nL'arrivo dovrà essere indicato manualmente!", Snackbar.LENGTH_LONG);
+                Snackbar.make(requireActivity().findViewById(R.id.map_fragment), "Permessi negati!\nLa tua posizione non può essere visualizzata sulla mappa!\nL'arrivo dovrà essere indicato manualmente!", Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -279,10 +270,10 @@ public class MapFragment extends MapViewFragment {
 
     private static class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
 
-        private Context context;
+        private RoadManager roadManager;
 
-        private ShowRoadTask(Context context){
-            this.context = context;
+        private ShowRoadTask(RoadManager roadManager){
+            this.roadManager = roadManager;
         }
 
         @Override
@@ -304,7 +295,6 @@ public class MapFragment extends MapViewFragment {
                 prevPoint = point;
                 prevLocation = location;
             }
-            RoadManager roadManager = new OSRMRoadManager(context);
             List<Polyline> polylines = new ArrayList<>();
             polylines.add(null);
             polylines.add(null);
