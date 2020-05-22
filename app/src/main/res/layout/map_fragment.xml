@@ -20,13 +20,32 @@
     </org.osmdroid.views.MapView>
 
     <ImageButton
+        android:id="@+id/enable_rotation_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/enable_rotation"
+        android:src="@drawable/ic_enable_rotation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/disable_rotation_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/disable_rotation"
+        android:src="@drawable/ic_disable_rotation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/enable_rotation_btn" />
+
+    <ImageButton
         android:id="@+id/zoom_out_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/show_all_markers"
         android:src="@drawable/ic_zoom_markers"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/disable_rotation_btn" />
 
     <ImageButton
         android:id="@+id/check_position_btn"
