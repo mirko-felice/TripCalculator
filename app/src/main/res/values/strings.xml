@@ -48,4 +48,8 @@
     <string name="enable_rotation">Abilita rotazione della mappa</string>
     <string name="disable_rotation">Disabilita rotazione della mappa</string>
     <string name="save_changes">Le modifiche sono state salvate.</string>
+    <string name="add_photo_cd">Aggiungi Foto</string>
+    <string name="set_clock">Imposta Orario</string>
+    <string name="set_day">Imposta Giorno</string>
+    <string name="save">Salva</string>
 </resources>

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.PlaybackParams;
 import android.os.Build;
 import android.view.ActionMode;
 import android.view.KeyEvent;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +31,7 @@ import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
+import com.example.tripcalculator.fragments.PlanningFragment;
 import com.example.tripcalculator.ui.recyclerview.viewholders.TripViewHolder;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
@@ -37,6 +40,7 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
+import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.w3c.dom.Text;
 
@@ -84,12 +88,12 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         MaterialCardView card = holder.itemView.findViewById(R.id.trip_card);
         tripCards.add(card);
         holder.setName(trip.Name);
-        if(trip.IsActive){
+        if (trip.IsActive) {
             holder.itemView.findViewById(R.id.trip_info).setVisibility(View.VISIBLE);
-            ((TextView)holder.itemView.findViewById(R.id.trip_info)).setText(trip.StartDate.toString());
+            ((TextView) holder.itemView.findViewById(R.id.trip_info)).setText(trip.StartDate.toString());
         }
         card.setOnLongClickListener(v -> {
-            if(!trip.IsActive) {
+            if (!trip.IsActive) {
                 if (actionMode == null) {
                     card.setChecked(!card.isChecked());
                     actionMode = activity.startActionMode(new TripActionModeCallback());
@@ -111,7 +115,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
             return true;
         });
         card.setOnClickListener(v -> {
-            if(trip.IsActive){
+            if (trip.IsActive) {
                 Intent activeTripIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
                 activeTripIntent.putExtra("TripId", trip.TripId);
                 activity.startActivity(activeTripIntent);
@@ -122,44 +126,17 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
             }
         });
         holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
-            Intent startIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
-            trip.IsActive = true;
-            trip.StartDate = new Date();
+                    Intent startIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
+                    trip.IsActive = true;
+                    trip.StartDate = new Date();
 
-            tripViewModel.updateTrip(trip);
-            startIntent.putExtra("TripId", trip.TripId);
-            activity.startActivity(startIntent);
-            }
-       );
+                    tripViewModel.updateTrip(trip);
+                    startIntent.putExtra("TripId", trip.TripId);
+                    activity.startActivity(startIntent);
+                }
+        );
         holder.itemView.findViewById(R.id.plan_trip_btn).setOnClickListener(v -> {
-            //activity.registerReceiver(new AlarmReceiver(), new IntentFilter("com.example.tripcalculator.NOTIFICATION"));
-            AlarmManager alarmManager = (AlarmManager) activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-            Calendar now = Calendar.getInstance();
-            Calendar timeToSet = Calendar.getInstance();
-            TimePickerDialog timePickerDialog = new TimePickerDialog(activity, R.style.TimePickerDialog, (view, hourOfDay, minute) -> {
-                timeToSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                timeToSet.set(Calendar.MINUTE, minute);
-
-                if(timeToSet.before(now)){
-                    showSnack();
-                    return;
-                }
-                assert alarmManager != null;
-                alarmManager.setExact(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
-            }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false);
-            timePickerDialog.setOnCancelListener(dialog -> showSnack());
-
-            CalendarConstraints calendarConstraints = new CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now()).build();
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().setCalendarConstraints(calendarConstraints).build();
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    timeToSet.setTimeInMillis(datePicker.getSelection());
-                }
-                timePickerDialog.show();
-            });
-            datePicker.addOnNegativeButtonClickListener(v1 -> showSnack());
-            datePicker.addOnCancelListener(dialog -> showSnack());
-            datePicker.show(activity.getSupportFragmentManager(), datePicker.toString());
+            new PlanningFragment().show(activity.getSupportFragmentManager(), "plan");
         });
 
         LiveData<List<Location>> locationLiveData = new ViewModelProvider(activity).get(LocationViewModel.class).getLocationsFromTrip(trip.TripId);
@@ -167,22 +144,18 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
             if (locations.size() < 2) {
                 holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
                 holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
-                ((TextView)holder.itemView.findViewById(R.id.trip_info)).setText("Per poter partire il viaggio deve avere almeno 2 località.");
+                ((TextView) holder.itemView.findViewById(R.id.trip_info)).setText("Per poter partire il viaggio deve avere almeno 2 località.");
             } else {
                 holder.itemView.findViewById(R.id.trip_info).setVisibility(View.GONE);
             }
             locationLiveData.removeObservers(activity);
         });
-        if (isTripActive){
+        if (isTripActive) {
             holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
         }
-        if (trip.IsActive){
+        if (trip.IsActive) {
             holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
         }
-    }
-
-    private void showSnack(){
-        Snackbar.make(activity.findViewById(R.id.coordinator_layout),"Sorry", Snackbar.LENGTH_LONG).show();
     }
 
     @Override

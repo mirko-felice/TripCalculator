@@ -21,12 +21,12 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
     public void adjustVisibility(boolean isPassed) {
         if(isPassed){
             itemView.findViewById(R.id.mod_reminder).setVisibility(View.GONE);
-            itemView.findViewById(R.id.add_photo).setVisibility(View.VISIBLE);
+            itemView.findViewById(R.id.view_photo).setVisibility(View.VISIBLE);
             itemView.findViewById(R.id.add_note).setVisibility(View.VISIBLE);
             itemView.findViewById(R.id.view_reminder).setVisibility(View.VISIBLE);
         } else{
             itemView.findViewById(R.id.mod_reminder).setVisibility(View.VISIBLE);
-            itemView.findViewById(R.id.add_photo).setVisibility(View.GONE);
+            itemView.findViewById(R.id.view_photo).setVisibility(View.GONE);
             itemView.findViewById(R.id.add_note).setVisibility(View.GONE);
             itemView.findViewById(R.id.view_reminder).setVisibility(View.GONE);
         }

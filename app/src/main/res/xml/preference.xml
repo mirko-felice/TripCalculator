@@ -19,9 +19,10 @@
             app:key="language"
             app:icon="@drawable/ic_language"
             app:summary="%s"/>
+
         <SwitchPreferenceCompat
             app:defaultValue="false"
-            app:key="time_format"
+            app:key="is24format"
             app:title="Formato 24 ore" />
 
     </PreferenceCategory>

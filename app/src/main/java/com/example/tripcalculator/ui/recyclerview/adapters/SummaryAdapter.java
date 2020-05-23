@@ -38,24 +38,18 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
         Location location = locations.get(position);
         holder.adjustVisibility(location.IsPassed);
         holder.setName(location.DisplayName);
-        holder.itemView.setOnClickListener(v -> {
-            DialogHelper.showImages(location, fragment.requireContext());
-        });
         holder.itemView.findViewById(R.id.view_reminder).setOnClickListener(v -> {
             //TODO visualizza promemoria
         });
         holder.itemView.findViewById(R.id.mod_reminder).setOnClickListener(v -> {
-            //TODO modifica promemoria
             DialogHelper.showSetReminderDialog(location, fragment.requireActivity());
         });
         holder.itemView.findViewById(R.id.add_note).setOnClickListener(v -> {
-            //TODO aggiungi Nota
             DialogHelper.showAddNote(location, fragment.requireActivity());
         });
         if(fragment.requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-            holder.itemView.findViewById(R.id.add_photo).setOnClickListener(v -> {
-                //TODO Aggiungi photo
-                fragment.takePhoto(location);
+            holder.itemView.findViewById(R.id.view_photo).setOnClickListener(v -> {
+                DialogHelper.showImages(location, fragment);
             });
         }
     }

@@ -60,11 +60,10 @@
                         android:text="@string/view_reminder" />
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/add_photo"
+                        android:id="@+id/view_photo"
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/add_photo"
                         app:chipIcon="@drawable/ic_attach" />
 
                     <com.google.android.material.chip.Chip

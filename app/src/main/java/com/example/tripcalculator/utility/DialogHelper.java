@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +19,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
+import com.example.tripcalculator.database.Trip;
+import com.example.tripcalculator.fragments.SummaryFragment;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -78,17 +83,22 @@ public class DialogHelper {
                 .show();
     }
 
-    public static void showImages(Location location, Context context){
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        View view = View.inflate(context, R.layout.photo_view, null);
+    public static void showImages(Location location, SummaryFragment fragment){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(fragment.requireContext());
+        View view = View.inflate(fragment.requireContext(), R.layout.photo_view, null);
         builder.setView(view);
         GridView gridView = view.findViewById(R.id.grid);
-        ImageAdapter adapter;
-        if (location.ImgNames == null)
-            adapter = new ImageAdapter(context, new ArrayList<>());
-        else
-            adapter = new ImageAdapter(context, location.ImgNames);
+        ImageAdapter adapter = new ImageAdapter(fragment.requireContext(), location.ImgNames);
         gridView.setAdapter(adapter);
+        LiveData<Trip> tripLiveData = new ViewModelProvider(fragment.requireActivity()).get(TripViewModel.class).getTripFromId(location.TripId);
+        tripLiveData.observe(fragment.requireActivity(), trip -> {
+            if (!trip.IsActive){
+                view.findViewById(R.id.add_photo_btn).setVisibility(View.GONE);
+            } else {
+                view.findViewById(R.id.add_photo_btn).setOnClickListener(v -> fragment.takePhoto(location));
+            }
+            tripLiveData.removeObservers(fragment.requireActivity());
+        });
         builder.show();
     }
 
@@ -138,13 +148,12 @@ public class DialogHelper {
             if (convertView == null) {
                 convertView = new ImageView(getContext());
                 convertView.setLayoutParams(new GridView.LayoutParams(300,300));
-                Bitmap bitmap = null;
                 try (InputStream inputStream =  getContext().getContentResolver().openInputStream(Uri.parse(getItem(position)))){
-                    bitmap =  BitmapFactory.decodeStream(inputStream);
+                    Bitmap bitmap =  BitmapFactory.decodeStream(inputStream);
+                    ((ImageView) convertView).setImageBitmap(bitmap);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e("ImageAdapter", e.toString());
                 }
-                ((ImageView) convertView).setImageBitmap(bitmap);
                 convertView.setOnClickListener(v -> {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     String path = Uri.parse(getItem(position)).getLastPathSegment();

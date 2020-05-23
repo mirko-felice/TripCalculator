@@ -48,6 +48,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     .show();
            return true;
         });
+
+        SwitchPreferenceCompat switchPreference = getPreferenceManager().findPreference("is24format");
+        assert switchPreference != null;
+        switchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putBoolean("is24format", (Boolean) newValue).apply();
+            return true;
+        });
+
     }
 
     private void restart(){
