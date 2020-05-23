@@ -1,4 +1,4 @@
-package com.example.tripcalculator.ui;
+package com.example.tripcalculator.ui.recyclerview.adapters;
 
 import android.content.Context;
 import android.content.Intent;

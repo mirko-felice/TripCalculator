@@ -76,4 +76,11 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <include
+        layout="@layout/snackbar_layout"
+        app:layout_constraintBottom_toBottomOf="@+id/add_location_btn"
+        app:layout_constraintEnd_toEndOf="@+id/add_location_btn"
+        app:layout_constraintStart_toStartOf="@+id/add_location_btn"
+        app:layout_constraintTop_toTopOf="@id/add_location_btn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

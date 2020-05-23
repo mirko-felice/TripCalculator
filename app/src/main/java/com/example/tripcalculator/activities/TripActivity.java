@@ -32,6 +32,7 @@ import java.util.List;
 
 public class TripActivity extends BaseActivity {
 
+    private static final String TRIP_ID = "TripId";
     private int tripId = -1;
     private ActivityTripBinding binding;
     private FragmentManager fragmentManager;
@@ -41,6 +42,8 @@ public class TripActivity extends BaseActivity {
 
     private List<Location> path;
     private LocationViewModel locationViewModel;
+
+    //TODO creare dialog fragment con imposta ora e data per il pianifica
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,15 +57,12 @@ public class TripActivity extends BaseActivity {
                 .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
         LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
         loader.show(getSupportFragmentManager(), "loader");
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mapFragment = new MapFragment();
-        fragmentTransaction.add(R.id.fragment_layout, mapFragment);
-        fragmentTransaction.commit();
+
         ViewPager2 viewPager = binding.locationViewPager;
         viewPager.setVisibility(View.GONE);
 
-        if (intent.hasExtra("TripId")){
-            tripId = intent.getIntExtra("TripId", -1);
+        if (intent.hasExtra(TRIP_ID)){
+            tripId = intent.getIntExtra(TRIP_ID, -1);
 
             locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
             LiveData<List<Location>> locationsLiveData = locationViewModel.getLocationsFromTrip(tripId);
@@ -85,7 +85,7 @@ public class TripActivity extends BaseActivity {
                         break;
                     }
                 }
-                //viewPager.setOnClickListener(v -> mapFragment.focusOn(locations.get(viewPager.getCurrentItem())));
+                viewPager.setOnClickListener(v -> mapFragment.focusOn(locations.get(viewPager.getCurrentItem())));
                 binding.slideLeft.setOnClickListener(v -> {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true);
                     mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
@@ -95,11 +95,14 @@ public class TripActivity extends BaseActivity {
                     mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
                 });
                 if (NetUtility.isNetworkConnected()) {
-                    mapFragment.setPath(path);
-                    mapFragment.showActualRoad();
+                    mapFragment = new MapFragment(path);
                 } else {
+                    mapFragment = new MapFragment();
                     netSnackbar.show();
                 }
+                fragmentManager.beginTransaction()
+                        .add(R.id.fragment_layout, mapFragment)
+                        .commit();
                 locationsLiveData.removeObservers(this);
                 loader.dismiss();
             });

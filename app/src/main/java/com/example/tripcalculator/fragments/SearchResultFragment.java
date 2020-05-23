@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ListFragmentBinding;
-import com.example.tripcalculator.ui.SearchResultAdapter;
+import com.example.tripcalculator.ui.recyclerview.adapters.SearchResultAdapter;
 
 import java.util.List;
 

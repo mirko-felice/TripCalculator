@@ -3,14 +3,15 @@ package com.example.tripcalculator.utility;
 import android.graphics.Color;
 import android.os.AsyncTask;
 
-import androidx.fragment.app.FragmentActivity;
-
+import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.LoaderFragment;
+import com.example.tripcalculator.fragments.MapFragment;
 
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.lang.ref.WeakReference;
@@ -21,18 +22,18 @@ public class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
 
     private RoadManager roadManager;
     private LoaderFragment loaderFragment;
-    private WeakReference<FragmentActivity> activity;
+    private WeakReference<MapFragment> mapFragment;
 
-    public ShowRoadTask(RoadManager roadManager, FragmentActivity activity){
+    public ShowRoadTask(RoadManager roadManager, MapFragment mapFragment){
         this.roadManager = roadManager;
-        this.loaderFragment = new LoaderFragment(activity.findViewById(android.R.id.content));
-        this.activity = new WeakReference<>(activity);
+        this.loaderFragment = new LoaderFragment(mapFragment.requireActivity().findViewById(android.R.id.content));
+        this.mapFragment = new WeakReference<>(mapFragment);
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        loaderFragment.show(activity.get().getSupportFragmentManager(), "loader");
+        loaderFragment.show(mapFragment.get().requireActivity().getSupportFragmentManager(), "loader");
     }
 
     @Override
@@ -78,5 +79,16 @@ public class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
     protected void onPostExecute(List<Polyline> polylines) {
         super.onPostExecute(polylines);
         loaderFragment.dismiss();
+        Polyline passedRoadOverlay = polylines.get(0);
+        Polyline roadToDoOverlay = polylines.get(1);
+        MapView map = mapFragment.get().requireActivity().findViewById(R.id.map);
+        if (passedRoadOverlay != null) {
+            map.getOverlays().add(passedRoadOverlay);
+        }
+        if (roadToDoOverlay != null) {
+            map.getOverlays().add(roadToDoOverlay);
+        }
+        mapFragment.get().setPathLocationMarkers();
+        mapFragment.get().showAllMarkers();
     }
 }

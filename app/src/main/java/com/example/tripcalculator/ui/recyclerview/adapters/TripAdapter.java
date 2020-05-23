@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.view.ActionMode;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -35,6 +37,8 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,27 +81,31 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
 
-        MaterialCardView card = (MaterialCardView) holder.itemView.findViewById(R.id.trip_card);
+        MaterialCardView card = holder.itemView.findViewById(R.id.trip_card);
         tripCards.add(card);
         holder.setName(trip.Name);
+        if(trip.IsActive){
+            holder.itemView.findViewById(R.id.trip_info).setVisibility(View.VISIBLE);
+            ((TextView)holder.itemView.findViewById(R.id.trip_info)).setText(trip.StartDate.toString());
+        }
         card.setOnLongClickListener(v -> {
-            if(actionMode == null){
-                card.setChecked(!card.isChecked());
-                actionMode = activity.startActionMode(new TripActionModeCallback());
-            } else{
-                int countChecked = 0;
-                for (MaterialCardView cardView : tripCards){
-                    if(cardView.isChecked()) {
-                        countChecked++;
-                    }
-                }
-                if(countChecked == 1){
+            if(!trip.IsActive) {
+                if (actionMode == null) {
                     card.setChecked(!card.isChecked());
-                    actionMode.finish();
-                    actionMode = null;
-                    return false;
+                    actionMode = activity.startActionMode(new TripActionModeCallback());
+                    actionMode.setTitle("Elimina Viaggi");
                 } else {
+                    int countChecked = 0;
                     card.setChecked(!card.isChecked());
+                    for (MaterialCardView cardView : tripCards) {
+                        if (cardView.isChecked()) {
+                            countChecked++;
+                        }
+                    }
+                    if (countChecked == 0) {
+                        actionMode.finish();
+                        actionMode = null;
+                    }
                 }
             }
             return true;
@@ -159,6 +167,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
             if (locations.size() < 2) {
                 holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
                 holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
+                ((TextView)holder.itemView.findViewById(R.id.trip_info)).setText("Per poter partire il viaggio deve avere almeno 2 località.");
+            } else {
+                holder.itemView.findViewById(R.id.trip_info).setVisibility(View.GONE);
             }
             locationLiveData.removeObservers(activity);
         });
@@ -203,6 +214,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
     class TripActionModeCallback implements ActionMode.Callback {
 
+        private boolean isBackPressed = true;
+
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
@@ -219,8 +232,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()){
                 case R.id.delete:
-                    //TODO Aggiornare alertdialog
                     alertDialog.show();
+                    isBackPressed = false;
                     mode.finish();
                     return true;
                 case android.R.id.home:
@@ -234,6 +247,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            if(isBackPressed)
+                deselectAllCards();
             actionMode = null;
         }
     }

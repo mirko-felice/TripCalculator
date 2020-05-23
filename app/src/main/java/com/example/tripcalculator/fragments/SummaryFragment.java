@@ -1,20 +1,16 @@
 package com.example.tripcalculator.fragments;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -31,7 +27,6 @@ import com.example.tripcalculator.viewmodel.TripViewModel;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -55,18 +50,20 @@ public class SummaryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = SummaryFragmentBinding.inflate(inflater, container, false);
-
         binding.summary.setLayoutManager(new LinearLayoutManager(getContext()));
         SummaryAdapter adapter = new SummaryAdapter(this);
         binding.summary.setAdapter(adapter);
         locationViewModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
-        locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), adapter::updateLocations);
+        locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), locations -> {
+            if(locations.get(locations.size() - 1).IsPassed){
+                binding.endTripBtn.setVisibility(View.VISIBLE);
+            }
+            adapter.updateLocations(locations);
+        });
         TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
         tripLiveData.observe(getViewLifecycleOwner(), trip -> {
-            if(trip.IsEnded){
-                binding.endTripBtn.setVisibility(View.GONE);
-            } else {
+            if(!trip.IsEnded){
                 binding.endTripBtn.setOnClickListener(v -> {
                     trip.IsEnded = true;
                     trip.IsActive = false;
@@ -96,20 +93,11 @@ public class SummaryFragment extends Fragment {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_PHOTO_CODE && resultCode == RESULT_OK) {
-            try {
-                Bitmap thumbnail = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    thumbnail = requireActivity().getContentResolver().loadThumbnail(photoURI, new Size(200,200), null);
-                }
-                lastLocation.ImgNames.add(photoURI.toString());
-                locationViewModel.updateLocation(lastLocation);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            lastLocation.ImgNames.add(photoURI.toString());
+            locationViewModel.updateLocation(lastLocation);
         }
     }
 

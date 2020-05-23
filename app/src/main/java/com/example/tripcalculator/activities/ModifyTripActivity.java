@@ -15,10 +15,10 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.ActivityModifyTripBinding;
-import com.example.tripcalculator.ui.TripItemTouchHelper;
+import com.example.tripcalculator.ui.recyclerview.adapters.TripItemTouchHelper;
 import com.example.tripcalculator.ui.recyclerview.adapters.LocationAdapter;
 import com.example.tripcalculator.utility.IOptimizeCallback;
-import com.example.tripcalculator.utility.PathOptimizingThread;
+import com.example.tripcalculator.utility.PathOptimizingTask;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
@@ -31,11 +31,14 @@ import java.util.Objects;
 
 public class ModifyTripActivity extends BaseActivity implements IOptimizeCallback {
 
+    private static final String TRIP_ID = "TripId";
     private Trip trip;
     private ActivityModifyTripBinding binding;
     private TripViewModel tripViewModel;
     private LocationViewModel locationViewModel;
     private LocationAdapter adapter;
+
+    //TODO eventualmente permettere di far partire il viaggio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +53,8 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
         LiveData<Trip> tripLiveData;
 
         Intent intent = getIntent();
-        if(intent.hasExtra("TripId")){
-            tripLiveData = tripViewModel.getTripFromId(intent.getIntExtra("TripId", -1));
+        if(intent.hasExtra(TRIP_ID)){
+            tripLiveData = tripViewModel.getTripFromId(intent.getIntExtra(TRIP_ID, -1));
         } else {
             tripLiveData = tripViewModel.getLastInsertedTrip();
         }
@@ -67,10 +70,10 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
                     adapter.updateLocations(locations);
                     binding.addLocationBtn.setText(getString(R.string.add_location));
                 }
-                binding.optimizeBtn.setOnClickListener(v -> new PathOptimizingThread(this,this).execute(locations.toArray(new Location[0])));
+                binding.optimizeBtn.setOnClickListener(v -> new PathOptimizingTask(this,this).execute(locations.toArray(new Location[0])));
                Utilities.hideKeyboard(this);
             });
-            searchIntent.putExtra("TripId", trip.TripId);
+            searchIntent.putExtra(TRIP_ID, trip.TripId);
             tripLiveData.removeObservers(this);
         });
 
@@ -108,9 +111,10 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     }
 
     private void saveChanges() {
+        //TODO controllo nome vuoto
         this.trip.Name = Objects.requireNonNull(binding.tripName.getText()).toString();
         tripViewModel.updateTrip(trip);
-        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Le modifiche sono state salvate.", 400);
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), getString(R.string.save_changes), 400);
         snackbar.setAnchorView(binding.addLocationBtn);
         snackbar.show();
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {

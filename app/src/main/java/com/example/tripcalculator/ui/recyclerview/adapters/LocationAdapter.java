@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.ui.ItemTouchHelperAdapter;
 import com.example.tripcalculator.ui.recyclerview.viewholders.LocationViewHolder;
 import com.example.tripcalculator.utility.DialogHelper;
 import com.example.tripcalculator.utility.Utilities;
@@ -21,8 +20,6 @@ import com.example.tripcalculator.viewmodel.LocationViewModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import okhttp3.internal.Util;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> implements ItemTouchHelperAdapter {
 
@@ -54,7 +51,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         Location location = locations.get(position);
         holder.setName(location.DisplayName);
-        holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> DialogHelper.showReminderDialog(location, activity));
+        holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> DialogHelper.showSetReminderDialog(location, activity));
         holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
         if (position > 0) {
             holder.itemView.findViewById(R.id.divider).setVisibility(View.GONE);

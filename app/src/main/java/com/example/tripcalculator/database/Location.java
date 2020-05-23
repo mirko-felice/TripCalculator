@@ -39,4 +39,7 @@ public class Location {
 
     @NonNull
     public String DisplayName = "";
+
+    @NonNull
+    public String FullName = "";
 }

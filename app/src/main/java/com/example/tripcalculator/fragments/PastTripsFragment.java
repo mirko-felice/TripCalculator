@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.databinding.ListFragmentBinding;
-import com.example.tripcalculator.ui.PastTripsAdapter;
+import com.example.tripcalculator.ui.recyclerview.adapters.PastTripsAdapter;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 
 public class PastTripsFragment extends Fragment {

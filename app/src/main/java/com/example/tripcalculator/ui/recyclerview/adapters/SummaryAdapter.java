@@ -46,7 +46,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
         });
         holder.itemView.findViewById(R.id.mod_reminder).setOnClickListener(v -> {
             //TODO modifica promemoria
-            DialogHelper.showReminderDialog(location, fragment.requireActivity());
+            DialogHelper.showSetReminderDialog(location, fragment.requireActivity());
         });
         holder.itemView.findViewById(R.id.add_note).setOnClickListener(v -> {
             //TODO aggiungi Nota

@@ -1,20 +1,15 @@
 package com.example.tripcalculator.fragments;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.LocationListener;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.location.LocationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
@@ -47,16 +41,13 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MapFragment extends MapViewFragment {
 
@@ -76,7 +67,13 @@ public class MapFragment extends MapViewFragment {
     //GPS
     private boolean isGPSOn = false;
 
-    @SuppressLint("MissingPermission")
+    public MapFragment(){
+    }
+
+    public MapFragment(List<Location> path){
+        this.path = path;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -108,6 +105,12 @@ public class MapFragment extends MapViewFragment {
         } else {
             showActivateGPSDialog();
         }
+        if(path == null){
+            mLocationOverlay.setPersonIcon(Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888));
+            binding.clearMarkersBtn.setVisibility(View.GONE);
+        } else {
+            showActualRoad();
+        }
         mapController.setCenter(startPoint);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
@@ -133,15 +136,8 @@ public class MapFragment extends MapViewFragment {
             mLocationOverlay.disableMyLocation();
     }
 
-    public void clearMarkers() {
-        for (Marker marker : markers) {
-            marker.remove(map);
-            map.getOverlays().remove(marker);
-        }
-        markers.clear();
-    }
-
     public void setSearchLocationMarkers(List<Location> locations) {
+        clearMarkers();
         for (Location location : locations) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
             Marker marker = new Marker(map);
@@ -162,9 +158,9 @@ public class MapFragment extends MapViewFragment {
         showActualRoad();
     }
 
-    private void setPathLocationMarkers(List<Location> locations) {
+    public void setPathLocationMarkers() {
         int i = 0;
-        for (Location location : locations) {
+        for (Location location : path) {
             GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
             Marker marker = new Marker(map);
             markers.add(marker);
@@ -175,6 +171,53 @@ public class MapFragment extends MapViewFragment {
             map.getOverlays().add(marker);
             i++;
         }
+    }
+
+    public void showAllMarkers() {
+        ArrayList<GeoPoint> points = new ArrayList<>();
+        for (Marker marker : markers){
+            points.add(marker.getPosition());
+        }
+        if(points.size() > 1) {
+            Road road = new Road(points);
+            map.zoomToBoundingBox(road.mBoundingBox, true);
+        } else if (points.size() == 1){
+            focusOn(points.get(0));
+        }
+    }
+
+    public void focusOn(Location location) {
+        GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
+        focusOn(point);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSIONS){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                hasPermissions = true;
+            }else{
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle("Permessi negati!")
+                        .setMessage("La tua posizione non può essere visualizzata sulla mappa!\n" +
+                                "L'arrivo dovrà essere indicato manualmente!\n" +
+                                "Per fornire i permessi cliccare sul simbolo del GPS sulla sua destra!" )
+                        .setNeutralButton("OK", (dialog, which) -> {}).show();
+            }
+        }
+    }
+
+    @Override
+    protected void afterResponse(List<Location> locations) {
+        setSearchLocationMarkers(locations);
+    }
+
+    private void clearMarkers() {
+        for (Marker marker : markers) {
+            marker.remove(map);
+            map.getOverlays().remove(marker);
+        }
+        markers.clear();
     }
 
     private void initMapLayout(){
@@ -246,75 +289,40 @@ public class MapFragment extends MapViewFragment {
         });
     }
 
-    private void showAllMarkers() {
-        ArrayList<GeoPoint> points = new ArrayList<>();
-        for (Marker marker : markers){
-            points.add(marker.getPosition());
-        }
-        if(points.size() > 1) {
-            Road road = new Road(points);
-            map.zoomToBoundingBox(road.mBoundingBox, true);
-        } else if (points.size() == 1){
-            focusOn(points.get(0));
-        }
-    }
-
-    public void focusOn(Location location) {
-        GeoPoint point = new GeoPoint(location.Latitude, location.Longitude);
-        focusOn(point);
-    }
 
     private void focusOn(GeoPoint point){
         mapController.animateTo(point, 15.0, 2000L, map.getMapOrientation());
     }
 
-    public void setPath(List<Location> path) {
-        this.path = path;
-    }
-
-    public void showActualRoad() {
+    private void showActualRoad() {
         RoadManager roadManager = new OSRMRoadManager(requireContext());
-        ShowRoadTask showRoadTask = new ShowRoadTask(roadManager, requireActivity());
+        ShowRoadTask showRoadTask = new ShowRoadTask(roadManager, this);
         showRoadTask.execute(path.toArray(new Location[0]));
 
-        try {
-            List<Polyline> polylines = showRoadTask.get();
-            Polyline passedRoadOverlay = polylines.get(0);
-            Polyline roadToDoOverlay = polylines.get(1);
-            if (passedRoadOverlay != null) {
-                map.getOverlays().add(passedRoadOverlay);
-            }
-            if (roadToDoOverlay != null) {
-                map.getOverlays().add(roadToDoOverlay);
-            }
-            setPathLocationMarkers(path);
-            showAllMarkers();
-            binding.clearMarkersBtn.setVisibility(View.GONE);
-            int i = 0;
-            while (i < path.size() && path.get(i).IsPassed)
-                i++;
-            if (i < path.size()){
-                nextLocationIndex = i;
-                focusOn(path.get(nextLocationIndex));
-            }
-            if (hasPermissions) {
-                startNavigation();
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+        int i = 0;
+        while (i < path.size() && path.get(i).IsPassed)
+            i++;
+        if (i < path.size()){
+            nextLocationIndex = i;
+            focusOn(path.get(i));
+        }
+        if (hasPermissions) {
+            startNavigation();
         }
     }
 
     private void checkGPS(){
         if (hasPermissions){
             LocationManager manager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-            isGPSOn = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            if (isGPSOn){
-                binding.checkPositionBtn.setVisibility(View.GONE);
-                binding.myPositionBtn.setVisibility(View.VISIBLE);
-            } else {
-                binding.myPositionBtn.setVisibility(View.GONE);
-                binding.checkPositionBtn.setVisibility(View.VISIBLE);
+            if(manager != null) {
+                isGPSOn = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                if (isGPSOn) {
+                    binding.checkPositionBtn.setVisibility(View.GONE);
+                    binding.myPositionBtn.setVisibility(View.VISIBLE);
+                } else {
+                    binding.myPositionBtn.setVisibility(View.GONE);
+                    binding.checkPositionBtn.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -338,21 +346,7 @@ public class MapFragment extends MapViewFragment {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION_PERMISSIONS){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                hasPermissions = true;
-            }else{
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle("Permessi negati!")
-                        .setMessage("La tua posizione non può essere visualizzata sulla mappa!\n" +
-                                "L'arrivo dovrà essere indicato manualmente!\n" +
-                                "Per fornire i permessi cliccare sul simbolo del GPS sulla sua destra!" )
-                        .setNeutralButton("OK", (dialog, which) -> {}).show();
-            }
-        }
-    }
+
 
     private void startNavigation(){
         mLocationOverlay.getMyLocationProvider().startLocationProvider((location, source) -> {
@@ -385,8 +379,5 @@ public class MapFragment extends MapViewFragment {
         }
     }
 
-    @Override
-    protected void afterResponse(List<Location> locations) {
-        setSearchLocationMarkers(locations);
-    }
+
 }

@@ -1,8 +1,10 @@
-package com.example.tripcalculator.ui;
+package com.example.tripcalculator.ui.recyclerview.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tripcalculator.ui.recyclerview.adapters.ItemTouchHelperAdapter;
 
 public class TripItemTouchHelper extends ItemTouchHelper.SimpleCallback {
 

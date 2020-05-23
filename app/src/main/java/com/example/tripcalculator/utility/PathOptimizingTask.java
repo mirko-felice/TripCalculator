@@ -1,11 +1,15 @@
 package com.example.tripcalculator.utility;
 
 import android.os.AsyncTask;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.fragments.LoaderFragment;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
@@ -17,13 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PathOptimizingThread extends AsyncTask<Location, Integer, List<Location>> {
+public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Location>> {
 
     private final LoaderFragment loaderFragment;
     private final IOptimizeCallback callback;
     private WeakReference<AppCompatActivity> activity;
 
-    public PathOptimizingThread(AppCompatActivity activity, IOptimizeCallback callback) {
+    public PathOptimizingTask(AppCompatActivity activity, IOptimizeCallback callback) {
         this.activity = new WeakReference<>(activity);
         this.loaderFragment = new LoaderFragment(activity.findViewById(android.R.id.content));
         this.callback = callback;
@@ -104,6 +108,7 @@ public class PathOptimizingThread extends AsyncTask<Location, Integer, List<Loca
     @Override
     protected void onPostExecute(List<Location> locations) {
         loaderFragment.dismiss();
+        Snackbar.make(activity.get().findViewById(R.id.snackbar_layout), "Il tuo percorso è stato ottimizzato!", BaseTransientBottomBar.LENGTH_LONG).show();
         callback.updateLocations(locations);
     }
 }

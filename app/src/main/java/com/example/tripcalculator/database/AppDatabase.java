@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Trip.class, Location.class}, version = 5)
+@Database(entities = {Trip.class, Location.class}, version = 6)
 @TypeConverters({DateConverter.class, StringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -52,7 +52,13 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("CREATE INDEX IF NOT EXISTS `index_Location_TripId` ON `Location` (`TripId`)");
         }
     };
-
+    private static Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            String ADD_FULL_NAME_TO_LOCATION = "ALTER TABLE `Location` ADD COLUMN `FullName` TEXT NOT NULL DEFAULT ''";
+            database.execSQL(ADD_FULL_NAME_TO_LOCATION);
+        }
+    };
 
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
@@ -66,6 +72,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         .addMigrations(MIGRATION_2_3)
                         .addMigrations(MIGRATION_3_4)
                         .addMigrations(MIGRATION_4_5)
+                        .addMigrations(MIGRATION_5_6)
                         .build();
             }
         }

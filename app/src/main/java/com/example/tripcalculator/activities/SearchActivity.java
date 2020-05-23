@@ -11,7 +11,6 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,6 +30,7 @@ import java.util.List;
 public class SearchActivity extends BaseActivity {
 
     private static final int REQUEST_INTERNET_PERMISSION = 1;
+    private static final String TRIP_ID = "TripId";
     private SearchView searchView;
     //permission vars
     FragmentManager fragmentManager;
@@ -65,8 +65,8 @@ public class SearchActivity extends BaseActivity {
                         .commit();
 
         Intent intent = getIntent();
-        if (intent.hasExtra("TripId")){
-            this.tripId = intent.getIntExtra("TripId", -1);
+        if (intent.hasExtra(TRIP_ID)){
+            this.tripId = intent.getIntExtra(TRIP_ID, -1);
         }
     }
 
@@ -89,6 +89,7 @@ public class SearchActivity extends BaseActivity {
             if (NetUtility.isNetworkConnected()) {
                 String query = intent.getStringExtra(SearchManager.QUERY);
                 searchResultFragment.executeQueue(query);
+                Utilities.hideKeyboard(this);
             } else {
                 netSnackbar.show();
             }
@@ -110,24 +111,25 @@ public class SearchActivity extends BaseActivity {
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-                fragmentTransaction.show(searchResultFragment).commit();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .show(searchResultFragment)
+                        .commit();
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-                fragmentTransaction.hide(searchResultFragment).commit();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .hide(searchResultFragment)
+                        .commit();
                 return true;
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mapFragment.clearMarkers();
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 intent.setAction(Intent.ACTION_SEARCH);
                 intent.putExtra(SearchManager.QUERY, query);
@@ -146,9 +148,10 @@ public class SearchActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.search){
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-            fragmentTransaction.show(searchResultFragment).commit();
+            fragmentManager.beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                    .show(searchResultFragment)
+                    .commit();
             if(locations.size() == 0){
                 searchView.requestFocus();
                 Utilities.showKeyboard(this, searchView);

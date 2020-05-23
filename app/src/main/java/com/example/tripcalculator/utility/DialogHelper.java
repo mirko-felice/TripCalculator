@@ -17,9 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -39,9 +37,12 @@ import java.util.Objects;
 
 public class DialogHelper {
 
-    public static void showReminderDialog(Location location, FragmentActivity activity){
+
+    //TODO galleria foto + bottone visibile solo se viaggio attivo
+    //TODO "località di partenza" solo se lisat non vuota
+    public static void showSetReminderDialog(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
-        View view = LayoutInflater.from(activity).inflate(R.layout.reminder_view, null, false);
+        View view = View.inflate(activity, R.layout.reminder_view, null);
         builder.setTitle("Promemoria")
                 .setView(view)
                 .setPositiveButton("Aggiungi", (dialog, which) -> setReminder(activity, location))
@@ -62,13 +63,13 @@ public class DialogHelper {
                 Toast.makeText(activity, "La destinazione precedente è stata impostata", Toast.LENGTH_SHORT).show();
             });
             builder.show();
-            liveData.removeObservers((AppCompatActivity)activity);
+            liveData.removeObservers(activity);
         });
     }
 
     public static void showAddNote(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
-        View view = LayoutInflater.from(activity).inflate(R.layout.note_view, null, false);
+        View view = View.inflate(activity, R.layout.note_view, null);
         builder.setTitle("Note")
                 .setView(view)
                 .setPositiveButton("Inserisci", (dialog, which) -> setNote(activity, location))
@@ -79,7 +80,7 @@ public class DialogHelper {
 
     public static void showImages(Location location, Context context){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.photo_view, null, false);
+        View view = View.inflate(context, R.layout.photo_view, null);
         builder.setView(view);
         GridView gridView = view.findViewById(R.id.grid);
         ImageAdapter adapter;
