@@ -48,4 +48,10 @@
     <string name="set_clock">Imposta Orario</string>
     <string name="set_day">Imposta Giorno</string>
     <string name="save">Salva</string>
+    <string name="show_all_markers">Mostra tutti i marker</string>
+    <string name="rotate_to_north">Ruota la mappa verso il nord</string>
+    <string name="clear_all_markers">Rimuovi tutti i marker</string>
+    <string name="show_my_position">Mostra la mia posizione</string>
+    <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
+    <string name="location_passed">Località superata!</string>
 </resources>

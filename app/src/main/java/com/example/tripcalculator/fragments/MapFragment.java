@@ -166,7 +166,10 @@ public class MapFragment extends MapViewFragment {
             markers.add(marker);
             marker.setPosition(point);
             marker.setTitle(location.DisplayName);
-            MarkerInfoWindow infoWindow = new ActiveTripLocationInfoWindow(map, i, location, getActivity());
+            ActiveTripLocationInfoWindow infoWindow = new ActiveTripLocationInfoWindow(map, i, location, getActivity());
+            if (i == nextLocationIndex){
+                infoWindow.setEnabled(true);
+            }
             marker.setInfoWindow(infoWindow);
             map.getOverlays().add(marker);
             i++;
@@ -304,6 +307,8 @@ public class MapFragment extends MapViewFragment {
             i++;
         if (i < path.size()){
             nextLocationIndex = i;
+            if (markers.size() > 0)
+                ((ActiveTripLocationInfoWindow)markers.get(i).getInfoWindow()).setEnabled(true);
             focusOn(path.get(i));
         }
         if (hasPermissions) {
@@ -378,6 +383,4 @@ public class MapFragment extends MapViewFragment {
             requireActivity().startActivity(intent);
         }
     }
-
-
 }

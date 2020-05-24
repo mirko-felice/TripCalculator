@@ -52,4 +52,6 @@
     <string name="set_clock">Imposta Orario</string>
     <string name="set_day">Imposta Giorno</string>
     <string name="save">Salva</string>
+    <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
+    <string name="location_passed">Località superata!</string>
 </resources>

@@ -32,14 +32,24 @@
         app:layout_constraintStart_toEndOf="@+id/active_trip_location_latitude"
         app:layout_constraintTop_toBottomOf="@+id/active_trip_location_title" />
 
+    <TextView
+        android:id="@+id/active_trip_location_message_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/location_out_order_message"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/active_trip_location_longitude" />
+
     <Button
         android:id="@+id/active_trip_location_passed_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/set_passed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/active_trip_location_longitude" />
+        app:layout_constraintTop_toBottomOf="@+id/active_trip_location_message_view"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
