@@ -102,6 +102,25 @@ public class DialogHelper {
         builder.show();
     }
 
+    public static void showLocationName(Location location, FragmentActivity activity){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
+        View view = View.inflate(activity, R.layout.edit_location_name, null);
+        ((TextInputEditText)view.findViewById(R.id.location_name_edit_text)).setText(location.DisplayName);
+        builder.setTitle(R.string.edit_location_name)
+                .setView(view)
+                .setPositiveButton(R.string.save, (dialog, which) -> setLocationName(activity, view, location))
+                .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
+                .setOnDismissListener(dialog -> Toast.makeText(activity, R.string.modify_location_name_canceled, Toast.LENGTH_SHORT).show())
+                .show();
+    }
+
+    private static void setLocationName(FragmentActivity activity, View viewHolder, Location location){
+        TextInputEditText editText = viewHolder.findViewById(R.id.location_name_edit_text);
+        location.DisplayName = editText.getText() != null ? editText.getText().toString() : location.FullName;
+        LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
+        locationViewModel.updateLocation(location);
+    }
+
     private static void setReminder(FragmentActivity activity, Location location) {
         TextInputEditText editText = activity.findViewById(R.id.reminder);
         location.Reminder = editText.getText() != null ? editText.getText().toString(): "Errore";

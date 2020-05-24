@@ -193,6 +193,7 @@ public class SearchActivity extends BaseActivity {
             location.TripId = tripId;
             location.Order = locations.size() > 0 ? locations.get(locations.size() - 1).Order + 1 : 1;
             location.IsPassed = false;
+            location.FullName = location.DisplayName;
             locationViewModel.insertLocation(location);
             liveData.removeObservers(this);
             finish();

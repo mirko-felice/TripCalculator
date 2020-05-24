@@ -50,4 +50,8 @@
     <string name="disable_rotation">Disable map rotation</string>
     <string name="location_out_order_message">You did not passed the previous location yet!</string>
     <string name="location_passed">Location passed!</string>
+    <string name="location_name">Location Name</string>
+    <string name="edit_location_name">edit location name</string>
+    <string name="cancel">Cancel</string>
+    <string name="modify_location_name_canceled">Location name was not modified</string>
 </resources>

@@ -54,4 +54,8 @@
     <string name="show_my_position">Mostra la mia posizione</string>
     <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
     <string name="location_passed">Località superata!</string>
+    <string name="location_name">Nome Località</string>
+    <string name="edit_location_name">Modifica nome località</string>
+    <string name="cancel">Annulla</string>
+    <string name="modify_location_name_canceled">Nome non modificato</string>
 </resources>

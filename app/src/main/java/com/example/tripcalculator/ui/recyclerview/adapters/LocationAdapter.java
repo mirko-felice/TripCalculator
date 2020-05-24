@@ -56,6 +56,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
         if (position > 0) {
             holder.itemView.findViewById(R.id.divider).setVisibility(View.GONE);
         }
+        holder.itemView.findViewById(R.id.location_name).setOnClickListener(v -> DialogHelper.showLocationName(location, activity));
     }
 
     @Override
