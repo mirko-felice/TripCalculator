@@ -80,4 +80,5 @@
     <string name="show_my_position">Mostra la mia posizione</string>
     <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
     <string name="location_passed">Località superata!</string>
+    <string name="splash_screen">Splash Screen</string>
 </resources>

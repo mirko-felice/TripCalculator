@@ -40,7 +40,8 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     private LocationAdapter adapter;
 
     //TODO eventualmente permettere di far partire il viaggio
-
+    //TODO evidenziare la possibilità di ordinare manualemnete
+    //TODO start al posto di salvataggio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +71,7 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
                     binding.addLocationBtn.setText(getString(R.string.add_start_point));
                 } else {
                     adapter.updateLocations(locations);
+                    binding.startingLocationLabel.setVisibility(View.VISIBLE);
                     binding.addLocationBtn.setText(getString(R.string.add_location));
                 }
                 binding.optimizeBtn.setOnClickListener(v -> new PathOptimizingTask(this,this).execute(locations.toArray(new Location[0])));
@@ -107,7 +109,9 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
 
     @Override
     public void onBackPressed() {
-        if (!trip.Name.equals(Objects.requireNonNull(binding.tripName.getText()).toString())){
+        if (binding.tripName.getText() != null && binding.tripName.getText().toString().equals("")){
+            showAlertDialog();
+        } else if(binding.tripName.getText() != null && !trip.Name.equals(binding.tripName.getText().toString())) {
             showDialog();
         } else {
             tripViewModel.updateTrip(trip);
@@ -115,21 +119,30 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
         }
     }
 
+    private void showAlertDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle("Attenzione");
+        builder.setMessage("Il tuo viaggio non ha un nome, dagliene uno!");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
     private void saveChanges() {
-        //TODO controllo nome vuoto
-        this.trip.Name = Objects.requireNonNull(binding.tripName.getText()).toString();
-        tripViewModel.updateTrip(trip);
-        Snackbar snackbar = Snackbar.make(binding.getRoot(), getString(R.string.save_changes), 400);
-        snackbar.setAnchorView(binding.addLocationBtn);
-        snackbar.show();
-        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                super.onDismissed(transientBottomBar, event);
-                if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
-                    finish();
-            }
-        });
+        if(binding.tripName.getText() != null && !binding.tripName.getText().toString().equals("")) {
+            this.trip.Name = binding.tripName.getText().toString();
+            tripViewModel.updateTrip(trip);
+            Snackbar snackbar = Snackbar.make(binding.getRoot(), getString(R.string.save_changes), 400);
+            snackbar.setAnchorView(binding.addLocationBtn);
+            snackbar.show();
+            snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
+                        finish();
+                }
+            });
+        }
     }
 
     private void showDialog(){

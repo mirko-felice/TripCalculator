@@ -61,15 +61,21 @@ public class NextTripsFragment extends Fragment {
             }
         });
 
+        //TODO rivedere la pianificazione insieme allo start
+
         viewModel.getAllTrips().observe(getViewLifecycleOwner(), trips -> {
             boolean isTripActive = false;
+            boolean isTripPlanned = false;
             for(Trip trip: trips){
                 if (trip.IsActive) {
                     isTripActive = true;
-                    break;
+                }
+                if(trip.IsPlanned){
+                    isTripPlanned = true;
                 }
             }
-            adapter = new TripAdapter(requireActivity(), isTripActive);
+
+            adapter = new TripAdapter(requireActivity(), isTripActive, isTripPlanned);
             binding.recyclerView.setAdapter(adapter);
             binding.recyclerView.setVisibility(View.VISIBLE);
             adapter.updateTrips(trips);
@@ -91,9 +97,5 @@ public class NextTripsFragment extends Fragment {
             return true;
         }
         return false;
-    }
-
-    public TripAdapter getAdapter() {
-        return adapter;
     }
 }

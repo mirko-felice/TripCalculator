@@ -17,11 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
+import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.PlanningFragmentBinding;
+import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -37,12 +40,12 @@ public class PlanningFragment extends DialogFragment {
     private Calendar timeToSet;
     private Calendar hourToSet = Calendar.getInstance();
     private Calendar dateToSet = Calendar.getInstance();
-    private String tripName;
+    private Trip trip;
     private SimpleDateFormat timeFormatter;
     private SimpleDateFormat dateFormatter;
 
-    public PlanningFragment(String tripName) {
-        this.tripName = tripName;
+    public PlanningFragment(Trip trip) {
+        this.trip = trip;
     }
 
     @Nullable
@@ -52,23 +55,28 @@ public class PlanningFragment extends DialogFragment {
         return binding.getRoot();
     }
 
-    //TODO solo una pianfiicazione alla volta
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(requireContext(), ReminderReceiver.class);
-        intent.putExtra("TripName", tripName);
+        intent.putExtra("TripName", trip.Name);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         binding.toolbar.setNavigationOnClickListener(v -> dismiss());
         binding.toolbar.setTitle(R.string.plan_trip_title);
         binding.toolbar.inflateMenu(R.menu.plan);
         binding.toolbar.setOnMenuItemClickListener(item -> {
-            binding.date.getText();
-            binding.clock.getText();
-            if(alarmManager != null)
+            timeToSet.set(Calendar.YEAR, dateToSet.get(Calendar.YEAR));
+            timeToSet.set(Calendar.MONTH, dateToSet.get(Calendar.MONTH));
+            timeToSet.set(Calendar.DAY_OF_MONTH, dateToSet.get(Calendar.DAY_OF_MONTH));
+            timeToSet.set(Calendar.HOUR_OF_DAY, hourToSet.get(Calendar.HOUR_OF_DAY));
+            timeToSet.set(Calendar.MINUTE, hourToSet.get(Calendar.MINUTE));
+            if(alarmManager != null) {
                 alarmManager.setExact(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
+                trip.IsPlanned = true;
+                new ViewModelProvider(requireActivity()).get(TripViewModel.class).updateTrip(trip);
+            }
             dismiss();
             return true;
         });
@@ -117,7 +125,6 @@ public class PlanningFragment extends DialogFragment {
         timePickerDialog.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void showDateDialog() {
         DatePickerDialog datePicker = new DatePickerDialog(requireContext(), R.style.Theme_MaterialComponents_DayNight_Dialog_Alert, (view, year, month, dayOfMonth) -> {
             dateToSet.set(Calendar.YEAR, year);

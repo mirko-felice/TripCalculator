@@ -55,6 +55,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
         holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
         if (position > 0) {
             holder.itemView.findViewById(R.id.divider).setVisibility(View.GONE);
+        } else {
+            holder.itemView.findViewById(R.id.divider).setVisibility(View.VISIBLE);
         }
         holder.itemView.findViewById(R.id.location_name).setOnClickListener(v -> DialogHelper.showLocationName(location, activity));
     }
@@ -84,15 +86,17 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
 
     @Override
     public void moveLocation(int from, int to) {
-        if (from < to){
-            for (int i = from; i < to; i++){
-                Utilities.swapLocations(activity, locations.get(i), locations.get(i + 1));
-                Collections.swap(locations, i, i+ 1);
-            }
-        } else {
-            for (int i = from; i > to; i--){
-                Utilities.swapLocations(activity, locations.get(i), locations.get(i - 1));
-                Collections.swap(locations, i , i- 1);
+        if(locations.size() > 1) {
+            if (from < to) {
+                for (int i = from; i < to; i++) {
+                    Utilities.swapLocations(activity, locations.get(i), locations.get(i + 1));
+                    Collections.swap(locations, i, i + 1);
+                }
+            } else {
+                for (int i = from; i > to; i--) {
+                    Utilities.swapLocations(activity, locations.get(i), locations.get(i - 1));
+                    Collections.swap(locations, i, i - 1);
+                }
             }
         }
     }

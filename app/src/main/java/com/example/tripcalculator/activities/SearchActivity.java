@@ -29,7 +29,6 @@ import java.util.List;
 
 public class SearchActivity extends BaseActivity {
 
-    private static final int REQUEST_INTERNET_PERMISSION = 1;
     private static final String TRIP_ID = "TripId";
     private SearchView searchView;
     //permission vars
@@ -147,12 +146,12 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.search){
+        if (item.getItemId() == R.id.search) {
             fragmentManager.beginTransaction()
                     .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                     .show(searchResultFragment)
                     .commit();
-            if(locations.size() == 0){
+            if (locations.size() == 0) {
                 searchView.requestFocus();
                 Utilities.showKeyboard(this, searchView);
             }
@@ -160,19 +159,6 @@ public class SearchActivity extends BaseActivity {
         }
         return false;
     }
-
-    //TODO Spostare nella splash Activity
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode){
-            case REQUEST_INTERNET_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED){
-                    Snackbar.make(findViewById(R.id.map_fragment), "Impossibile utilizzare la mappa senza l'accesso ad internet!", Snackbar.LENGTH_LONG).show();
-                }
-                break;
-        }
-    }*/
 
     public void setSearchResult(List<Location> locations){
         Utilities.hideKeyboard(this);
@@ -199,12 +185,4 @@ public class SearchActivity extends BaseActivity {
             finish();
         });
     }
-
-    //TODO Spostare nella splash Activity
-    /*private void checkPermissions(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET}, REQUEST_INTERNET_PERMISSION);
-        }
-    }*/
 }

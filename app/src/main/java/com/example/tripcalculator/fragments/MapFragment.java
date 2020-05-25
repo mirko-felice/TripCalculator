@@ -56,6 +56,7 @@ public class MapFragment extends MapViewFragment {
     private final static float DISTANCE_DELTA = 200F;
     private final static String PROVIDER = "USER";
     private static final int REQUEST_LOCATION_PERMISSIONS = 0;
+    private static final long MAP_SPEED = 1000L;
     private MapView map;
     private MyLocationNewOverlay mLocationOverlay;
     private MapFragmentBinding binding;
@@ -75,6 +76,8 @@ public class MapFragment extends MapViewFragment {
         this.path = path;
     }
 
+    //TODO controllare internet e gps
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,7 +86,7 @@ public class MapFragment extends MapViewFragment {
         configuration.setUserAgentValue(BuildConfig.APPLICATION_ID);
         configuration.load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()));
         configuration.setTileDownloadThreads((short) Runtime.getRuntime().availableProcessors());
-        configuration.setCacheMapTileOvershoot((short) (4 * Configuration.getInstance().getCacheMapTileOvershoot()));
+        configuration.setCacheMapTileOvershoot((short) (2 * Configuration.getInstance().getCacheMapTileOvershoot()));
         configuration.setMapViewHardwareAccelerated(true);
 
         binding = MapFragmentBinding.inflate(inflater, container, false);
@@ -107,7 +110,7 @@ public class MapFragment extends MapViewFragment {
             mLocationOverlay.enableMyLocation();
             if (mLocationOverlay.getMyLocation() != null)
                 startPoint = mLocationOverlay.getMyLocation();
-        } else {
+        } else if (hasPermissions){
             showActivateGPSDialog();
         }
         if(path == null){
@@ -229,7 +232,6 @@ public class MapFragment extends MapViewFragment {
     }
 
     private void initMapLayout(){
-
         Overlay overlay = new Overlay() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e, MapView mapView) {
@@ -262,10 +264,11 @@ public class MapFragment extends MapViewFragment {
         });
 
         binding.zoomOutBtn.setOnClickListener(v -> showAllMarkers());
-        binding.toNorthBtn.setOnClickListener(v -> map.getController().animateTo(map.getMapCenter(), map.getZoomLevelDouble(), 2000L, 0.0F));
+        binding.toNorthBtn.setOnClickListener(v -> map.getController().animateTo(map.getMapCenter(), map.getZoomLevelDouble(), MAP_SPEED, 0.0F));
         binding.clearMarkersBtn.setOnClickListener(v -> clearMarkers());
 
         binding.checkPositionBtn.setOnClickListener(v -> {
+            checkGPS();
             if (!hasPermissions){
                 if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
                     checkPermissions();
@@ -274,13 +277,10 @@ public class MapFragment extends MapViewFragment {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-            } else if (!isGPSOn){
-                checkGPS();
-                if (!isGPSOn)
-                    showActivateGPSDialog();
-                else
-                    binding.myPositionBtn.performClick();
-            }
+            } else if (!isGPSOn) {
+                showActivateGPSDialog();
+            } else
+                binding.myPositionBtn.performClick();
         });
         binding.myPositionBtn.setOnClickListener(v -> {
             checkGPS();
@@ -299,7 +299,7 @@ public class MapFragment extends MapViewFragment {
 
 
     private void focusOn(GeoPoint point){
-        mapController.animateTo(point, 15.0, 2000L, map.getMapOrientation());
+        mapController.animateTo(point, 15.0, MAP_SPEED, map.getMapOrientation());
     }
 
     private void showActualRoad() {

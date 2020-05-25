@@ -31,4 +31,6 @@ public class Trip {
 
     @NonNull
     public Date InsertDate = new Date();
+
+    public boolean IsPlanned;
 }

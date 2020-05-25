@@ -27,7 +27,9 @@ public class MainActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("exit", false)){
-            recreate();
+            finish();
+            SplashActivity.isFirstStart = true;
+            startActivity(new Intent(this, SplashActivity.class));
         }
     }
 

@@ -80,4 +80,5 @@
     <string name="modify_location_name_canceled">Nome non modificato</string>
     <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
     <string name="location_passed">Località superata!</string>
+    <string name="splash_screen">Splash Screen</string>
 </resources>
