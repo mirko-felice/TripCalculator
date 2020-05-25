@@ -2,7 +2,6 @@ package com.example.tripcalculator.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,8 +17,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.activities.ModifyTripActivity;
+import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.NextTripsFragmentBinding;
 import com.example.tripcalculator.ui.recyclerview.adapters.TripAdapter;
@@ -40,7 +39,7 @@ public class NextTripsFragment extends Fragment {
         binding.addTrip.setOnClickListener(v -> {
             Trip trip = new Trip();
             trip.TripId = 0;
-            trip.Name = "Nuovo Viaggio";
+            trip.Name = getString(R.string.new_trip);
             trip.IsActive = false;
             trip.IsEnded = false;
             trip.InsertDate = new Date();

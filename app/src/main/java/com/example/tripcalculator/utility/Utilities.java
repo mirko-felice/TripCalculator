@@ -66,11 +66,11 @@ public class Utilities {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
 
-        String message = location.Reminder == null || location.Reminder.isEmpty() ? "Nessun promemoria impostato." : "Ricordati di " + location.Reminder + ".";
+        String message = location.Reminder == null || location.Reminder.isEmpty() ? context.getString(R.string.empty_reminder) : context.getString(R.string.reminder_message, location.Reminder);
 
         Notification n = builder.setAutoCancel(true)
-                .setContentTitle("Sei arrivato alla destinazione " + location.DisplayName + ".")
-                .setTicker("Sei arrivato alla destinazione " + location.DisplayName + "\n" + message)
+                .setContentTitle(context.getString(R.string.arrival_title, location.DisplayName))
+                .setTicker(context.getString(R.string.ticker_reminder, location.DisplayName, message))
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(null)
                 .setShowWhen(true)

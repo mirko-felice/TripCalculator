@@ -41,8 +41,4 @@ public class SearchResultFragment extends MapViewFragment {
     protected void afterResponse(List<Location> locations) {
         adapter.setLocations(locations);
     }
-
-    public Location getLocation(int position){
-        return adapter.getLocation(position);
-    }
 }

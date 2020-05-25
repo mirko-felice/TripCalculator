@@ -19,7 +19,7 @@ import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ActivitySearchBinding;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SearchResultFragment;
-import com.example.tripcalculator.utility.NetUtility;
+import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.google.android.material.snackbar.Snackbar;
@@ -52,7 +52,7 @@ public class SearchActivity extends BaseActivity {
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         netSnackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> NetUtility.setNetSettingsIntent(this));
+                .setAction("Impostazioni", (v) -> InternetUtility.setNetSettingsIntent(this));
 
         fragmentManager = getSupportFragmentManager();
 
@@ -73,20 +73,20 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        NetUtility.registerNetworkCallback(this);
+        InternetUtility.registerNetworkCallback(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        NetUtility.unregisterNetworkCallback(this);
+        InternetUtility.unregisterNetworkCallback(this);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
-            if (NetUtility.isNetworkConnected()) {
+            if (InternetUtility.isNetworkConnected()) {
                 String query = intent.getStringExtra(SearchManager.QUERY);
                 searchResultFragment.executeQueue(query);
                 Utilities.hideKeyboard(this);

@@ -13,8 +13,6 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.MainActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
@@ -25,12 +23,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         listPreference.setOnPreferenceChangeListener((preference, newValue) -> {
             String oldValue = listPreference.getValue();
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
-            builder.setPositiveButton("Conferma", (dialog, which) -> {
+            builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
                 editor.putString("language", String.valueOf(newValue)).apply();
                 restart();
             })
-                    .setNegativeButton("Annulla", (dialog, which) -> listPreference.setValue(oldValue))
+                    .setNegativeButton(R.string.discard, (dialog, which) -> listPreference.setValue(oldValue))
                     .show();
             return true;
         });
@@ -40,11 +38,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switchPreferenceCompat.setOnPreferenceChangeListener((preference, newValue) -> {
             boolean oldValue = switchPreferenceCompat.isChecked();
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
-            builder.setPositiveButton("Conferma", (dialog, which) -> {
+            builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
                 PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putBoolean("dark_theme", (Boolean) newValue).apply();
                 restart();
             })
-                    .setNegativeButton("Annulla", (dialog, which) -> switchPreferenceCompat.setChecked(oldValue))
+                    .setNegativeButton(R.string.discard, (dialog, which) -> switchPreferenceCompat.setChecked(oldValue))
                     .show();
            return true;
         });
@@ -63,10 +61,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         exitIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         exitIntent.putExtra("exit", true);
         startActivity(exitIntent);
-
-        Intent intent = new Intent(requireContext(), MainActivity.class);
-        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
 
         requireActivity().finish();
     }

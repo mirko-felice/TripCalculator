@@ -1,34 +1,26 @@
 package com.example.tripcalculator.ui.recyclerview.adapters;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.media.PlaybackParams;
-import android.os.Build;
 import android.view.ActionMode;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tripcalculator.activities.TripActivity;
-import com.example.tripcalculator.activities.ModifyTripActivity;
-import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.activities.ModifyTripActivity;
+import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.PlanningFragment;
@@ -36,16 +28,8 @@ import com.example.tripcalculator.ui.recyclerview.viewholders.TripViewHolder;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.datepicker.CalendarConstraints;
-import com.google.android.material.datepicker.DateValidatorPointForward;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.snackbar.Snackbar;
-import com.j256.ormlite.stmt.PreparedQuery;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -79,10 +63,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
-        Intent intent = new Intent(activity.getApplicationContext(), ReminderReceiver.class);
         Trip trip = trips.get(position);
-        intent.putExtra("TripName", trip.Name);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
 
         MaterialCardView card = holder.itemView.findViewById(R.id.trip_card);
@@ -125,6 +106,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 activity.startActivity(modifyIntent);
             }
         });
+        ((Button)holder.itemView.findViewById(R.id.start_trip_btn)).setText(activity.getString(R.string.start_trip));
         holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
                     Intent startIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
                     trip.IsActive = true;
@@ -136,7 +118,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 }
         );
         holder.itemView.findViewById(R.id.plan_trip_btn).setOnClickListener(v -> {
-            new PlanningFragment().show(activity.getSupportFragmentManager(), "plan");
+            new PlanningFragment(trip.Name).show(activity.getSupportFragmentManager(), "plan");
         });
 
         LiveData<List<Location>> locationLiveData = new ViewModelProvider(activity).get(LocationViewModel.class).getLocationsFromTrip(trip.TripId);
@@ -145,7 +127,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
                 holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
                 ((TextView) holder.itemView.findViewById(R.id.trip_info)).setText("Per poter partire il viaggio deve avere almeno 2 località.");
-            } else {
+            } else if(!trip.IsActive){
                 holder.itemView.findViewById(R.id.trip_info).setVisibility(View.GONE);
             }
             locationLiveData.removeObservers(activity);

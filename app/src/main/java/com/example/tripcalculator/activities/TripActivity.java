@@ -22,7 +22,7 @@ import com.example.tripcalculator.fragments.LoaderFragment;
 import com.example.tripcalculator.fragments.MapFragment;
 import com.example.tripcalculator.fragments.SummaryTripFragment;
 import com.example.tripcalculator.ui.viewpager.LocationViewPagerAdapter;
-import com.example.tripcalculator.utility.NetUtility;
+import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.google.android.material.snackbar.Snackbar;
@@ -43,8 +43,6 @@ public class TripActivity extends BaseActivity {
     private List<Location> path;
     private LocationViewModel locationViewModel;
 
-    //TODO creare dialog fragment con imposta ora e data per il pianifica
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +52,7 @@ public class TripActivity extends BaseActivity {
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         netSnackbar = Snackbar.make(binding.getRoot(), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> { NetUtility.setNetSettingsIntent(this); });
+                .setAction("Impostazioni", (v) -> InternetUtility.setNetSettingsIntent(this));
         LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
         loader.show(getSupportFragmentManager(), "loader");
 
@@ -94,7 +92,7 @@ public class TripActivity extends BaseActivity {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() == locations.size() - 1 ? locations.size() - 1: viewPager.getCurrentItem() + 1, true);
                     mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
                 });
-                if (NetUtility.isNetworkConnected()) {
+                if (InternetUtility.isNetworkConnected()) {
                     mapFragment = new MapFragment(path);
                 } else {
                     mapFragment = new MapFragment();
@@ -133,19 +131,19 @@ public class TripActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        NetUtility.registerNetworkCallback(this);
+        InternetUtility.registerNetworkCallback(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        NetUtility.unregisterNetworkCallback(this);
+        InternetUtility.unregisterNetworkCallback(this);
     }
 
     public void setLocationAsPassed(int index){
         path.get(index).IsPassed = true;
         locationViewModel.updateLocation(path.get(index));
-        if (NetUtility.isNetworkConnected()) {
+        if (InternetUtility.isNetworkConnected()) {
             mapFragment.updatePassedLocation(index);
         } else {
             netSnackbar.show();

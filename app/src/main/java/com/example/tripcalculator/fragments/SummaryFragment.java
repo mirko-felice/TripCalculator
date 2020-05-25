@@ -82,7 +82,6 @@ public class SummaryFragment extends Fragment {
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(takePhotoIntent.resolveActivity(requireActivity().getPackageManager()) != null){
             File photoFile = createImageFile();
-            // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(requireContext(),
                         "com.example.tripcalculator.fileprovider",
@@ -102,11 +101,10 @@ public class SummaryFragment extends Fragment {
     }
 
     private File createImageFile() {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = null;
+        File image;
         try {
             image = File.createTempFile(
                     imageFileName,  /* prefix */

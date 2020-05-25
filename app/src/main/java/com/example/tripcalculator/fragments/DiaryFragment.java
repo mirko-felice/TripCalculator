@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.DiaryLayoutBinding;
 import com.example.tripcalculator.viewmodel.TripViewModel;
@@ -39,7 +40,7 @@ public class DiaryFragment extends Fragment {
             if(trip.IsEnded){
                 binding.diaryContent.setEnabled(false);
                 binding.diaryContent.setHint("");
-                binding.diaryContent.setText(trip.Diary == null || trip.Diary.isEmpty() ? "Non hai inserito nessun diario" : trip.Diary);
+                binding.diaryContent.setText(trip.Diary == null || trip.Diary.isEmpty() ? getString(R.string.no_diary_label) : trip.Diary);
             } else {
                 binding.diaryContent.setText(trip.Diary);
             }

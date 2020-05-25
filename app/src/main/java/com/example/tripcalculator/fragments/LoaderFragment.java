@@ -35,6 +35,7 @@ public class LoaderFragment extends DialogFragment {
             dialog.getWindow().setContentView(rootView);
         }
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         return dialog;
     }
 }

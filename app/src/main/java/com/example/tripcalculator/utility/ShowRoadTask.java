@@ -78,17 +78,19 @@ public class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
     @Override
     protected void onPostExecute(List<Polyline> polylines) {
         super.onPostExecute(polylines);
-        loaderFragment.dismiss();
         Polyline passedRoadOverlay = polylines.get(0);
         Polyline roadToDoOverlay = polylines.get(1);
-        MapView map = mapFragment.get().requireActivity().findViewById(R.id.map);
-        if (passedRoadOverlay != null) {
-            map.getOverlays().add(passedRoadOverlay);
+        if(mapFragment.get().isVisible()) {
+            MapView map = mapFragment.get().requireActivity().findViewById(R.id.map);
+            if (passedRoadOverlay != null) {
+                map.getOverlays().add(passedRoadOverlay);
+            }
+            if (roadToDoOverlay != null) {
+                map.getOverlays().add(roadToDoOverlay);
+            }
+            mapFragment.get().setPathLocationMarkers();
+            mapFragment.get().showAllMarkers();
         }
-        if (roadToDoOverlay != null) {
-            map.getOverlays().add(roadToDoOverlay);
-        }
-        mapFragment.get().setPathLocationMarkers();
-        mapFragment.get().showAllMarkers();
+        loaderFragment.dismiss();
     }
 }

@@ -19,7 +19,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,23 +35,19 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class DialogHelper {
 
-
-    //TODO galleria foto + bottone visibile solo se viaggio attivo
-    //TODO "località di partenza" solo se lisat non vuota
     public static void showSetReminderDialog(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.reminder_view, null);
-        builder.setTitle("Promemoria")
+        builder.setTitle(R.string.reminder)
                 .setView(view)
-                .setPositiveButton("Aggiungi", (dialog, which) -> setReminder(activity, location))
-                .setNegativeButton("Cancella", (dialog, which) -> Toast.makeText(activity, "Non aggiunto", Toast.LENGTH_SHORT).show())
-                .setOnDismissListener(dialog -> Toast.makeText(activity, "Non aggiunto", Toast.LENGTH_SHORT).show())
+                .setPositiveButton(R.string.add_label, (dialog, which) -> setReminder(activity, location))
+                .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.reminder_cancel_message, Toast.LENGTH_SHORT).show())
+                .setOnDismissListener(dialog -> Toast.makeText(activity, R.string.reminder_cancel_message, Toast.LENGTH_SHORT).show())
                 .show();
     }
 
@@ -65,7 +60,7 @@ public class DialogHelper {
             builder.setAdapter(new PreviousLocationAdapter(activity, locations), (dialog, which) -> {
                 locationToExclude.PreviousId = locations.get(which).Id;
                 locationViewModel.updateLocation(locationToExclude);
-                Toast.makeText(activity, "La destinazione precedente è stata impostata", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.previous_message, Toast.LENGTH_SHORT).show();
             });
             builder.show();
             liveData.removeObservers(activity);
@@ -75,11 +70,11 @@ public class DialogHelper {
     public static void showAddNote(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.note_view, null);
-        builder.setTitle("Note")
+        builder.setTitle(R.string.note)
                 .setView(view)
-                .setPositiveButton("Inserisci", (dialog, which) -> setNote(activity, location))
-                .setNegativeButton("Cancella", (dialog, which) -> Toast.makeText(activity, "Nota non aggiunta", Toast.LENGTH_SHORT).show())
-                .setOnDismissListener(dialog -> Toast.makeText(activity, "Nota non aggiunta", Toast.LENGTH_SHORT).show())
+                .setPositiveButton(R.string.insert, (dialog, which) -> setNote(activity, location))
+                .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.note_cancel_message, Toast.LENGTH_SHORT).show())
+                .setOnDismissListener(dialog -> Toast.makeText(activity, R.string.note_cancel_message, Toast.LENGTH_SHORT).show())
                 .show();
     }
 
@@ -124,7 +119,7 @@ public class DialogHelper {
     private static void setReminder(FragmentActivity activity, Location location) {
         TextInputEditText editText = activity.findViewById(R.id.reminder);
         location.Reminder = editText.getText() != null ? editText.getText().toString(): "Errore";
-        Toast.makeText(activity.getApplicationContext(), "Il promemoria è stato salvato.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity.getApplicationContext(), R.string.reminder_save_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);
     }
@@ -132,7 +127,7 @@ public class DialogHelper {
     private static void setNote(FragmentActivity activity, Location location) {
         TextInputEditText editText = activity.findViewById(R.id.note);
         location.Note = editText.getText() != null ? editText.getText().toString(): "Errore";
-        Toast.makeText(activity.getApplicationContext(), "La nota è stata salvata.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity.getApplicationContext(), R.string.note_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);
     }

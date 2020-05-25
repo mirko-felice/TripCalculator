@@ -14,8 +14,6 @@ import androidx.core.app.TaskStackBuilder;
 
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.MainActivity;
-import com.example.tripcalculator.activities.SearchActivity;
-import com.example.tripcalculator.database.AppDatabase;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
@@ -42,8 +40,8 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         String name = intent.getStringExtra("TripName");
 
-        String title = "Inizia il viaggio!";
-        String message = "Hai pianificato di iniziare il viaggio " + name + " ora.";
+        String title = context.getString(R.string.plan_trip_not_title);
+        String message = context.getString(R.string.plan_trip_not_message, name);
 
         Notification n = builder.setAutoCancel(true)
                 .setContentTitle(title)

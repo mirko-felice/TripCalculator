@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
+import com.example.tripcalculator.BuildConfig;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
@@ -34,6 +35,7 @@ import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.config.IConfigurationProvider;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
@@ -67,8 +69,7 @@ public class MapFragment extends MapViewFragment {
     //GPS
     private boolean isGPSOn = false;
 
-    public MapFragment(){
-    }
+    public MapFragment(){ }
 
     public MapFragment(List<Location> path){
         this.path = path;
@@ -78,8 +79,12 @@ public class MapFragment extends MapViewFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         markers = new ArrayList<>();
-        Context context = requireContext();
-        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+        IConfigurationProvider configuration = Configuration.getInstance();
+        configuration.setUserAgentValue(BuildConfig.APPLICATION_ID);
+        configuration.load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()));
+        configuration.setTileDownloadThreads((short) Runtime.getRuntime().availableProcessors());
+        configuration.setCacheMapTileOvershoot((short) (4 * Configuration.getInstance().getCacheMapTileOvershoot()));
+        configuration.setMapViewHardwareAccelerated(true);
 
         binding = MapFragmentBinding.inflate(inflater, container, false);
 

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -26,9 +27,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
-    public Context createConfigurationContext(Configuration overrideConfiguration) {
-        overrideConfiguration.setLocale(PreferenceManager.getDefaultSharedPreferences(this).getString("language", "0").equals("0")? Locale.ITALIAN : Locale.ENGLISH);
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+    }
+
+    @Override
+    public Context createConfigurationContext(@NonNull Configuration overrideConfiguration) {
+        overrideConfiguration.setLocale(PreferenceManager.getDefaultSharedPreferences(this).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
         return super.createConfigurationContext(overrideConfiguration);
     }
 }

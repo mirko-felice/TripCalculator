@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -65,6 +66,7 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
             LiveData<List<Location>> listLiveData = locationViewModel.getLocationsFromTrip(trip.TripId);
             listLiveData.observe(this, locations -> {
                 if (locations.size() == 0){
+                    binding.startingLocationLabel.setVisibility(View.GONE);
                     binding.addLocationBtn.setText(getString(R.string.add_start_point));
                 } else {
                     adapter.updateLocations(locations);
@@ -95,6 +97,9 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save_changes){
             saveChanges();
+            return true;
+        } else if(item.getItemId() == android.R.id.home){
+            this.onBackPressed();
             return true;
         }
         return false;

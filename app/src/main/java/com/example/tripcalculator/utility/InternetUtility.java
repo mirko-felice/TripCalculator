@@ -11,7 +11,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class NetUtility {
+public class InternetUtility {
 
     private static boolean networkConnected = false;
 

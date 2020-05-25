@@ -1,7 +1,6 @@
 package com.example.tripcalculator.utility;
 
 import android.os.AsyncTask;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -108,7 +107,7 @@ public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Locati
     @Override
     protected void onPostExecute(List<Location> locations) {
         loaderFragment.dismiss();
-        Snackbar.make(activity.get().findViewById(R.id.snackbar_layout), "Il tuo percorso è stato ottimizzato!", BaseTransientBottomBar.LENGTH_LONG).show();
+        Snackbar.make(activity.get().findViewById(R.id.snackbar_layout), R.string.optimize_message, BaseTransientBottomBar.LENGTH_LONG).show();
         callback.updateLocations(locations);
     }
 }
