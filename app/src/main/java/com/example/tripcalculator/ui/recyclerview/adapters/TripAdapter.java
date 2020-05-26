@@ -50,6 +50,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     private boolean isTripActive;
     private boolean isTripPlanned;
 
+    //TODO controlli
     public TripAdapter(FragmentActivity activity, boolean isTripActive, boolean isTripPlanned) {
         this.activity = activity;
         this.isTripActive = isTripActive;

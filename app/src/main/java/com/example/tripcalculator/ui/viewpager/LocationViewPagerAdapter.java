@@ -3,6 +3,8 @@ package com.example.tripcalculator.ui.viewpager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.tripcalculator.database.Location;
@@ -14,8 +16,9 @@ public class LocationViewPagerAdapter extends FragmentStateAdapter {
 
     private final List<Location> locations;
 
-    public LocationViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<Location> locations) {
-        super(fragmentActivity);
+
+    public LocationViewPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, List<Location> locations) {
+        super(fragmentManager, lifecycle);
         this.locations = locations;
     }
 

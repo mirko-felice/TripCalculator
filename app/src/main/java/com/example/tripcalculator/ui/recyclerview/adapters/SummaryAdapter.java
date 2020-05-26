@@ -38,8 +38,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
         Location location = locations.get(position);
         holder.adjustVisibility(location.IsPassed);
         holder.setName(location.DisplayName);
-        //TODO visualizza promemoria
-        holder.setViewReminderListener(null);
+        holder.setViewReminderListener(v -> DialogHelper.showReminder(location, fragment));
         holder.setModReminderListener(v -> DialogHelper.showSetReminderDialog(location, fragment.requireActivity()));
         holder.setAddNoteListener(v -> DialogHelper.showAddNote(location, fragment.requireActivity()));
         if(fragment.requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))

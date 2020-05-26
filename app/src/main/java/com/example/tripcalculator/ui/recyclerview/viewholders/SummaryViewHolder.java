@@ -10,8 +10,17 @@ import com.example.tripcalculator.R;
 
 public class SummaryViewHolder extends RecyclerView.ViewHolder {
 
+    private View modifyReminder;
+    private View showPhoto;
+    private View addNote;
+    private View showReminder;
+
     public SummaryViewHolder(@NonNull View itemView) {
         super(itemView);
+        modifyReminder = itemView.findViewById(R.id.mod_reminder);
+        showPhoto = itemView.findViewById(R.id.view_photo);
+        addNote = itemView.findViewById(R.id.add_note);
+        showReminder = itemView.findViewById(R.id.view_reminder);
     }
 
     public void setName(String name){
@@ -20,15 +29,31 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
 
     public void adjustVisibility(boolean isPassed) {
         if(isPassed){
-            itemView.findViewById(R.id.mod_reminder).setVisibility(View.GONE);
-            itemView.findViewById(R.id.view_photo).setVisibility(View.VISIBLE);
-            itemView.findViewById(R.id.add_note).setVisibility(View.VISIBLE);
-            itemView.findViewById(R.id.view_reminder).setVisibility(View.VISIBLE);
+            modifyReminder.setVisibility(View.GONE);
+            showPhoto.setVisibility(View.VISIBLE);
+            addNote.setVisibility(View.VISIBLE);
+            showReminder.setVisibility(View.VISIBLE);
         } else{
-            itemView.findViewById(R.id.mod_reminder).setVisibility(View.VISIBLE);
-            itemView.findViewById(R.id.view_photo).setVisibility(View.GONE);
-            itemView.findViewById(R.id.add_note).setVisibility(View.GONE);
-            itemView.findViewById(R.id.view_reminder).setVisibility(View.GONE);
+            modifyReminder.setVisibility(View.VISIBLE);
+            showPhoto.setVisibility(View.GONE);
+            addNote.setVisibility(View.GONE);
+            showReminder.setVisibility(View.GONE);
         }
+    }
+
+    public void setModReminderListener(View.OnClickListener listener){
+        modifyReminder.setOnClickListener(listener);
+    }
+
+    public void setViewPhotoListener(View.OnClickListener listener){
+        showPhoto.setOnClickListener(listener);
+    }
+
+    public void setAddNoteListener(View.OnClickListener listener){
+        addNote.setOnClickListener(listener);
+    }
+
+    public void setViewReminderListener(View.OnClickListener listener){
+        showReminder.setOnClickListener(listener);
     }
 }

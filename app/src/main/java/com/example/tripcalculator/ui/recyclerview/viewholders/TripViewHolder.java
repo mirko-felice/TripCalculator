@@ -1,6 +1,7 @@
 package com.example.tripcalculator.ui.recyclerview.viewholders;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,7 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
 
     private TextView trip_info;
     private MaterialCardView card;
-    private MaterialButton start_trip_btn, plan_trip_btn;
+    private Button start_trip_btn, plan_trip_btn;
 
     public TripViewHolder(@NonNull View itemView) {
         super(itemView);

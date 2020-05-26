@@ -6,10 +6,11 @@
     tools:context=".activities.SplashActivity">
 
     <ImageView
+        android:id="@+id/splash_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_map"
-        android:contentDescription="@string/splash_screen" />
+        android:contentDescription="@string/splash_screen"
+        android:src="@drawable/ic_map" />
 
     <include layout="@layout/snackbar_layout" />
 </FrameLayout>

@@ -17,5 +17,8 @@ public class SearchViewHolder extends RecyclerView.ViewHolder {
         location = itemView.findViewById(R.id.result_location);
     }
 
-    public void setText(String s){ location.setText(s); }
+    public void setLabel(String s, View.OnClickListener listener){
+        location.setText(s);
+        location.setOnClickListener(listener);
+    }
 }

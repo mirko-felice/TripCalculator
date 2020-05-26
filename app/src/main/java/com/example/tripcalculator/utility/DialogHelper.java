@@ -29,6 +29,7 @@ import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.SummaryFragment;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -43,11 +44,11 @@ public class DialogHelper {
     public static void showSetReminderDialog(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.reminder_view, null);
+        ((TextInputEditText)view.findViewById(R.id.reminder)).setText(location.Reminder);
         builder.setTitle(R.string.reminder)
                 .setView(view)
-                .setPositiveButton(R.string.add_label, (dialog, which) -> setReminder(activity, location))
+                .setPositiveButton(R.string.add_label, (dialog, which) -> setReminder(activity, view, location))
                 .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.reminder_cancel_message, Toast.LENGTH_SHORT).show())
-                .setOnDismissListener(dialog -> Toast.makeText(activity, R.string.reminder_cancel_message, Toast.LENGTH_SHORT).show())
                 .show();
     }
 
@@ -70,11 +71,11 @@ public class DialogHelper {
     public static void showAddNote(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.note_view, null);
+        ((TextInputEditText)view.findViewById(R.id.note)).setText(location.Note);
         builder.setTitle(R.string.note)
                 .setView(view)
-                .setPositiveButton(R.string.insert, (dialog, which) -> setNote(activity, location))
+                .setPositiveButton(R.string.insert, (dialog, which) -> setNote(activity, view, location))
                 .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.note_cancel_message, Toast.LENGTH_SHORT).show())
-                .setOnDismissListener(dialog -> Toast.makeText(activity, R.string.note_cancel_message, Toast.LENGTH_SHORT).show())
                 .show();
     }
 
@@ -99,6 +100,14 @@ public class DialogHelper {
         builder.show();
     }
 
+    public static void showReminder(Location location, SummaryFragment fragment){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(fragment.requireContext());
+        builder.setTitle(R.string.show_reminder)
+                .setMessage(location.Note != null && location.Note.length() > 0 ? location.Note : fragment.getString(R.string.no_reminder_message))
+                .setNeutralButton(R.string.close, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
     public static void showLocationName(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.edit_location_name, null);
@@ -106,8 +115,7 @@ public class DialogHelper {
         builder.setTitle(R.string.edit_location_name)
                 .setView(view)
                 .setPositiveButton(R.string.save, (dialog, which) -> setLocationName(activity, view, location))
-                .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
-                .setOnDismissListener(dialog -> Toast.makeText(activity, R.string.modify_location_name_canceled, Toast.LENGTH_SHORT).show())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.modify_location_name_canceled, Toast.LENGTH_SHORT).show())
                 .show();
     }
 
@@ -118,17 +126,17 @@ public class DialogHelper {
         locationViewModel.updateLocation(location);
     }
 
-    private static void setReminder(FragmentActivity activity, Location location) {
-        TextInputEditText editText = activity.findViewById(R.id.reminder);
-        location.Reminder = editText.getText() != null ? editText.getText().toString(): "Errore";
+    private static void setReminder(FragmentActivity activity, View viewHolder, Location location) {
+        TextInputEditText editText = viewHolder.findViewById(R.id.reminder);
+        location.Reminder = editText.getText() != null ? editText.getText().toString(): "";
         Toast.makeText(activity.getApplicationContext(), R.string.reminder_save_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);
     }
 
-    private static void setNote(FragmentActivity activity, Location location) {
-        TextInputEditText editText = activity.findViewById(R.id.note);
-        location.Note = editText.getText() != null ? editText.getText().toString(): "Errore";
+    private static void setNote(FragmentActivity activity, View viewHolder, Location location) {
+        TextInputEditText editText = viewHolder.findViewById(R.id.note);
+        location.Note = editText.getText() != null ? editText.getText().toString(): "";
         Toast.makeText(activity.getApplicationContext(), R.string.note_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);

@@ -67,10 +67,10 @@ public class NextTripsFragment extends Fragment {
             boolean isTripActive = false;
             boolean isTripPlanned = false;
             for(Trip trip: trips){
-                if (trip.IsActive) {
+                if (trip.IsActive && !isTripActive) {
                     isTripActive = true;
                 }
-                if(trip.IsPlanned){
+                if(trip.IsPlanned && !isTripPlanned){
                     isTripPlanned = true;
                 }
             }

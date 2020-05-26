@@ -33,7 +33,6 @@ public class SearchActivity extends BaseActivity {
     private SearchView searchView;
     //permission vars
     FragmentManager fragmentManager;
-    Snackbar netSnackbar;
 
     //tripId
     private int tripId = -1;
@@ -50,12 +49,12 @@ public class SearchActivity extends BaseActivity {
 
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        netSnackbar = Snackbar.make(findViewById(R.id.search_layout), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> InternetUtility.setNetSettingsIntent(this));
+        InternetUtility.initSnackBar(this, findViewById(R.id.search_layout), getString(R.string.no_connection), Snackbar.LENGTH_INDEFINITE);
 
         fragmentManager = getSupportFragmentManager();
 
         searchResultFragment = new SearchResultFragment();
+
         mapFragment = new MapFragment();
         fragmentManager.beginTransaction()
                         .add(R.id.search_layout, mapFragment)
@@ -90,7 +89,7 @@ public class SearchActivity extends BaseActivity {
                 searchResultFragment.executeQueue(query);
                 Utilities.hideKeyboard(this);
             } else {
-                netSnackbar.show();
+                InternetUtility.showSnackbar();
             }
         }
     }

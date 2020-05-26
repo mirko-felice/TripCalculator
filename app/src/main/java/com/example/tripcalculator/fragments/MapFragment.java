@@ -76,7 +76,7 @@ public class MapFragment extends MapViewFragment {
         this.path = path;
     }
 
-    //TODO controllare internet e gps
+    //TODO controllare internet
 
     @Nullable
     @Override
@@ -113,11 +113,11 @@ public class MapFragment extends MapViewFragment {
         } else if (hasPermissions){
             showActivateGPSDialog();
         }
-        if(path == null){
-            mLocationOverlay.setPersonIcon(Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888));
+        if(path != null){
             binding.clearMarkersBtn.setVisibility(View.GONE);
-        } else {
             showActualRoad();
+        } else {
+            mLocationOverlay.setDirectionArrow(Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888), Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888));
         }
         mapController.setCenter(startPoint);
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -213,7 +213,7 @@ public class MapFragment extends MapViewFragment {
                         .setMessage("La tua posizione non può essere visualizzata sulla mappa!\n" +
                                 "L'arrivo dovrà essere indicato manualmente!\n" +
                                 "Per fornire i permessi cliccare sul simbolo del GPS sulla sua destra!" )
-                        .setNeutralButton("OK", (dialog, which) -> {}).show();
+                        .setNeutralButton(R.string.close, (dialog, which) -> {}).show();
             }
         }
     }
@@ -315,6 +315,8 @@ public class MapFragment extends MapViewFragment {
             if (markers.size() > 0)
                 ((ActiveTripLocationInfoWindow)markers.get(i).getInfoWindow()).setEnabled(true);
             focusOn(path.get(i));
+        } else {
+            showAllMarkers();
         }
         if (hasPermissions) {
             startNavigation();

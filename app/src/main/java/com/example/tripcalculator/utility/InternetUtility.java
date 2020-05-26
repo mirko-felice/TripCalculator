@@ -7,13 +7,18 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tripcalculator.R;
+import com.google.android.material.snackbar.Snackbar;
+
 public class InternetUtility {
 
     private static boolean networkConnected = false;
+    private static Snackbar snackbar;
 
     public static void registerNetworkCallback(AppCompatActivity activity){
         ConnectivityManager connectivityManager = (ConnectivityManager) activity.getSystemService((Context.CONNECTIVITY_SERVICE));
@@ -43,6 +48,15 @@ public class InternetUtility {
             networkConnected = false;
         }
     };
+
+    public static void initSnackBar(AppCompatActivity activity, View viewHolder, String message, int duration){
+        snackbar = Snackbar.make(viewHolder, message, duration)
+                            .setAction(R.string.settings, (v) -> setNetSettingsIntent(activity));
+    }
+
+    public static void showSnackbar(){
+        snackbar.show();
+    }
 
     public static boolean isNetworkConnected(){
         return networkConnected;

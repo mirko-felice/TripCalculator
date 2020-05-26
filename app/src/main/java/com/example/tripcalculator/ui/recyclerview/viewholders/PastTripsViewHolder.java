@@ -17,9 +17,10 @@ public class PastTripsViewHolder extends RecyclerView.ViewHolder {
         trip = itemView.findViewById(R.id.past_trips_card);
     }
 
-    public void setData(String title, String startDate, String endDate){
+    public void setData(String title, String startDate, String endDate, View.OnClickListener listener){
         ((TextView)trip.findViewById(R.id.past_trip_title)).setText(title);
         ((TextView)trip.findViewById(R.id.past_trip_start_date)).setText(startDate);
         ((TextView)trip.findViewById(R.id.past_trip_end_date)).setText(endDate);
+        trip.setOnClickListener(listener);
     }
 }

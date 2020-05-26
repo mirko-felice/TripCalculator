@@ -38,7 +38,8 @@ public class TripActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private SummaryTripFragment myFragment;
-    Snackbar netSnackbar;
+    private Snackbar netSnackbar;
+    private ViewPager2 viewPager;
 
     private List<Location> path;
     private LocationViewModel locationViewModel;
@@ -56,7 +57,8 @@ public class TripActivity extends BaseActivity {
         LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
         loader.show(getSupportFragmentManager(), "loader");
 
-        ViewPager2 viewPager = binding.locationViewPager;
+
+        viewPager = binding.locationViewPager;
         viewPager.setVisibility(View.GONE);
 
         if (intent.hasExtra(TRIP_ID)){
@@ -67,22 +69,16 @@ public class TripActivity extends BaseActivity {
             locationsLiveData.observe(this, locations -> {
                 path.addAll(locations);
 
+                LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(getSupportFragmentManager(), getLifecycle(), locations);
+
+                viewPager.setAdapter(adapter);
+
                 FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
                 myFragment = new SummaryTripFragment(tripId);
                 fragmentTransaction1.add(R.id.activity_active_trip_layout, myFragment);
                 fragmentTransaction1.hide(myFragment);
                 fragmentTransaction1.commit();
 
-                LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(this, locations);
-                viewPager.setAdapter(adapter);
-                viewPager.setUserInputEnabled(false);
-                viewPager.setVisibility(View.VISIBLE);
-                for (Location location: locations){
-                    if(!location.IsPassed){
-                        viewPager.setCurrentItem(locations.indexOf(location), true);
-                        break;
-                    }
-                }
                 viewPager.setOnClickListener(v -> mapFragment.focusOn(locations.get(viewPager.getCurrentItem())));
                 binding.slideLeft.setOnClickListener(v -> {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true);
@@ -101,10 +97,25 @@ public class TripActivity extends BaseActivity {
                 fragmentManager.beginTransaction()
                         .add(R.id.fragment_layout, mapFragment)
                         .commit();
+
+                viewPager.setUserInputEnabled(false);
+                viewPager.setVisibility(View.VISIBLE);
+                for (Location location: locations){
+                    if(!location.IsPassed){
+                        viewPager.post(() -> viewPager.setCurrentItem(locations.indexOf(location), true));
+                        break;
+                    }
+                }
+
                 locationsLiveData.removeObservers(this);
                 loader.dismiss();
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -143,6 +154,7 @@ public class TripActivity extends BaseActivity {
     public void setLocationAsPassed(int index){
         path.get(index).IsPassed = true;
         locationViewModel.updateLocation(path.get(index));
+        viewPager.setCurrentItem(index + 1, true);
         if (InternetUtility.isNetworkConnected()) {
             mapFragment.updatePassedLocation(index);
         } else {

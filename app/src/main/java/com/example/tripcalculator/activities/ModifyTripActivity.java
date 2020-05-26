@@ -41,7 +41,6 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     private LocationAdapter adapter;
     private boolean canStart;
 
-    //TODO evidenziare la possibilità di ordinare manualemnete
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

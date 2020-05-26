@@ -50,9 +50,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
         Location location = result.get(position);
-        TextView element = holder.itemView.findViewById(R.id.result_location);
-        element.setOnClickListener(v -> activity.focusOn(result.get(position)));
-        element.setText(location.DisplayName);
+        holder.setLabel(location.DisplayName, v -> activity.focusOn(result.get(position)));
     }
 
     @Override

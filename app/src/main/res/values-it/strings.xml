@@ -92,4 +92,6 @@
     <string name="delete_dialog_title">Sei sicuro di voler eliminare la destinazione?</string>
     <string name="yes">SI</string>
     <string name="No">NO</string>
+    <string name="no_reminder_message">Promemoria assente!</string>
+    <string name="no_connection">Connessione a internet assente!</string>
 </resources>

@@ -85,7 +85,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
 
     @Override
     public void moveLocation(int from, int to) {
-        if(locations.size() > 1) {
+        if(locations.size() > 1 && from > -1) {
             if (from < to) {
                 for (int i = from; i < to; i++) {
                     Utilities.swapLocations(activity, locations.get(i), locations.get(i + 1));
@@ -104,6 +104,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     private void deleteItem(){
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.deleteLocation(lastLocationDismiss);
+        locations.remove(lastLocationDismiss);
         for(Location location: locations){
             if (location.Order > lastLocationDismissPosition){
                 location.Order--;

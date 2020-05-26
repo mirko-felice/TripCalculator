@@ -1,10 +1,12 @@
 package com.example.tripcalculator.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +26,11 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if(isFirstStart){
             isFirstStart = false;
+            setImmersive(true);
+            setContentView(R.layout.activity_splash);
+            ((ImageView)findViewById(R.id.splash_image)).setImageResource(R.drawable.ic_map);
             if(checkPermissions())
                 new Handler().postDelayed(this::start, 2000);
-            setImmersive(true);
-            setContentView(ActivitySplashBinding.inflate(getLayoutInflater()).getRoot());
         } else {
             start();
         }

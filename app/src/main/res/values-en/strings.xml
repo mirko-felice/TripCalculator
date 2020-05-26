@@ -88,4 +88,6 @@
     <string name="diary_hint">Write your trip\'s diary</string>
     <string name="add_photo">Attach Photo</string>
     <string name="mod_reminder">Set Reminder</string>
+    <string name="no_reminder_message">No reminder setted!</string>
+    <string name="no_connection">No connection!</string>
 </resources>

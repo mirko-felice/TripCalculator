@@ -39,7 +39,8 @@
             android:parentActivityName=".activities.MainActivity" />
         <activity
             android:name=".activities.SearchActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".activities.ModifyTripActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

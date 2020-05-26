@@ -73,6 +73,7 @@ public class PlanningFragment extends DialogFragment {
             timeToSet.set(Calendar.HOUR_OF_DAY, hourToSet.get(Calendar.HOUR_OF_DAY));
             timeToSet.set(Calendar.MINUTE, hourToSet.get(Calendar.MINUTE));
             if(alarmManager != null) {
+                //TODO creazione allarme
                 alarmManager.setExact(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
                 trip.IsPlanned = true;
                 new ViewModelProvider(requireActivity()).get(TripViewModel.class).updateTrip(trip);
