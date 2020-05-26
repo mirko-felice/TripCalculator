@@ -38,7 +38,6 @@ public class SummaryFragment extends Fragment {
     private final int tripId;
     private LocationViewModel locationViewModel;
     private SummaryFragmentBinding binding;
-    private String currentPhotoPath;
     private Uri photoURI;
     private Location lastLocation;
 
@@ -114,9 +113,6 @@ public class SummaryFragment extends Fragment {
         } catch (IOException e) {
             return null;
         }
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
         return image;
     }
 }

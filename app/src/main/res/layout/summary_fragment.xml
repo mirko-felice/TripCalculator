@@ -29,11 +29,12 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/end_trip_btn"
         android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/end_trip_label"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

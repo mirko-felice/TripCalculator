@@ -25,7 +25,7 @@ public class SearchResultFragment extends MapViewFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ListFragmentBinding binding = ListFragmentBinding.inflate(inflater, container, false);
 
-        adapter = new SearchResultAdapter(getContext(), (SearchActivity)getActivity());
+        adapter = new SearchResultAdapter(requireContext(), (SearchActivity) requireActivity());
 
         binding.itemsList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.itemsList.setAdapter(adapter);

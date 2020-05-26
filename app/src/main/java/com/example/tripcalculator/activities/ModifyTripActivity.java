@@ -27,6 +27,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,10 +39,9 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     private TripViewModel tripViewModel;
     private LocationViewModel locationViewModel;
     private LocationAdapter adapter;
+    private boolean canStart;
 
-    //TODO eventualmente permettere di far partire il viaggio
     //TODO evidenziare la possibilità di ordinare manualemnete
-    //TODO start al posto di salvataggio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +67,11 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
             LiveData<List<Location>> listLiveData = locationViewModel.getLocationsFromTrip(trip.TripId);
             listLiveData.observe(this, locations -> {
                 if (locations.size() == 0){
+                    canStart = false;
                     binding.startingLocationLabel.setVisibility(View.GONE);
                     binding.addLocationBtn.setText(getString(R.string.add_start_point));
                 } else {
+                    canStart = locations.size() > 1;
                     adapter.updateLocations(locations);
                     binding.startingLocationLabel.setVisibility(View.VISIBLE);
                     binding.addLocationBtn.setText(getString(R.string.add_location));
@@ -97,8 +99,19 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.save_changes){
+        if(item.getItemId() == R.id.start_trip){
             saveChanges();
+            if (canStart) {
+                Intent intent = new Intent(this, TripActivity.class);
+                intent.putExtra(TRIP_ID, trip.TripId);
+                trip.IsActive = true;
+                trip.StartDate = new Date();
+                tripViewModel.updateTrip(trip);
+                startActivity(intent);
+                finish();
+            } else {
+                showStartDialog();
+            }
             return true;
         } else if(item.getItemId() == android.R.id.home){
             this.onBackPressed();
@@ -127,11 +140,19 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
         builder.show();
     }
 
+    private void showStartDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle("Attenzione");
+        builder.setMessage("Il tuo viaggio non può iniziare se non inserisci almeno 2 località!");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
     private void saveChanges() {
         if(binding.tripName.getText() != null && !binding.tripName.getText().toString().equals("")) {
             this.trip.Name = binding.tripName.getText().toString();
             tripViewModel.updateTrip(trip);
-            Snackbar snackbar = Snackbar.make(binding.getRoot(), getString(R.string.save_changes), 400);
+            /*Snackbar snackbar = Snackbar.make(binding.getRoot(), getString(R.string.save_changes), 400);
             snackbar.setAnchorView(binding.addLocationBtn);
             snackbar.show();
             snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -141,7 +162,7 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
                     if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
                         finish();
                 }
-            });
+            });*/
         }
     }
 
@@ -149,7 +170,10 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle("Attenzione");
         builder.setMessage("Stai per tornare indietro, vuoi salvare le modifiche al tuo viaggio?");
-        builder.setPositiveButton("Si", (dialog, which) -> saveChanges());
+        builder.setPositiveButton("Si", (dialog, which) -> {
+            saveChanges();
+            finish();
+        });
         builder.setNegativeButton("No", (dialog, which) -> super.onBackPressed());
         builder.show();
     }

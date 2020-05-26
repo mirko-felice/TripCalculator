@@ -42,6 +42,7 @@ public class DiaryFragment extends Fragment {
                 binding.diaryContent.setHint("");
                 binding.diaryContent.setText(trip.Diary == null || trip.Diary.isEmpty() ? getString(R.string.no_diary_label) : trip.Diary);
             } else {
+                binding.diaryContent.setHint(getString(R.string.diary_hint));
                 binding.diaryContent.setText(trip.Diary);
             }
         });

@@ -23,7 +23,6 @@ import java.util.List;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> implements ItemTouchHelperAdapter {
 
-    private static final String DIALOG_TITLE = "Sei sicuro di voler eliminare la destinazione?";
     private List<Location> locations = new ArrayList<>();
     private AppCompatActivity activity;
     private AlertDialog alertDialog;
@@ -33,9 +32,9 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     public LocationAdapter(AppCompatActivity activity) {
         this.activity = activity;
         this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_DayNight_Dialog)
-                .setTitle(DIALOG_TITLE)
-                .setPositiveButton("SI", (dialog, which) -> deleteItem())
-                .setNegativeButton("NO", (dialog, which) -> notifyDataSetChanged())
+                .setTitle(R.string.delete_dialog_title)
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteItem())
+                .setNegativeButton(R.string.No, (dialog, which) -> notifyDataSetChanged())
                 .setOnDismissListener(dialog -> notifyDataSetChanged())
                 .create();
     }
@@ -51,14 +50,14 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         Location location = locations.get(position);
         holder.setName(location.DisplayName);
-        holder.itemView.findViewById(R.id.reminder_btn).setOnClickListener(v -> DialogHelper.showSetReminderDialog(location, activity));
-        holder.itemView.findViewById(R.id.previous_btn).setOnClickListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
+        holder.setReminderListener(v -> DialogHelper.showSetReminderDialog(location, activity));
+        holder.setPreviousListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
         if (position > 0) {
-            holder.itemView.findViewById(R.id.divider).setVisibility(View.GONE);
+            holder.setDividerVisibility(View.GONE);
         } else {
-            holder.itemView.findViewById(R.id.divider).setVisibility(View.VISIBLE);
+            holder.setDividerVisibility(View.VISIBLE);
         }
-        holder.itemView.findViewById(R.id.location_name).setOnClickListener(v -> DialogHelper.showLocationName(location, activity));
+        holder.setLocationNameListener(v -> DialogHelper.showLocationName(location, activity));
     }
 
     @Override

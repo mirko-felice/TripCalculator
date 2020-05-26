@@ -2,15 +2,15 @@
 <resources>
     <string name="app_name">TripCalculator</string>
     <string name="next_trips">Prossimi Viaggi</string>
-    <string name="past_trips">Cronologia Viaggi</string>
+    <string name="past_trips">Cronologia</string>
     <string name="search_label">Cerca luogo</string>
     <string name="search_title">Ricerca</string>
     <string name="welcome_locations">Qui puoi controllare le singole località del tuo viaggio, prova ad aggiungere, cancellare o modificare!</string>
     <string name="start_trip">Inizia Viaggio</string>
     <string name="plan_trip">Pianifica Viaggio</string>
     <string name="aggiungi">Aggiungi</string>
-    <string name="longitude_n">Longitude:\n%1$f</string>
-    <string name="latitude_n">Latitude:\n%1$f</string>
+    <string name="longitude_n">Longitudine:\n%1$f</string>
+    <string name="latitude_n">Latitudine:\n%1$f</string>
     <string name="settings">Impostazioni</string>
     <string name="add_location">Aggiungi località</string>
     <string name="add_start_point">Aggiungi partenza</string>
@@ -27,7 +27,7 @@
     <string name="mod_reminder">Modifica Promemoria</string>
     <string name="add_note">Aggiungi Nota</string>
     <string name="view_reminder">Visualizza Promemoria</string>
-    <string name="details">Details</string>
+    <string name="details">Dettagli</string>
     <string name="end_trip_label">Termina Viaggio</string>
     <string name="show_details">Visualizza dettagli</string>
     <string name="show_notes">Note</string>
@@ -46,7 +46,7 @@
     <string name="disable_rotation">Disabilita rotazione della mappa</string>
     <string name="add_photo_cd">Aggiungi Foto</string>
     <string name="set_clock">Imposta Orario</string>
-    <string name="set_day">Imposta Giorno</string>
+    <string name="set_day">Imposta Data</string>
     <string name="save">Salva</string>
     <string name="plan_trip_not_title">Inizia il viaggio!</string>
     <string name="plan_trip_not_message">Hai pianificato di iniziare il viaggio %s ora.</string>
@@ -56,7 +56,7 @@
     <string name="confirm">Conferma</string>
     <string name="discard">Annulla</string>
     <string name="optimize_message">Il tuo percorso è stato ottimizzato!</string>
-    <string name="arrival_title">Sei arrivato alla destinazione %s.</string>
+    <string name="arrival_title">Sei arrivato a %s.</string>
     <string name="empty_reminder">Nessun promemoria impostato.</string>
     <string name="reminder_message">Ricordati di %s.</string>
     <string name="ticker_reminder">Sei arrivato alla destinazione %s. \n %s</string>
@@ -81,4 +81,15 @@
     <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
     <string name="location_passed">Località superata!</string>
     <string name="splash_screen">Splash Screen</string>
+    <string name="start_trip_label">Inizia il viaggio</string>
+    <string name="save_changes">Le modifiche sono state salvate.</string>
+    <string name="start_error">Per poter partire il viaggio deve avere almeno 2 località.</string>
+    <string name="dark_theme">Tema Scuro</string>
+    <string name="language">Lingua</string>
+    <string name="hour_format">Formato 24 ore</string>
+    <string name="diary_hint">Scrivi il diario del tuo viaggio</string>
+    <string name="version_error">La tua versione di Android non permette la pianificazione, ci dispiace.</string>
+    <string name="delete_dialog_title">Sei sicuro di voler eliminare la destinazione?</string>
+    <string name="yes">SI</string>
+    <string name="No">NO</string>
 </resources>

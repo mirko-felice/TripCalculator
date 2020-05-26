@@ -83,8 +83,10 @@ public class DialogHelper {
         View view = View.inflate(fragment.requireContext(), R.layout.photo_view, null);
         builder.setView(view);
         GridView gridView = view.findViewById(R.id.grid);
-        ImageAdapter adapter = new ImageAdapter(fragment.requireContext(), location.ImgNames);
-        gridView.setAdapter(adapter);
+        new ViewModelProvider(fragment.requireActivity()).get(LocationViewModel.class).getLocationFromId(location.Id).observe(fragment.getViewLifecycleOwner(), l -> {
+            ImageAdapter adapter = new ImageAdapter(fragment.requireContext(), l.ImgNames);
+            gridView.setAdapter(adapter);
+        });
         LiveData<Trip> tripLiveData = new ViewModelProvider(fragment.requireActivity()).get(TripViewModel.class).getTripFromId(location.TripId);
         tripLiveData.observe(fragment.requireActivity(), trip -> {
             if (!trip.IsActive){

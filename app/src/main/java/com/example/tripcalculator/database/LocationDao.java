@@ -18,6 +18,9 @@ public interface LocationDao {
     @Query("SELECT * FROM Location where TripId = :tripId and Id != :id and PreviousId is null")
     LiveData<List<Location>> getPossiblePreviousLocations(int tripId, long id);
 
+    @Query("SELECT * FROM Location where Id = :locationId")
+    LiveData<Location> getLocationFromId(long locationId);
+
     @Insert
     void insertLocation(Location location);
 
@@ -26,4 +29,5 @@ public interface LocationDao {
 
     @Delete
     void deleteLocation(Location location);
+
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
@@ -14,8 +15,10 @@ import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.ui.recyclerview.viewholders.PastTripsViewHolder;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PastTripsAdapter extends RecyclerView.Adapter<PastTripsViewHolder> {
 
@@ -41,7 +44,10 @@ public class PastTripsAdapter extends RecyclerView.Adapter<PastTripsViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull PastTripsViewHolder holder, int position) {
         Trip trip = trips.get(position);
-        holder.setData(trip.Name, trip.StartDate.toString(), trip.EndDate.toString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", PreferenceManager.getDefaultSharedPreferences(inflater.getContext()).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
+        assert trip.StartDate != null;
+        assert trip.EndDate != null;
+        holder.setData(trip.Name, dateFormat.format(trip.StartDate), dateFormat.format(trip.EndDate));
         holder.itemView.findViewById(R.id.past_trips_card).setOnClickListener(v -> {
             Intent intent = new Intent(inflater.getContext(), TripActivity.class);
             intent.putExtra("TripId", trip.TripId);

@@ -2,16 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-   <!--TODO start btn -->
-    <item
-        android:id="@+id/save_changes"
-        android:title="@string/save_changes_title"
-        android:icon="@drawable/ic_save"
-        app:showAsAction="ifRoom"/>
-
     <item
         android:id="@+id/start_trip"
-        android:title="Inizia il viaggio"
-        android:icon="@android:color/black"
+        android:title="@string/start_trip_label"
+        android:icon="@drawable/ic_start"
         app:showAsAction="ifRoom" />
 </menu>

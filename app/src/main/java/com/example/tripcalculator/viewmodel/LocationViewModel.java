@@ -28,6 +28,10 @@ public class LocationViewModel extends AndroidViewModel {
         return repo.getPossiblePreviousLocations(tripId, locationId);
     }
 
+    public LiveData<Location> getLocationFromId(long locationId){
+        return repo.getLocationFromId(locationId);
+    }
+
     public void insertLocation(Location location){
         repo.insertLocation(location);
     }

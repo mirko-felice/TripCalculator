@@ -82,7 +82,7 @@ public class PlanningFragment extends DialogFragment {
         });
         timeToSet = Calendar.getInstance();
 
-        Locale locale = Locale.getDefault();
+        Locale locale = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH;
         is24Format = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("is24format", true);
 
         String pattern = is24Format ? "HH:mm" : "hh:mm a" ;

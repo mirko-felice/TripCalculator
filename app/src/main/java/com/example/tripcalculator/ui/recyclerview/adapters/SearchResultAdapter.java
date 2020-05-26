@@ -59,8 +59,4 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchViewHolder> 
     public int getItemCount() {
         return result.size();
     }
-
-    public Location getLocation(int position){
-        return result.get(position);
-    }
 }

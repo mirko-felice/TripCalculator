@@ -10,8 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
@@ -30,13 +29,14 @@ import com.example.tripcalculator.fragments.PlanningFragment;
 import com.example.tripcalculator.ui.recyclerview.viewholders.TripViewHolder;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.card.MaterialCardView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 
 public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
@@ -75,19 +75,21 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         Trip trip = trips.get(position);
         tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
 
-        MaterialCardView card = holder.itemView.findViewById(R.id.trip_card);
+        MaterialCardView card = holder.getCard();
         tripCards.add(card);
         holder.setName(trip.Name);
         if (trip.IsActive) {
-            holder.itemView.findViewById(R.id.trip_info).setVisibility(View.VISIBLE);
-            ((TextView) holder.itemView.findViewById(R.id.trip_info)).setText(trip.StartDate.toString());
+            holder.setTripInfoVisibility(View.VISIBLE);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", PreferenceManager.getDefaultSharedPreferences(activity).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
+            assert trip.StartDate != null;
+            holder.setTripInfo(dateFormat.format(trip.StartDate));
         }
         card.setOnLongClickListener(v -> {
             if (!trip.IsActive) {
                 if (actionMode == null) {
                     card.setChecked(!card.isChecked());
                     actionMode = activity.startActionMode(new TripActionModeCallback());
-                    actionMode.setTitle("Elimina Viaggi");
+                    Objects.requireNonNull(actionMode).setTitle("Elimina Viaggi");
                 } else {
                     int countChecked = 0;
                     card.setChecked(!card.isChecked());
@@ -115,8 +117,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 activity.startActivity(modifyIntent);
             }
         });
-        ((Button)holder.itemView.findViewById(R.id.start_trip_btn)).setText(activity.getString(R.string.start_trip));
-        holder.itemView.findViewById(R.id.start_trip_btn).setOnClickListener(v -> {
+        holder.setStartText(activity.getString(R.string.start_trip));
+        holder.setPlanText(activity.getString(R.string.plan_trip));
+        holder.setStartListener(v -> {
                     Intent startIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
                     trip.IsActive = true;
                     trip.StartDate = new Date();
@@ -125,7 +128,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                     activity.startActivity(startIntent);
                 }
         );
-        holder.itemView.findViewById(R.id.plan_trip_btn).setOnClickListener(v -> {
+        holder.setPlanListener(v -> {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                 new PlanningFragment(trip).show(activity.getSupportFragmentManager(), "plan");
             else
@@ -135,23 +138,23 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         LiveData<List<Location>> locationLiveData = new ViewModelProvider(activity).get(LocationViewModel.class).getLocationsFromTrip(trip.TripId);
         locationLiveData.observe(activity, locations -> {
             if (locations.size() < 2) {
-                holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
-                holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
-                ((TextView) holder.itemView.findViewById(R.id.trip_info)).setText("Per poter partire il viaggio deve avere almeno 2 località.");
-            } else if(!trip.IsActive){
-                holder.itemView.findViewById(R.id.trip_info).setVisibility(View.GONE);
+                holder.setStartEnabled(false);
+                holder.setPlanEnabled(false);
+                holder.setTripInfo(activity.getString(R.string.start_error));
+            } else if (!trip.IsActive){
+                holder.setTripInfoVisibility(View.GONE);
             }
             locationLiveData.removeObservers(activity);
         });
         if (isTripActive) {
-            holder.itemView.findViewById(R.id.start_trip_btn).setEnabled(false);
+            holder.setStartEnabled(false);
         }
         if (trip.IsActive) {
-            holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
+            holder.setPlanEnabled(false);
         }
         if(isTripPlanned){
-            BadgeUtils.attachBadgeDrawable(BadgeDrawable.create(activity), holder.itemView.findViewById(R.id.plan_trip_btn),null);
-            holder.itemView.findViewById(R.id.plan_trip_btn).setEnabled(false);
+            //BadgeUtils.attachBadgeDrawable(BadgeDrawable.create(activity), holder.itemView.findViewById(R.id.plan_trip_btn),null);
+            holder.setPlanEnabled(false);
         }
     }
 
@@ -224,6 +227,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     }
 
     private void showAlertDialog() {
-        Toast.makeText(activity, "La tua versione di Android non permette la pianificazione, ci dispiace.", Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, R.string.version_error, Toast.LENGTH_LONG).show();
     }
 }

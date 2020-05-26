@@ -26,6 +26,10 @@ public class LocationRepository {
         return locationDao.getPossiblePreviousLocations(tripId, locationId);
     }
 
+    public LiveData<Location> getLocationFromId(long locationId) {
+        return locationDao.getLocationFromId(locationId);
+    }
+
     public void insertLocation(Location location){
         AppDatabase.databaseWriteExecutor.execute(() -> locationDao.insertLocation(location));
     }
@@ -37,4 +41,6 @@ public class LocationRepository {
     public void deleteLocation(Location location){
         AppDatabase.databaseWriteExecutor.execute(() -> locationDao.deleteLocation(location));
     }
+
+
 }
