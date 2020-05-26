@@ -1,0 +1,31 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!--<item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>-->
+        <item name="background">@color/white</item>
+        <item name="colorPrimary">@color/black</item>
+
+       <!-- <item name="android:colorForeground">@color/black</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/primaryColor</item>
+        <item name="preferenceTheme">@style/MyPreferenceThemeOverlay</item>
+        <item name="colorControlNormal">@color/black</item>-->
+    </style>
+
+    <style name="MyPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
+        <item name="android:textColor">@color/primaryColor</item>
+    </style>
+    <style name="TimePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="AlertDialogDarkTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+</resources>

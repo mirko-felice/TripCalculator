@@ -22,9 +22,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         boolean isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true);
         AppCompatDelegate.setDefaultNightMode(isDarkTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
-        if (!isDarkTheme){
-            Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        }
     }
 
 

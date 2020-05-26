@@ -24,6 +24,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getApplication().setTheme(R.style.AppTheme);
         if(isFirstStart){
             isFirstStart = false;
             setImmersive(true);

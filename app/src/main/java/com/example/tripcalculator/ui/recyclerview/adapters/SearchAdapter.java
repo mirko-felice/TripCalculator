@@ -17,17 +17,16 @@ import com.example.tripcalculator.ui.recyclerview.viewholders.SearchViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultAdapter extends RecyclerView.Adapter<SearchViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> {
 
     private List<Location> result = new ArrayList<>();
     private LayoutInflater inflater;
     private SearchActivity activity;
 
-    public SearchResultAdapter(Context context, SearchActivity activity){
+    public SearchAdapter(Context context, SearchActivity activity){
         this.activity = activity;
         this.inflater = LayoutInflater.from(context);
     }
-
 
     public void setLocations(List<Location> locations){
         this.result = locations;

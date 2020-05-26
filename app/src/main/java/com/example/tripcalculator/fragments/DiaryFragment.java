@@ -1,5 +1,6 @@
 package com.example.tripcalculator.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,6 +35,7 @@ public class DiaryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DiaryLayoutBinding.inflate(inflater, container, false);
+        binding.getRoot().setBackgroundColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? Color.BLACK : Color.WHITE);
         tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
         tripLiveData.observe(getViewLifecycleOwner(), trip -> {

@@ -16,7 +16,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getApplication().setTheme(R.style.AppTheme);
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         binding.viewPager.setAdapter(new TripViewPagerAdapter(getSupportFragmentManager(), this));
         setContentView(binding.getRoot());
