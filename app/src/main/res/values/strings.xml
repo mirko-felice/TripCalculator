@@ -114,4 +114,10 @@
     <string name="remove_plan_title">Cancella la pianificazione</string>
     <string name="remove_planning_message">Sei sicuro di voler rimuovere la pianificazione?</string>
     <string name="planning_removed">Pianificazione cancellata</string>
+    <string name="restart_needed_title">Riavvio necessario</string>
+    <string name="restart_needed_message">Necessario riavviare l\'applicativo per applicare le modifiche!</string>
+    <string name="no_note_message">Nessuna nota presente!</string>
+    <string name="images_shown_title">Immagini scattate</string>
+    <string name="no_images_found">Nessuna immagine scattata per questa località</string>
+    <string name="photo">Foto scattata</string>
 </resources>

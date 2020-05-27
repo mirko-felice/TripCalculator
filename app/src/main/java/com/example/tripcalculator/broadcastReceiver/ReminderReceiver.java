@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -16,6 +17,8 @@ import androidx.preference.PreferenceManager;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.MainActivity;
 
+import java.util.Locale;
+
 public class ReminderReceiver extends BroadcastReceiver {
 
     private static final String CHANNEL_ID = "plan";
@@ -24,6 +27,9 @@ public class ReminderReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(PreferenceManager.getDefaultSharedPreferences(context).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
+        context = context.createConfigurationContext(configuration);
         Intent notificationIntent = new Intent(context, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(notificationIntent);

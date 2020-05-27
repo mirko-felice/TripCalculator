@@ -14,7 +14,7 @@ class StringConverter {
 
     @TypeConverter
     public static List<String> fromString(String string) {
-        return string.isEmpty() ? new ArrayList<>() : Arrays.asList(string.split(SEPARATOR));
+        return string.isEmpty() ? new ArrayList<>() : new ArrayList<>(Arrays.asList(string.split(SEPARATOR)));
     }
 
     @TypeConverter

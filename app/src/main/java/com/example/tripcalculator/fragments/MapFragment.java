@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
@@ -28,6 +27,7 @@ import com.example.tripcalculator.databinding.MapFragmentBinding;
 import com.example.tripcalculator.ui.ActiveTripLocationInfoWindow;
 import com.example.tripcalculator.ui.LocationInfoWindow;
 import com.example.tripcalculator.utility.ShowRoadTask;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.api.IMapController;
@@ -208,7 +208,7 @@ public class MapFragment extends MapViewFragment {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 hasPermissions = true;
             }else{
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
                 builder.setTitle(R.string.permission_denied)
                         .setMessage(R.string.permission_denied_message)
                         .setNeutralButton(R.string.close, (dialog, which) -> {}).show();
@@ -372,7 +372,7 @@ public class MapFragment extends MapViewFragment {
     }
 
     private void showActivateGPSDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle(R.string.gps_title)
                 .setMessage(R.string.gps_message)
                 .setPositiveButton(R.string.settings, (dialog, which) -> setSettingsIntent())

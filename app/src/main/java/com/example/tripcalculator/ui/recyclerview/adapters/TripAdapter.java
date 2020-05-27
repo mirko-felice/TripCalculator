@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -51,7 +50,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     private FragmentActivity activity;
     private List<Trip> trips = new ArrayList<>();
     private List<MaterialCardView> tripCards = new ArrayList<>();
-    private AlertDialog alertDialog;
+    private MaterialAlertDialogBuilder alertDialogBuilder;
     private ActionMode actionMode;
     private TripViewModel tripViewModel;
     private boolean isTripActive;
@@ -61,18 +60,17 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         this.activity = activity;
         this.isTripActive = isTripActive;
         this.isTripPlanned = isTripPlanned;
-        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
+        this.alertDialogBuilder = new MaterialAlertDialogBuilder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
                 .setTitle(R.string.delete_trip_message)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteItems())
                 .setNegativeButton(R.string.no, (dialog, which) -> deselectAllCards())
-                .setOnDismissListener(dialog -> deselectAllCards())
-                .create();
+                .setOnDismissListener(dialog -> deselectAllCards());
     }
 
     @NonNull
     @Override
     public TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View tripView = LayoutInflater.from(activity.getApplicationContext()).inflate(R.layout.trip_view, parent, false);
+        View tripView = LayoutInflater.from(activity).inflate(R.layout.trip_view, parent, false);
         return new TripViewHolder(tripView);
     }
 
@@ -115,11 +113,11 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         });
         card.setOnClickListener(v -> {
             if (trip.IsActive) {
-                Intent activeTripIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
+                Intent activeTripIntent = new Intent(activity, TripActivity.class);
                 activeTripIntent.putExtra(TRIP_ID, trip.TripId);
                 activity.startActivity(activeTripIntent);
             } else {
-                Intent modifyIntent = new Intent(activity.getApplicationContext(), ModifyTripActivity.class);
+                Intent modifyIntent = new Intent(activity, ModifyTripActivity.class);
                 modifyIntent.putExtra(TRIP_ID, trip.TripId);
                 activity.startActivity(modifyIntent);
             }
@@ -127,7 +125,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         holder.setStartText(activity.getString(R.string.start_trip));
         holder.setPlanText(activity.getString(R.string.plan_trip));
         holder.setStartListener(v -> {
-                    Intent startIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
+                    Intent startIntent = new Intent(activity, TripActivity.class);
                     trip.IsActive = true;
                     trip.StartDate = new Date();
                     tripViewModel.updateTrip(trip);
@@ -190,11 +188,11 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     }
 
     private void deleteIntent(Trip trip){
-        AlarmManager alarmManager = (AlarmManager) activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(activity.getApplicationContext(), ReminderReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(activity, ReminderReceiver.class);
         intent.putExtra("TripName", trip.Name);
         intent.putExtra(TRIP_ID, trip.TripId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         if (alarmManager != null) {
             alarmManager.cancel(pendingIntent);
             pendingIntent.cancel();
@@ -241,7 +239,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()){
                 case R.id.delete:
-                    alertDialog.show();
+                    alertDialogBuilder.show();
                     isBackPressed = false;
                     mode.finish();
                     return true;

@@ -24,12 +24,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         listPreference.setOnPreferenceChangeListener((preference, newValue) -> {
             String oldValue = listPreference.getValue();
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
-            builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
-                editor.putString("language", String.valueOf(newValue)).apply();
-                restart();
-            })
+            builder.setTitle(R.string.restart_needed_title)
+                    .setMessage(R.string.restart_needed_message)
+                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
+                        editor.putString("language", String.valueOf(newValue)).apply();
+                        restart();
+                    })
                     .setNegativeButton(R.string.discard, (dialog, which) -> listPreference.setValue(oldValue))
+                    .setCancelable(false)
                     .show();
             return true;
         });
@@ -39,11 +42,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switchPreferenceCompat.setOnPreferenceChangeListener((preference, newValue) -> {
             boolean oldValue = switchPreferenceCompat.isChecked();
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
-            builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
-                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putBoolean("dark_theme", (Boolean) newValue).apply();
-                restart();
-            })
-                    .setNegativeButton(R.string.discard, (dialog, which) -> switchPreferenceCompat.setChecked(oldValue))
+            builder.setTitle(R.string.restart_needed_title)
+                    .setMessage(R.string.restart_needed_message)
+                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putBoolean("dark_theme", (Boolean) newValue).apply();
+                        restart();
+                    })
+                    .setNegativeButton(R.string.discard, (dialog, which) -> {
+                        switchPreferenceCompat.setChecked(oldValue);
+                    })
+                    .setCancelable(false)
                     .show();
            return true;
         });

@@ -167,6 +167,6 @@ public class TripActivity extends BaseActivity {
         } else {
             netSnackbar.show();
         }
-        Utilities.createLocationNotification(getBaseContext(), path.get(index));
+        Utilities.createLocationNotification(this, path.get(index));
     }
 }

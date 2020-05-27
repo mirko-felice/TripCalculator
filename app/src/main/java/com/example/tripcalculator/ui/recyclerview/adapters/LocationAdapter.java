@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,6 +17,7 @@ import com.example.tripcalculator.ui.recyclerview.viewholders.LocationViewHolder
 import com.example.tripcalculator.utility.DialogHelper;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,18 +27,17 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
 
     private List<Location> locations = new ArrayList<>();
     private AppCompatActivity activity;
-    private AlertDialog alertDialog;
+    private MaterialAlertDialogBuilder alertDialogBuilder;
     private Location lastLocationDismiss;
     private int lastLocationDismissPosition;
 
     public LocationAdapter(AppCompatActivity activity) {
         this.activity = activity;
-        this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_DayNight_Dialog)
+        this.alertDialogBuilder = new MaterialAlertDialogBuilder(activity, R.style.Theme_MaterialComponents_DayNight_Dialog)
                 .setTitle(R.string.delete_dialog_title)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteItem())
                 .setNegativeButton(R.string.no, (dialog, which) -> notifyDataSetChanged())
-                .setOnDismissListener(dialog -> notifyDataSetChanged())
-                .create();
+                .setOnDismissListener(dialog -> notifyDataSetChanged());
     }
 
     @NonNull
@@ -83,7 +82,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     public void onItemDismiss(int position) {
         lastLocationDismiss = locations.get(position);
         lastLocationDismissPosition = position;
-        this.alertDialog.show();
+        this.alertDialogBuilder.show();
     }
 
     @Override

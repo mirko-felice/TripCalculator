@@ -57,7 +57,7 @@ public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Locati
                 }
             }
 
-            RoadManager roadManager = new OSRMRoadManager(activity.get().getApplicationContext());
+            RoadManager roadManager = new OSRMRoadManager(activity.get());
             for (int i = 0; i < path.size(); i++) {
                 GeoPoint firstPoint = new GeoPoint(resultPath.get(resultPath.size() - 1).Latitude, resultPath.get(resultPath.size() - 1).Longitude);
                 Location nextLocationToAdd = null;

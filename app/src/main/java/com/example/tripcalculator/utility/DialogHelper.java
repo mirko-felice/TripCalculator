@@ -2,6 +2,7 @@ package com.example.tripcalculator.utility;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,15 +31,17 @@ import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.SummaryFragment;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Objects;
+
+import static android.widget.GridView.AUTO_FIT;
 
 public class DialogHelper {
 
@@ -83,10 +87,17 @@ public class DialogHelper {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(fragment.requireContext());
         View view = View.inflate(fragment.requireContext(), R.layout.photo_view, null);
         builder.setView(view);
+        ((TextView)view.findViewById(R.id.show_images_title)).setText(R.string.images_shown_title);
         GridView gridView = view.findViewById(R.id.grid);
         new ViewModelProvider(fragment.requireActivity()).get(LocationViewModel.class).getLocationFromId(location.Id).observe(fragment.getViewLifecycleOwner(), l -> {
             ImageAdapter adapter = new ImageAdapter(fragment.requireContext(), l.ImgNames);
             gridView.setAdapter(adapter);
+            TextView noImagesView = view.findViewById(R.id.no_images_found_text_view);
+            if (adapter.getCount() == 0){
+                noImagesView.setVisibility(View.VISIBLE);
+                noImagesView.setText(R.string.no_images_found);
+            } else
+                noImagesView.setVisibility(View.GONE);
         });
         LiveData<Trip> tripLiveData = new ViewModelProvider(fragment.requireActivity()).get(TripViewModel.class).getTripFromId(location.TripId);
         tripLiveData.observe(fragment.requireActivity(), trip -> {
@@ -104,7 +115,15 @@ public class DialogHelper {
     public static void showReminder(Location location, SummaryFragment fragment){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(fragment.requireContext());
         builder.setTitle(R.string.show_reminder)
-                .setMessage(location.Note != null && location.Note.length() > 0 ? location.Note : fragment.getString(R.string.no_reminder_message))
+                .setMessage(location.Reminder != null && location.Reminder.length() > 0 ? location.Reminder : fragment.getString(R.string.no_reminder_message))
+                .setNeutralButton(R.string.close, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    public static void showNotes(Location location, SummaryFragment fragment){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(fragment.requireContext());
+        builder.setTitle(R.string.show_notes)
+                .setMessage(location.Note != null && location.Note.length() > 0 ? location.Note : fragment.getString(R.string.no_note_message))
                 .setNeutralButton(R.string.close, (dialog, which) -> dialog.dismiss())
                 .show();
     }
@@ -130,7 +149,7 @@ public class DialogHelper {
     private static void setReminder(FragmentActivity activity, View viewHolder, Location location) {
         TextInputEditText editText = viewHolder.findViewById(R.id.reminder);
         location.Reminder = editText.getText() != null ? editText.getText().toString(): "";
-        Toast.makeText(activity.getApplicationContext(), R.string.reminder_save_message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, R.string.reminder_save_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);
     }
@@ -138,7 +157,7 @@ public class DialogHelper {
     private static void setNote(FragmentActivity activity, View viewHolder, Location location) {
         TextInputEditText editText = viewHolder.findViewById(R.id.note);
         location.Note = editText.getText() != null ? editText.getText().toString(): "";
-        Toast.makeText(activity.getApplicationContext(), R.string.note_message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, R.string.note_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);
     }
@@ -160,6 +179,48 @@ public class DialogHelper {
             return convertView;
         }
     }
+/*
+    private static class ImageAdapter extends BaseAdapter{
+
+        private Context context;
+        private List<String> imageNames;
+
+        ImageAdapter(Context context, List<String> names){
+            this.context = context;
+            this.imageNames = names;
+        }
+
+        @Override
+        public int getCount() {
+            return imageNames.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            return imageNames.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                final LayoutInflater layoutInflater = LayoutInflater.from(context);
+                convertView = layoutInflater.inflate(R.layout.photo_layout, null);
+            }
+            try (InputStream inputStream =  context.getContentResolver().openInputStream(Uri.parse(getItem(position)))){
+                Bitmap bitmap =  BitmapFactory.decodeStream(inputStream);
+                ((ImageView)convertView.findViewById(R.id.photo_preview)).setImageResource(bitmap.);
+            } catch (IOException e) {
+                Log.e("ImageAdapter", e.toString());
+            }
+            return convertView;
+        }
+    }
+*/
 
     private static class ImageAdapter extends ArrayAdapter<String>{
 
@@ -172,7 +233,8 @@ public class DialogHelper {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             if (convertView == null) {
                 convertView = new ImageView(getContext());
-                convertView.setLayoutParams(new GridView.LayoutParams(300,300));
+                float density = Resources.getSystem().getDisplayMetrics().density;
+                convertView.setLayoutParams(new GridView.LayoutParams(AUTO_FIT, (int) (100 * density)));
                 try (InputStream inputStream =  getContext().getContentResolver().openInputStream(Uri.parse(getItem(position)))){
                     Bitmap bitmap =  BitmapFactory.decodeStream(inputStream);
                     ((ImageView) convertView).setImageBitmap(bitmap);

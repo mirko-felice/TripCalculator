@@ -115,4 +115,10 @@
     <string name="remove_plan_title">Remove planning</string>
     <string name="remove_planning_message">Are you sure you want to remove the planning?</string>
     <string name="planning_removed">Planning removed</string>
+    <string name="restart_needed_title">Restart needed</string>
+    <string name="restart_needed_message">Need to restart the app to apply the settings!</string>
+    <string name="no_note_message">You haven\'t add any notes!</string>
+    <string name="images_shown_title">Images taken</string>
+    <string name="no_images_found">No image was taken in this location</string>
+    <string name="photo">Photo taken</string>
 </resources>

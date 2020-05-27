@@ -53,15 +53,15 @@ public class SummaryFragment extends Fragment {
         SummaryAdapter adapter = new SummaryAdapter(this);
         binding.summary.setAdapter(adapter);
         locationViewModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
-        locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), locations -> {
-            if(locations.get(locations.size() - 1).IsPassed){
-                binding.endTripBtn.setVisibility(View.VISIBLE);
-            }
-            adapter.updateLocations(locations);
-        });
+
         TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
         tripLiveData.observe(getViewLifecycleOwner(), trip -> {
+            locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), locations -> {
+                if(locations.get(locations.size() - 1).IsPassed)
+                    binding.endTripBtn.setVisibility(View.VISIBLE);
+                adapter.updateLocations(locations);
+            });
             if(!trip.IsEnded){
                 binding.endTripBtn.setOnClickListener(v -> {
                     trip.IsEnded = true;
@@ -71,7 +71,8 @@ public class SummaryFragment extends Fragment {
                     requireActivity().finish();
                     tripLiveData.removeObservers(getViewLifecycleOwner());
                 });
-            }
+            } else
+                binding.endTripBtn.setVisibility(View.GONE);
         });
         return binding.getRoot();
     }

@@ -33,7 +33,7 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
             showPhoto.setVisibility(View.VISIBLE);
             addNote.setVisibility(View.VISIBLE);
             showReminder.setVisibility(View.VISIBLE);
-        } else{
+        } else {
             modifyReminder.setVisibility(View.VISIBLE);
             showPhoto.setVisibility(View.GONE);
             addNote.setVisibility(View.GONE);
