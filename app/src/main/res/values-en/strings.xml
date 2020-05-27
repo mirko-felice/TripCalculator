@@ -111,4 +111,8 @@
     <string name="next_location_cd">Next Location</string>
     <string name="start_date_label">Start Date: %s</string>
     <string name="end_date_label">End date: %s</string>
+    <string name="remove_plan">Remove planning</string>
+    <string name="remove_plan_title">Remove planning</string>
+    <string name="remove_planning_message">Are you sure you want to remove the planning?</string>
+    <string name="planning_removed">Planning removed</string>
 </resources>

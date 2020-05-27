@@ -1,6 +1,7 @@
 package com.example.tripcalculator.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.tripcalculator.R;
@@ -61,7 +63,18 @@ public class NextTripsFragment extends Fragment {
             }
         });
 
-        //TODO rivedere la pianificazione insieme allo start
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        if (sharedPreferences.contains("TripId")) {
+            int tripId = sharedPreferences.getInt("TripId", -1);
+            sharedPreferences.edit().remove("TripId").apply();
+            TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
+            LiveData<Trip> liveData = tripViewModel.getTripFromId(tripId);
+            liveData.observe(getViewLifecycleOwner(), trip -> {
+                trip.IsPlanned = false;
+                tripViewModel.updateTrip(trip);
+                liveData.removeObservers(getViewLifecycleOwner());
+            });
+        }
 
         viewModel.getAllTrips().observe(getViewLifecycleOwner(), trips -> {
             boolean isTripActive = false;

@@ -111,4 +111,8 @@
     <string name="next_location_cd">Prossima località</string>
     <string name="start_date_label">Data d\'inizio: %s</string>
     <string name="end_date_label">Data di fine: %s</string>
+    <string name="remove_plan">Cancella pianificazione</string>
+    <string name="remove_plan_title">Cancella la pianificazione</string>
+    <string name="remove_planning_message">Sei sicuro di voler rimuovere la pianificazione?</string>
+    <string name="planning_removed">Pianificazione cancellata</string>
 </resources>

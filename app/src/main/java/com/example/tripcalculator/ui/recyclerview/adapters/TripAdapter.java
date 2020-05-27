@@ -1,6 +1,9 @@
 package com.example.tripcalculator.ui.recyclerview.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.view.ActionMode;
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.ModifyTripActivity;
 import com.example.tripcalculator.activities.TripActivity;
+import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.PlanningFragment;
@@ -30,6 +34,8 @@ import com.example.tripcalculator.ui.recyclerview.viewholders.TripViewHolder;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +57,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     private boolean isTripActive;
     private boolean isTripPlanned;
 
-    //TODO controlli
     public TripAdapter(FragmentActivity activity, boolean isTripActive, boolean isTripPlanned) {
         this.activity = activity;
         this.isTripActive = isTripActive;
@@ -128,13 +133,24 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                     tripViewModel.updateTrip(trip);
                     startIntent.putExtra(TRIP_ID, trip.TripId);
                     activity.startActivity(startIntent);
+                    if (trip.IsPlanned)
+                        deleteIntent(trip);
                 }
         );
         holder.setPlanListener(v -> {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                new PlanningFragment(trip).show(activity.getSupportFragmentManager(), "plan");
-            else
-                showAlertDialog();
+            if (!trip.IsPlanned) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    new PlanningFragment(trip).show(activity.getSupportFragmentManager(), "plan");
+                else
+                    showAlertDialog();
+            } else {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
+                builder.setTitle(R.string.remove_plan_title)
+                        .setMessage(R.string.remove_planning_message)
+                        .setPositiveButton(R.string.yes, (dialog, which) -> deleteIntent(trip))
+                        .setNegativeButton(R.string.no, (dialog, which) -> {})
+                        .show();
+            }
         });
 
         LiveData<List<Location>> locationLiveData = new ViewModelProvider(activity).get(LocationViewModel.class).getLocationsFromTrip(trip.TripId);
@@ -150,13 +166,15 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         });
         if (isTripActive) {
             holder.setStartEnabled(false);
-        }
-        if (trip.IsActive) {
             holder.setPlanEnabled(false);
         }
-        if(isTripPlanned){
-            //BadgeUtils.attachBadgeDrawable(BadgeDrawable.create(activity), holder.itemView.findViewById(R.id.plan_trip_btn),null);
-            holder.setPlanEnabled(false);
+        if (isTripPlanned) {
+            if (!trip.IsPlanned) {
+                holder.setStartEnabled(false);
+                holder.setPlanEnabled(false);
+            } else {
+                holder.setPlanText(activity.getString(R.string.remove_plan));
+            }
         }
     }
 
@@ -169,6 +187,22 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         this.trips = trips;
         this.tripCards.clear();
         notifyDataSetChanged();
+    }
+
+    private void deleteIntent(Trip trip){
+        AlarmManager alarmManager = (AlarmManager) activity.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(activity.getApplicationContext(), ReminderReceiver.class);
+        intent.putExtra("TripName", trip.Name);
+        intent.putExtra(TRIP_ID, trip.TripId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity.getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
+        trip.IsPlanned = false;
+        TripViewModel tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
+        tripViewModel.updateTrip(trip);
+        Snackbar.make(activity.findViewById(R.id.coordinator_layout), R.string.planning_removed, Snackbar.LENGTH_LONG).show();
     }
 
     private void deleteItems(){

@@ -59,10 +59,11 @@ public class PlanningFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(requireContext(), ReminderReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) requireActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(requireActivity().getApplicationContext(), ReminderReceiver.class);
         intent.putExtra("TripName", trip.Name);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
+        intent.putExtra("TripId", trip.TripId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireActivity().getApplicationContext(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         binding.toolbar.setNavigationOnClickListener(v -> dismiss());
         binding.toolbar.setTitle(R.string.plan_trip_title);
         binding.toolbar.inflateMenu(R.menu.plan);
@@ -73,8 +74,7 @@ public class PlanningFragment extends DialogFragment {
             timeToSet.set(Calendar.HOUR_OF_DAY, hourToSet.get(Calendar.HOUR_OF_DAY));
             timeToSet.set(Calendar.MINUTE, hourToSet.get(Calendar.MINUTE));
             if(alarmManager != null) {
-                //TODO creazione allarme
-                alarmManager.setExact(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
+                alarmManager.set(AlarmManager.RTC, timeToSet.getTimeInMillis(), pendingIntent);
                 trip.IsPlanned = true;
                 new ViewModelProvider(requireActivity()).get(TripViewModel.class).updateTrip(trip);
             }
