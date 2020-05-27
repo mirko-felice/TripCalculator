@@ -90,4 +90,21 @@
     <string name="mod_reminder">Set Reminder</string>
     <string name="no_reminder_message">No reminder setted!</string>
     <string name="no_connection">No connection!</string>
+    <string name="no_internet">No Connection</string>
+    <string name="version_error">Your Android version doesn\'t allow to plan, sorry.</string>
+    <string name="delete_dialog_title">Are you sure to delete the location?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="permission_denied">Permissions denied!</string>
+    <string name="permission_denied_message">Your position can\'t be seen into the map! Arrival will have to be indicated manually! To give permissions click on GPS icon on your right!</string>
+    <string name="position_not_found">Impossible to get your position</string>
+    <string name="gps_title">GPS disabled!</string>
+    <string name="gps_message">Do you want to enable GPS?</string>
+    <string name="alert">Caution</string>
+    <string name="no_name_error">Your trip hasn\'t a name, give it one!</string>
+    <string name="location_error">Your trip can\'t start until you insert at least 2 locations!</string>
+    <string name="save_message">You\'re going back, do you want to save changes to your trip?</string>
+    <string name="internet_error">It\'s impossible to use map withour internet connection!</string>
+    <string name="delete_trip_message">Are you sure to deletw selected trips?</string>
+    <string name="delete_trips">Delete Trips</string>
 </resources>

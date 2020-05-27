@@ -32,7 +32,7 @@ public class SearchActivity extends BaseActivity {
     private static final String TRIP_ID = "TripId";
     private SearchView searchView;
     //permission vars
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
 
     //tripId
     private int tripId = -1;

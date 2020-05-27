@@ -90,8 +90,21 @@
     <string name="diary_hint">Scrivi il diario del tuo viaggio</string>
     <string name="version_error">La tua versione di Android non permette la pianificazione, ci dispiace.</string>
     <string name="delete_dialog_title">Sei sicuro di voler eliminare la destinazione?</string>
-    <string name="yes">SI</string>
-    <string name="No">NO</string>
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
     <string name="no_reminder_message">Promemoria assente!</string>
     <string name="no_connection">Connessione a internet assente!</string>
+    <string name="permission_denied">Permessi negati!</string>
+    <string name="position_not_found">Impossibile ottenere la posizione</string>
+    <string name="gps_title">GPS disattivato!</string>
+    <string name="gps_message">Vuoi attivare il GPS?</string>
+    <string name="alert">Attenzione</string>
+    <string name="no_name_error">Il tuo viaggio non ha un nome, dagliene uno!</string>
+    <string name="location_error">Il tuo viaggio non può iniziare se non inserisci almeno 2 località!</string>
+    <string name="save_message">Stai per tornare indietro, vuoi salvare le modifiche al tuo viaggio?</string>
+    <string name="internet_error">Impossibile utilizzare la mappa senza l\'accesso ad internet!</string>
+    <string name="delete_trip_message">Sei sicuro di voler eliminare i viaggi selezionati?</string>
+    <string name="delete_trips">Elimina Viaggi</string>
+    <string name="no_internet">Connessione assente</string>
+    <string name="permission_denied_message">La tua posizione non può essere visualizzata sulla mappa!  L\'arrivo dovrà essere indicato manualmente!  Per fornire i permessi cliccare sul simbolo del GPS sulla sua destra!</string>
 </resources>

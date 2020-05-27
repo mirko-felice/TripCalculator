@@ -52,8 +52,8 @@ public class TripActivity extends BaseActivity {
         Intent intent = getIntent();
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        netSnackbar = Snackbar.make(binding.getRoot(), "No Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Impostazioni", (v) -> InternetUtility.setNetSettingsIntent(this));
+        netSnackbar = Snackbar.make(binding.getRoot(), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.settings, (v) -> InternetUtility.setNetSettingsIntent(this));
         LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
         loader.show(getSupportFragmentManager(), "loader");
 

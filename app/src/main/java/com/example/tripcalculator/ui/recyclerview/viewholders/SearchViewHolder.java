@@ -2,7 +2,6 @@ package com.example.tripcalculator.ui.recyclerview.viewholders;
 
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;

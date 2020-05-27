@@ -41,7 +41,7 @@ public class SplashActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
          if (requestCode == REQUEST_INTERNET_PERMISSION) {
              if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                 Snackbar.make(findViewById(R.id.snackbar_layout), "Impossibile utilizzare la mappa senza l'accesso ad internet!", Snackbar.LENGTH_LONG).show();
+                 Snackbar.make(findViewById(R.id.snackbar_layout), R.string.internet_error, Snackbar.LENGTH_LONG).show();
              }
          }
     }

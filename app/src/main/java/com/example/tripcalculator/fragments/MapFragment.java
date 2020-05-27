@@ -184,7 +184,7 @@ public class MapFragment extends MapViewFragment {
         }
     }
 
-    public void showAllMarkers() {
+    private void showAllMarkers() {
         ArrayList<GeoPoint> points = new ArrayList<>();
         for (Marker marker : markers){
             points.add(marker.getPosition());
@@ -209,10 +209,8 @@ public class MapFragment extends MapViewFragment {
                 hasPermissions = true;
             }else{
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle("Permessi negati!")
-                        .setMessage("La tua posizione non può essere visualizzata sulla mappa!\n" +
-                                "L'arrivo dovrà essere indicato manualmente!\n" +
-                                "Per fornire i permessi cliccare sul simbolo del GPS sulla sua destra!" )
+                builder.setTitle(R.string.permission_denied)
+                        .setMessage(R.string.permission_denied_message)
                         .setNeutralButton(R.string.close, (dialog, which) -> {}).show();
             }
         }
@@ -290,7 +288,7 @@ public class MapFragment extends MapViewFragment {
                     if (path == null)
                         createRequest(mLocationOverlay.getMyLocation().getLatitude() + " " + mLocationOverlay.getMyLocation().getLongitude());
                 } else {
-                    Snackbar.make(requireActivity().findViewById(R.id.map_fragment), "Impossibile ottenere la posizione", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(requireActivity().findViewById(R.id.map_fragment), R.string.position_not_found, Snackbar.LENGTH_LONG).show();
                 }
             } else
                 showActivateGPSDialog();
@@ -375,8 +373,8 @@ public class MapFragment extends MapViewFragment {
 
     private void showActivateGPSDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("GPS disattivato!")
-                .setMessage("Vuoi attivare il GPS?")
+        builder.setTitle(R.string.gps_title)
+                .setMessage(R.string.gps_message)
                 .setPositiveButton(R.string.settings, (dialog, which) -> setSettingsIntent())
                 .setNegativeButton(R.string.close, (dialog, which) -> {}).show();
     }

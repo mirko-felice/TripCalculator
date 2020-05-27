@@ -12,6 +12,7 @@ import com.google.android.material.card.MaterialCardView;
 public class PastTripsViewHolder extends RecyclerView.ViewHolder {
 
     private MaterialCardView trip;
+
     public PastTripsViewHolder(@NonNull View itemView) {
         super(itemView);
         trip = itemView.findViewById(R.id.past_trips_card);

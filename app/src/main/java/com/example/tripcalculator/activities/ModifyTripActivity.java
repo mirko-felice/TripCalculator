@@ -16,20 +16,17 @@ import com.example.tripcalculator.R;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.ActivityModifyTripBinding;
-import com.example.tripcalculator.ui.recyclerview.adapters.TripItemTouchHelper;
 import com.example.tripcalculator.ui.recyclerview.adapters.LocationAdapter;
+import com.example.tripcalculator.ui.recyclerview.adapters.TripItemTouchHelper;
 import com.example.tripcalculator.utility.IOptimizeCallback;
 import com.example.tripcalculator.utility.PathOptimizingTask;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class ModifyTripActivity extends BaseActivity implements IOptimizeCallback {
 
@@ -133,16 +130,16 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
 
     private void showAlertDialog() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle("Attenzione");
-        builder.setMessage("Il tuo viaggio non ha un nome, dagliene uno!");
+        builder.setTitle(R.string.alert);
+        builder.setMessage(R.string.no_name_error);
         builder.setPositiveButton("OK", null);
         builder.show();
     }
 
     private void showStartDialog() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle("Attenzione");
-        builder.setMessage("Il tuo viaggio non può iniziare se non inserisci almeno 2 località!");
+        builder.setTitle(R.string.alert);
+        builder.setMessage(R.string.location_error);
         builder.setPositiveButton("OK", null);
         builder.show();
     }
@@ -151,29 +148,18 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
         if(binding.tripName.getText() != null && !binding.tripName.getText().toString().equals("")) {
             this.trip.Name = binding.tripName.getText().toString();
             tripViewModel.updateTrip(trip);
-            /*Snackbar snackbar = Snackbar.make(binding.getRoot(), getString(R.string.save_changes), 400);
-            snackbar.setAnchorView(binding.addLocationBtn);
-            snackbar.show();
-            snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                @Override
-                public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
-                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
-                        finish();
-                }
-            });*/
         }
     }
 
     private void showDialog(){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle("Attenzione");
-        builder.setMessage("Stai per tornare indietro, vuoi salvare le modifiche al tuo viaggio?");
-        builder.setPositiveButton("Si", (dialog, which) -> {
+        builder.setTitle(R.string.alert);
+        builder.setMessage(R.string.save_message);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             saveChanges();
             finish();
         });
-        builder.setNegativeButton("No", (dialog, which) -> super.onBackPressed());
+        builder.setNegativeButton(R.string.no, (dialog, which) -> super.onBackPressed());
         builder.show();
     }
 

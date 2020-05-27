@@ -41,6 +41,7 @@ import java.util.Objects;
 
 public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
+    private static final String TRIP_ID = "TripId";
     private FragmentActivity activity;
     private List<Trip> trips = new ArrayList<>();
     private List<MaterialCardView> tripCards = new ArrayList<>();
@@ -56,9 +57,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         this.isTripActive = isTripActive;
         this.isTripPlanned = isTripPlanned;
         this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
-                .setTitle("Sei sicuro di voler eliminare i viaggi selezionati?")
-                .setPositiveButton("SI", (dialog, which) -> deleteItems())
-                .setNegativeButton("NO", (dialog, which) -> deselectAllCards())
+                .setTitle(R.string.delete_trip_message)
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteItems())
+                .setNegativeButton(R.string.no, (dialog, which) -> deselectAllCards())
                 .setOnDismissListener(dialog -> deselectAllCards())
                 .create();
     }
@@ -90,7 +91,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 if (actionMode == null) {
                     card.setChecked(!card.isChecked());
                     actionMode = activity.startActionMode(new TripActionModeCallback());
-                    Objects.requireNonNull(actionMode).setTitle("Elimina Viaggi");
+                    Objects.requireNonNull(actionMode).setTitle(R.string.delete_trips);
                 } else {
                     int countChecked = 0;
                     card.setChecked(!card.isChecked());
@@ -110,11 +111,11 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         card.setOnClickListener(v -> {
             if (trip.IsActive) {
                 Intent activeTripIntent = new Intent(activity.getApplicationContext(), TripActivity.class);
-                activeTripIntent.putExtra("TripId", trip.TripId);
+                activeTripIntent.putExtra(TRIP_ID, trip.TripId);
                 activity.startActivity(activeTripIntent);
             } else {
                 Intent modifyIntent = new Intent(activity.getApplicationContext(), ModifyTripActivity.class);
-                modifyIntent.putExtra("TripId", trip.TripId);
+                modifyIntent.putExtra(TRIP_ID, trip.TripId);
                 activity.startActivity(modifyIntent);
             }
         });
@@ -125,7 +126,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                     trip.IsActive = true;
                     trip.StartDate = new Date();
                     tripViewModel.updateTrip(trip);
-                    startIntent.putExtra("TripId", trip.TripId);
+                    startIntent.putExtra(TRIP_ID, trip.TripId);
                     activity.startActivity(startIntent);
                 }
         );

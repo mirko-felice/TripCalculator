@@ -1,7 +1,6 @@
 package com.example.tripcalculator.ui;
 
 import android.app.Activity;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.tripcalculator.R;

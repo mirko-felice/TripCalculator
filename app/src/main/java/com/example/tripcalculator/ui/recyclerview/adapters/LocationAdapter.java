@@ -35,7 +35,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
         this.alertDialog = new AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_DayNight_Dialog)
                 .setTitle(R.string.delete_dialog_title)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteItem())
-                .setNegativeButton(R.string.No, (dialog, which) -> notifyDataSetChanged())
+                .setNegativeButton(R.string.no, (dialog, which) -> notifyDataSetChanged())
                 .setOnDismissListener(dialog -> notifyDataSetChanged())
                 .create();
     }
