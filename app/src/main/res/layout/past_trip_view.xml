@@ -15,26 +15,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="12dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/past_trip_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
+                android:layout_marginBottom="4dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
 
             <TextView
                 android:id="@+id/past_trip_start_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"/>
 
             <TextView
                 android:id="@+id/past_trip_end_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"/>
 
         </LinearLayout>
 

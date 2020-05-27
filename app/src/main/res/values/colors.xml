@@ -8,4 +8,6 @@
   <color name="secondaryDarkColor">#0086c3</color>
   <color name="white">#ffffff</color>
   <color name="black">#000000</color>
+  <color name="cardNight">#478047</color>
+  <color name="cardNotNight">#9575CD</color>
 </resources>

@@ -14,6 +14,6 @@
         android:textAlignment="textStart"
         android:layout_margin="0dp"
         app:icon="@drawable/ic_result"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         />
 </LinearLayout>

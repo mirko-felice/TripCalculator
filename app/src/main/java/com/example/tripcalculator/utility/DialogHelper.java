@@ -93,6 +93,7 @@ public class DialogHelper {
             if (!trip.IsActive){
                 view.findViewById(R.id.add_photo_btn).setVisibility(View.GONE);
             } else {
+                view.findViewById(R.id.add_photo_btn).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.add_photo_btn).setOnClickListener(v -> fragment.takePhoto(location));
             }
             tripLiveData.removeObservers(fragment.requireActivity());

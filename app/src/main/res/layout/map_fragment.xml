@@ -27,6 +27,11 @@
         android:src="@drawable/ic_enable_rotation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         android:visibility="gone" />
 
     <ImageButton
@@ -35,6 +40,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/disable_rotation"
         android:src="@drawable/ic_disable_rotation"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/enable_rotation_btn" />
 
@@ -44,6 +54,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/show_all_markers"
         android:src="@drawable/ic_zoom_markers"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/disable_rotation_btn" />
 
@@ -53,6 +68,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/check_my_position"
         android:src="@drawable/ic_gps_off"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/zoom_out_btn" />
 
@@ -62,6 +82,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/show_my_position"
         android:src="@drawable/ic_gps_on"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/check_position_btn"
         android:visibility="gone"/>
@@ -72,6 +97,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/rotate_to_north"
         android:src="@drawable/ic_rotate_north"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_position_btn" />
 
@@ -81,6 +111,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/clear_all_markers"
         android:src="@drawable/ic_delete"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/to_north_btn" />
 

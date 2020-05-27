@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.SearchActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.ListFragmentBinding;
@@ -30,7 +31,7 @@ public class SearchResultFragment extends MapViewFragment {
         adapter = new SearchAdapter(requireContext(), (SearchActivity) requireActivity());
 
         binding.itemsList.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.itemsList.setBackgroundColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? Color.BLACK : Color.WHITE);
+        binding.itemsList.setBackgroundColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? requireActivity().getResources().getColor(R.color.primaryLightColor) : Color.WHITE);
         binding.itemsList.setAdapter(adapter);
         return binding.getRoot();
     }

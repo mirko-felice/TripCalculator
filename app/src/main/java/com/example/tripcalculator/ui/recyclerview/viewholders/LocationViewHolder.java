@@ -33,4 +33,8 @@ public class LocationViewHolder extends RecyclerView.ViewHolder {
     public void setDividerVisibility(int visibility){
         itemView.findViewById(R.id.divider).setVisibility(visibility);
     }
+
+    public void setDividerColor(int color){
+        itemView.findViewById(R.id.divider).setBackgroundColor(color);
+    }
 }

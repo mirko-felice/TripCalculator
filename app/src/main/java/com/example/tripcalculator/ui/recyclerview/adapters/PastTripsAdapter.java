@@ -47,7 +47,7 @@ public class PastTripsAdapter extends RecyclerView.Adapter<PastTripsViewHolder> 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", PreferenceManager.getDefaultSharedPreferences(inflater.getContext()).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
         assert trip.StartDate != null;
         assert trip.EndDate != null;
-        holder.setData(trip.Name, dateFormat.format(trip.StartDate), dateFormat.format(trip.EndDate), v -> {
+        holder.setData(trip.Name, inflater.getContext().getString(R.string.start_date_label, dateFormat.format(trip.StartDate)), inflater.getContext().getString(R.string.end_date_label, dateFormat.format(trip.EndDate)), v -> {
             Intent intent = new Intent(inflater.getContext(), TripActivity.class);
             intent.putExtra("TripId", trip.TripId);
             inflater.getContext().startActivity(intent);

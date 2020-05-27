@@ -1,5 +1,6 @@
 package com.example.tripcalculator.ui.recyclerview.adapters;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     @NonNull
     @Override
     public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View locationView = LayoutInflater.from(activity.getApplicationContext()).inflate(R.layout.location_view, parent, false);
+        View locationView = LayoutInflater.from(activity).inflate(R.layout.location_view, parent, false);
         return new LocationViewHolder(locationView);
     }
 
@@ -53,8 +54,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
         holder.setName(location.DisplayName);
         holder.setReminderListener(v -> DialogHelper.showSetReminderDialog(location, activity));
         holder.setPreviousListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
-
-        holder.itemView.findViewById(R.id.divider).setBackgroundColor(activity.getResources().getColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? R.color.white : R.color.black));
+        holder.setDividerColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? Color.WHITE : Color.BLACK);
         if (position > 0) {
             holder.setDividerVisibility(View.GONE);
         } else {

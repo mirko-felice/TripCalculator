@@ -18,7 +18,7 @@
     <string name="next_location">Località successiva</string>
     <string name="add_reminder">Aggiungi Promemoria</string>
     <string name="set_previous">Imposta Precedente</string>
-    <string name="locations_list_label">Lista delle destinazioni</string>
+    <string name="locations_list_label">Lista delle Destinazioni</string>
     <string name="save_changes_title">Salva Modifiche</string>
     <string name="optimize_trip">Ottimizza il percorso</string>
     <string name="summary_label">Riepilogo Del Viaggio</string>
@@ -106,4 +106,8 @@
     <string name="delete_trip_message">Sei sicuro di voler eliminare i viaggi selezionati?</string>
     <string name="delete_trips">Elimina Viaggi</string>
     <string name="no_internet">Connessione assente</string>
+    <string name="previous_location">Località precedente</string>
+    <string name="next_location_cd">Prossima località</string>
+    <string name="start_date_label">Data d\'inizio: %s</string>
+    <string name="end_date_label">Data di fine: %s</string>
 </resources>

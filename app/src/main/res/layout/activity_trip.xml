@@ -21,12 +21,13 @@
                 android:id="@+id/slide_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="TODO"
-                android:src="@drawable/ic_left"
+                android:contentDescription="@string/previous_location"
+                android:background="@drawable/ic_left"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+<!--           TODO secondo me meglio senza frecce-->
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/location_view_pager"
                 android:layout_width="0dp"
@@ -40,12 +41,13 @@
                 android:id="@+id/slide_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="TODO"
-                android:src="@drawable/ic_right"
+                android:contentDescription="@string/next_location_cd"
+                android:background="@drawable/ic_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_layout"
             android:layout_width="match_parent"

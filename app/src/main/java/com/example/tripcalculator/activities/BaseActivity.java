@@ -24,7 +24,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(isDarkTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
     }
 
-
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);

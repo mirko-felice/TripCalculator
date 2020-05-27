@@ -44,6 +44,7 @@ public class TripActivity extends BaseActivity {
     private List<Location> path;
     private LocationViewModel locationViewModel;
 
+    //TODO inserire "data inizio" e "data fine"
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +98,14 @@ public class TripActivity extends BaseActivity {
                 fragmentManager.beginTransaction()
                         .add(R.id.fragment_layout, mapFragment)
                         .commit();
-
-                viewPager.setUserInputEnabled(false);
+                viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        super.onPageSelected(position);
+                        if(mapFragment.isVisible())
+                            mapFragment.focusOn(locations.get(position));
+                    }
+                });
                 viewPager.setVisibility(View.VISIBLE);
                 for (Location location: locations){
                     if(!location.IsPassed){
@@ -160,6 +167,6 @@ public class TripActivity extends BaseActivity {
         } else {
             netSnackbar.show();
         }
-        Utilities.createLocationNotification(getApplicationContext(), path.get(index));
+        Utilities.createLocationNotification(getBaseContext(), path.get(index));
     }
 }

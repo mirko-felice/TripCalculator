@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.ViewCompat;
+
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Location;
@@ -16,7 +19,6 @@ public class ActiveTripLocationInfoWindow extends MarkerInfoWindow {
     public ActiveTripLocationInfoWindow(MapView mapView, int myIndex, Location location, Activity activeTripActivity) {
         super(R.layout.active_trip_location_infowindow, mapView);
         TripActivity tripActivity = (TripActivity) activeTripActivity;
-
         String title = (myIndex + 1) + ". " + location.DisplayName;
         ((TextView)mView.findViewById(R.id.active_trip_location_title)).setText(title);
         String latitude = tripActivity.getString(R.string.latitude_n, location.Latitude);
