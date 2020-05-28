@@ -20,7 +20,7 @@
     <string name="set_previous">Imposta Precedente</string>
     <string name="locations_list_label">Lista delle Destinazioni</string>
     <string name="save_changes_title">Salva Modifiche</string>
-    <string name="optimize_trip">Ottimizza il percorso</string>
+    <string name="optimize_trip">Ottimizza</string>
     <string name="summary_label">Riepilogo Del Viaggio</string>
     <string name="add_photo">"Allega Foto"</string>
     <string name="mod_reminder">Modifica Promemoria</string>
@@ -82,7 +82,7 @@
     <string name="location_passed">Località superata!</string>
     <string name="splash_screen">Splash Screen</string>
     <string name="start_trip_label">Inizia il viaggio</string>
-    <string name="start_error">Per poter partire il viaggio deve avere almeno 2 località.</string>
+    <string name="start_error">Per poter partire, il viaggio deve avere almeno 2 località.</string>
     <string name="dark_theme">Tema Scuro</string>
     <string name="language">Lingua</string>
     <string name="hour_format">Formato 24 ore</string>
@@ -120,4 +120,9 @@
     <string name="images_shown_title">Immagini scattate</string>
     <string name="no_images_found">Nessuna immagine scattata per questa località</string>
     <string name="photo">Foto scattata</string>
+    <string name="view_photo">Guarda Galleria</string>
+    <string name="active_trip">Viaggio Attivo:</string>
+    <string name="other_trips">Altri Viaggi:</string>
+    <string name="active_trip_error">Il viaggio non può partire, perchè ne hai già uno attivo!</string>
+    <string name="planned_trip_error">Il viaggio non può partire perchè ne hai già pianificato uno!</string>
 </resources>

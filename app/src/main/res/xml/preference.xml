@@ -7,7 +7,7 @@
         <SwitchPreferenceCompat
             app:title="@string/dark_theme"
             app:key="dark_theme"
-            app:icon="@drawable/ic_theme"
+            app:icon="@drawable/ic_dark_theme"
             app:defaultValue="true" />
 
         <ListPreference

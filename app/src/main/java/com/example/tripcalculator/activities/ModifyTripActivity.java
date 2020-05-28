@@ -36,7 +36,7 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     private TripViewModel tripViewModel;
     private LocationViewModel locationViewModel;
     private LocationAdapter adapter;
-    private boolean canStart;
+    private boolean hasTwoLocations, isAnyActive, isAnyPlanned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +63,11 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
             LiveData<List<Location>> listLiveData = locationViewModel.getLocationsFromTrip(trip.TripId);
             listLiveData.observe(this, locations -> {
                 if (locations.size() == 0){
-                    canStart = false;
+                    hasTwoLocations = false;
                     binding.startingLocationLabel.setVisibility(View.GONE);
                     binding.addLocationBtn.setText(getString(R.string.add_start_point));
                 } else {
-                    canStart = locations.size() > 1;
+                    hasTwoLocations = locations.size() > 1;
                     adapter.updateLocations(locations);
                     binding.startingLocationLabel.setVisibility(View.VISIBLE);
                     binding.addLocationBtn.setText(getString(R.string.add_location));
@@ -81,7 +81,7 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
 
         binding.addLocationBtn.setOnClickListener(v -> startActivity(searchIntent));
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TripItemTouchHelper(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT, adapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TripItemTouchHelper(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT, adapter));
         itemTouchHelper.attachToRecyclerView(binding.locations);
 
         setContentView(binding.getRoot());
@@ -97,17 +97,32 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.start_trip){
             saveChanges();
-            if (canStart) {
-                Intent intent = new Intent(this, TripActivity.class);
-                intent.putExtra(TRIP_ID, trip.TripId);
-                trip.IsActive = true;
-                trip.StartDate = new Date();
-                tripViewModel.updateTrip(trip);
-                startActivity(intent);
-                finish();
-            } else {
-                showStartDialog();
-            }
+            LiveData<Trip> activeTrip = tripViewModel.getActiveTrip();
+            LiveData<Trip> plannedTrip = tripViewModel.getPlannedTrip();
+
+            activeTrip.observe(this, trip1 -> {
+                isAnyActive = trip1 != null;
+                activeTrip.removeObservers(this);
+                plannedTrip.observe(this, trip -> {
+                    isAnyPlanned = trip != null;
+                    plannedTrip.removeObservers(this);
+                    if (hasTwoLocations && !isAnyActive && !isAnyPlanned) {
+                        Intent intent = new Intent(this, TripActivity.class);
+                        intent.putExtra(TRIP_ID, this.trip.TripId);
+                        this.trip.IsActive = true;
+                        this.trip.StartDate = new Date();
+                        tripViewModel.updateTrip(this.trip);
+                        startActivity(intent);
+                        finish();
+                    } else if(!hasTwoLocations){
+                        showStartDialog();
+                    } else if(isAnyActive){
+                        showActiveDialog();
+                    } else {
+                        showPlannedDialog();
+                    }
+                });
+            });
             return true;
         } else if(item.getItemId() == android.R.id.home){
             this.onBackPressed();
@@ -126,6 +141,22 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
             tripViewModel.updateTrip(trip);
             super.onBackPressed();
         }
+    }
+
+    private void showActiveDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle(R.string.alert);
+        builder.setMessage(R.string.active_trip_error);
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
+    private void showPlannedDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle(R.string.alert);
+        builder.setMessage(R.string.planned_trip_error);
+        builder.setPositiveButton("OK", null);
+        builder.show();
     }
 
     private void showAlertDialog() {

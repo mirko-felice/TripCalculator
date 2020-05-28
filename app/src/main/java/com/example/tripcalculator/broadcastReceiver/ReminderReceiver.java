@@ -54,7 +54,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         Notification n = builder.setAutoCancel(true)
                 .setContentTitle(title)
                 .setTicker(title + "\n" + message)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_app_round)
                 .setLargeIcon(null)
                 .setShowWhen(true)
                 .setContentText(message)

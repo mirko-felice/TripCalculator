@@ -40,6 +40,10 @@ public class TripViewModel extends AndroidViewModel {
         return repo.getTripFromId(tripId);
     }
 
+    public LiveData<Trip> getPlannedTrip() {
+        return repo.getPlannedTrip();
+    }
+
     public void insertTrip(Trip trip){
         repo.insertTrip(trip);
     }
@@ -51,4 +55,6 @@ public class TripViewModel extends AndroidViewModel {
     public void deleteTrip(Trip trip){
         repo.deleteTrip(trip);
     }
+
+
 }

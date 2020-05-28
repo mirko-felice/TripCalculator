@@ -21,7 +21,12 @@
 
     <style name="Card" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/location_selector</item>
-        <item name="cardElevation">8dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <style name="MaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="TimePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">

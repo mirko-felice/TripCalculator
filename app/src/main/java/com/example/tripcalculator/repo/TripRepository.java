@@ -38,6 +38,10 @@ public class TripRepository {
         return tripDao.getTripFromId(tripId);
     }
 
+    public LiveData<Trip> getPlannedTrip() {
+        return tripDao.getPlannedTrip();
+    }
+
     public void insertTrip(Trip trip){
         AppDatabase.databaseWriteExecutor.execute(() -> tripDao.insertTrip(trip));
     }

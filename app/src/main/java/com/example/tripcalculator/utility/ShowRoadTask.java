@@ -89,6 +89,7 @@ public class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
                 map.getOverlays().add(roadToDoOverlay);
             }
             mapFragment.get().setPathLocationMarkers();
+            map.performClick();
         }
         loaderFragment.dismiss();
     }

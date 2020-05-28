@@ -2,8 +2,6 @@ package com.example.tripcalculator.activities;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +11,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public abstract class BaseActivity extends AppCompatActivity {
 

@@ -71,7 +71,7 @@ public class Utilities {
         Notification n = builder.setAutoCancel(true)
                 .setContentTitle(context.getString(R.string.arrival_title, location.DisplayName))
                 .setTicker(context.getString(R.string.ticker_reminder, location.DisplayName, message))
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_app_round)
                 .setLargeIcon(null)
                 .setShowWhen(true)
                 .setContentText(message)

@@ -1,6 +1,5 @@
 package com.example.tripcalculator.ui.recyclerview.adapters;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-
 public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
 
     private static final String TRIP_ID = "TripId";
@@ -60,7 +59,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         this.activity = activity;
         this.isTripActive = isTripActive;
         this.isTripPlanned = isTripPlanned;
-        this.alertDialogBuilder = new MaterialAlertDialogBuilder(activity, R.style.Theme_MaterialComponents_Light_Dialog)
+        this.alertDialogBuilder = new MaterialAlertDialogBuilder(activity, R.style.Theme_MaterialComponents_DayNight_Dialog)
                 .setTitle(R.string.delete_trip_message)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteItems())
                 .setNegativeButton(R.string.no, (dialog, which) -> deselectAllCards())
@@ -74,7 +73,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         return new TripViewHolder(tripView);
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         Trip trip = trips.get(position);
@@ -83,11 +81,30 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         MaterialCardView card = holder.getCard();
         tripCards.add(card);
         holder.setName(trip.Name);
-        if (trip.IsActive) {
-            holder.setTripInfoVisibility(View.VISIBLE);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", PreferenceManager.getDefaultSharedPreferences(activity).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
-            assert trip.StartDate != null;
-            holder.setTripInfo(dateFormat.format(trip.StartDate));
+        if (trips.get(0).IsActive){
+            if (trip.IsActive) {
+                holder.setActiveTripVisibility(View.VISIBLE);
+                holder.setOtherTripsVisibility(View.GONE);
+                card.setCardBackgroundColor(activity.getResources().getColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? R.color.cardNight : R.color.cardNotNight));
+                holder.setTripInfoVisibility(View.VISIBLE);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", PreferenceManager.getDefaultSharedPreferences(activity).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
+                assert trip.StartDate != null;
+                holder.setTripInfo(activity.getString(R.string.start_date_label, dateFormat.format(trip.StartDate)));
+            } else if (position == 1) {
+                holder.setActiveTripVisibility(View.GONE);
+                holder.setOtherTripsVisibility(View.VISIBLE);
+            } else {
+                holder.setActiveTripVisibility(View.GONE);
+                holder.setOtherTripsVisibility(View.GONE);
+            }
+        } else {
+            if (position == 0){
+                holder.setActiveTripVisibility(View.GONE);
+                holder.setOtherTripsVisibility(View.VISIBLE);
+            } else {
+                holder.setActiveTripVisibility(View.GONE);
+                holder.setOtherTripsVisibility(View.GONE);
+            }
         }
         card.setOnLongClickListener(v -> {
             if (!trip.IsActive) {

@@ -12,7 +12,7 @@ import com.google.android.material.card.MaterialCardView;
 
 public class TripViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView trip_info;
+    private TextView trip_info, active_trip, other_trips;
     private MaterialCardView card;
     private Button start_trip_btn, plan_trip_btn;
 
@@ -22,6 +22,8 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
         start_trip_btn = itemView.findViewById(R.id.start_trip_btn);
         plan_trip_btn = itemView.findViewById(R.id.plan_trip_btn);
         trip_info = itemView.findViewById(R.id.trip_info);
+        active_trip = itemView.findViewById(R.id.active_trip);
+        other_trips = itemView.findViewById(R.id.other_trips);
     }
 
     public void setName(String text){
@@ -62,5 +64,13 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
 
     public void setTripInfoVisibility(int value){
         trip_info.setVisibility(value);
+    }
+
+    public void setActiveTripVisibility(int value){
+        active_trip.setVisibility(value);
+    }
+
+    public void setOtherTripsVisibility(int value){
+        other_trips.setVisibility(value);
     }
 }

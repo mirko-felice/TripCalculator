@@ -20,7 +20,7 @@
     <string name="set_previous">Set Previous</string>
     <string name="locations_list_label">Location\'s List</string>
     <string name="save_changes_title">Save Changes</string>
-    <string name="optimize_trip">Optimize your route</string>
+    <string name="optimize_trip">Optimize</string>
     <string name="summary_label">Trip Summary</string>
     <string name="add_note">Add Note</string>
     <string name="view_reminder">View Reminder</string>
@@ -121,4 +121,7 @@
     <string name="images_shown_title">Images taken</string>
     <string name="no_images_found">No image was taken in this location</string>
     <string name="photo">Photo taken</string>
+    <string name="view_photo">Watch Gallery</string>
+    <string name="active_trip">Active Trip:</string>
+    <string name="other_trips">Other Trips:</string>
 </resources>

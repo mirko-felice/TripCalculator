@@ -44,7 +44,6 @@ public class TripActivity extends BaseActivity {
     private List<Location> path;
     private LocationViewModel locationViewModel;
 
-    //TODO inserire "data inizio" e "data fine"
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,17 +69,12 @@ public class TripActivity extends BaseActivity {
             locationsLiveData.observe(this, locations -> {
                 path.addAll(locations);
 
-                LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(getSupportFragmentManager(), getLifecycle(), locations);
-
-                viewPager.setAdapter(adapter);
-
                 FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
                 myFragment = new SummaryTripFragment(tripId);
                 fragmentTransaction1.add(R.id.activity_active_trip_layout, myFragment);
                 fragmentTransaction1.hide(myFragment);
                 fragmentTransaction1.commit();
 
-                viewPager.setOnClickListener(v -> mapFragment.focusOn(locations.get(viewPager.getCurrentItem())));
                 binding.slideLeft.setOnClickListener(v -> {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() == 0 ?  0: viewPager.getCurrentItem() - 1, true);
                     mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
@@ -95,6 +89,9 @@ public class TripActivity extends BaseActivity {
                     mapFragment = new MapFragment();
                     netSnackbar.show();
                 }
+                LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(getSupportFragmentManager(), getLifecycle(), locations, mapFragment);
+
+                viewPager.setAdapter(adapter);
                 fragmentManager.beginTransaction()
                         .add(R.id.fragment_layout, mapFragment)
                         .commit();

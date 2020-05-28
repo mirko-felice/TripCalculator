@@ -26,7 +26,7 @@
         android:id="@+id/destination_list_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="4dp"
         android:padding="8dp"
         android:text="@string/locations_list_label"
         app:layout_constraintEnd_toStartOf="@+id/optimize_btn"
@@ -37,12 +37,12 @@
         android:id="@+id/starting_location_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="4dp"
         android:padding="8dp"
         android:text="@string/start_location"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optimize_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/destination_list_label" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/optimize_btn"

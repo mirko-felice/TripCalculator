@@ -43,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/active_trip_location_longitude" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/active_trip_location_passed_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -27,6 +27,9 @@ public interface TripDao {
     @Query("SELECT * FROM Trip where IsActive = 1")
     LiveData<Trip> getActiveTrip();
 
+    @Query("SELECT * FROM Trip where IsPlanned = 1")
+    LiveData<Trip> getPlannedTrip();
+
     @Insert
     void insertTrip(Trip trip);
 
@@ -35,4 +38,5 @@ public interface TripDao {
 
     @Delete
     void deleteTrip(Trip trip);
+
 }

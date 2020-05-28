@@ -162,6 +162,10 @@ public class DialogHelper {
         locationViewModel.updateLocation(location);
     }
 
+    public static void showAlertPlanDialog() {
+        //TODO dialog di errore nel caso la data non è maggiore di now
+    }
+
     private static class PreviousLocationAdapter extends ArrayAdapter<Location> {
 
         private PreviousLocationAdapter(@NonNull Context context, List<Location> items) {
