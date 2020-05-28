@@ -45,8 +45,8 @@ public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Locati
         if (!path.isEmpty()){
             List<Location> primaryLocations = new ArrayList<>();
             List<Location> nextLocations = new ArrayList<>();
-
-            resultPath.add(path.get(0));
+            Location startLocation = path.get(0);
+            resultPath.add(startLocation);
             path.remove(0);
 
             for (Location location : path){
@@ -56,6 +56,20 @@ public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Locati
                     nextLocations.add(location);
                 }
             }
+
+            List<Location> newPossibleLocations = new ArrayList<>();
+
+            for (Location location : nextLocations){
+                if (location.PreviousId != null && location.PreviousId == startLocation.Id) {
+                    primaryLocations.add(location);
+                    newPossibleLocations.add(location);
+                }
+            }
+
+            for (Location location : newPossibleLocations){
+                nextLocations.remove(location);
+            }
+            newPossibleLocations.clear();
 
             RoadManager roadManager = new OSRMRoadManager(activity.get());
             for (int i = 0; i < path.size(); i++) {
@@ -78,7 +92,7 @@ public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Locati
                     }
                 }
                 if (nextLocationToAdd != null) {
-                    List<Location> newPossibleLocations = new ArrayList<>();
+                    newPossibleLocations = new ArrayList<>();
                     for (Location location : nextLocations) {
                         if (location.PreviousId != null && location.PreviousId == nextLocationToAdd.Id) {
                             primaryLocations.add(location);
