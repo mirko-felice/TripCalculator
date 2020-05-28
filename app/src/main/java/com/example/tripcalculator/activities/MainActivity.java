@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("exit", false)){
             finish();
-            SplashActivity.isFirstStart = true;
+            SplashActivity.setFirstStart(true);
             startActivity(new Intent(this, SplashActivity.class));
         }
     }

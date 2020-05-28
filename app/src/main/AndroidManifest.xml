@@ -57,7 +57,7 @@
             android:parentActivityName=".activities.MainActivity" />
 
         <receiver
-            android:name=".broadcastReceiver.ReminderReceiver"
+            android:name=".broadcast_receiver.ReminderReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.example.tripcalculator.NOTIFICATION" />

@@ -12,18 +12,21 @@ import com.google.android.material.card.MaterialCardView;
 
 public class TripViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView trip_info, active_trip, other_trips;
+    private TextView tripInfo;
+    private TextView activeTrip;
+    private TextView otherTrips;
     private MaterialCardView card;
-    private Button start_trip_btn, plan_trip_btn;
+    private Button startTripBtn;
+    private Button planTripBtn;
 
     public TripViewHolder(@NonNull View itemView) {
         super(itemView);
         card = itemView.findViewById(R.id.trip_card);
-        start_trip_btn = itemView.findViewById(R.id.start_trip_btn);
-        plan_trip_btn = itemView.findViewById(R.id.plan_trip_btn);
-        trip_info = itemView.findViewById(R.id.trip_info);
-        active_trip = itemView.findViewById(R.id.active_trip);
-        other_trips = itemView.findViewById(R.id.other_trips);
+        startTripBtn = itemView.findViewById(R.id.start_trip_btn);
+        planTripBtn = itemView.findViewById(R.id.plan_trip_btn);
+        tripInfo = itemView.findViewById(R.id.trip_info);
+        activeTrip = itemView.findViewById(R.id.active_trip);
+        otherTrips = itemView.findViewById(R.id.other_trips);
     }
 
     public void setName(String text){
@@ -35,27 +38,27 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setStartEnabled(boolean value){
-        start_trip_btn.setEnabled(value);
+        startTripBtn.setEnabled(value);
     }
 
     public void setPlanEnabled(boolean value){
-        plan_trip_btn.setEnabled(value);
+        planTripBtn.setEnabled(value);
     }
 
     public void setStartText(String text){
-        start_trip_btn.setText(text);
+        startTripBtn.setText(text);
     }
 
     public void setPlanText(String text){
-        plan_trip_btn.setText(text);
+        planTripBtn.setText(text);
     }
 
     public void setStartListener(View.OnClickListener l){
-        start_trip_btn.setOnClickListener(l);
+        startTripBtn.setOnClickListener(l);
     }
 
     public void setPlanListener(View.OnClickListener l){
-        plan_trip_btn.setOnClickListener(l);
+        planTripBtn.setOnClickListener(l);
     }
 
     public void setTripInfo(String text){
@@ -63,14 +66,14 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setTripInfoVisibility(int value){
-        trip_info.setVisibility(value);
+        tripInfo.setVisibility(value);
     }
 
     public void setActiveTripVisibility(int value){
-        active_trip.setVisibility(value);
+        activeTrip.setVisibility(value);
     }
 
     public void setOtherTripsVisibility(int value){
-        other_trips.setVisibility(value);
+        otherTrips.setVisibility(value);
     }
 }

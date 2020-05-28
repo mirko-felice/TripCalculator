@@ -65,7 +65,7 @@ public class ShowRoadTask extends AsyncTask<Location, Void, List<Polyline>> {
                 polylines.add(0, passedRoadOverlay);
             }
         }
-        if (nextWaypoints.size() > 0) {
+        if (!nextWaypoints.isEmpty()) {
             Road roadToDo = roadManager.getRoad(nextWaypoints);
             if (roadToDo.mStatus == Road.STATUS_OK) {
                 Polyline roadToDoOverlay = RoadManager.buildRoadOverlay(roadToDo, Color.BLACK, 4f);

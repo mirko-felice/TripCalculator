@@ -39,4 +39,6 @@ public interface TripDao {
     @Delete
     void deleteTrip(Trip trip);
 
+    @Query("DELETE From Trip where IsEnded = 1")
+    void deleteAllEndedTrips();
 }

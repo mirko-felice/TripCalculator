@@ -22,7 +22,7 @@ import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class SearchActivity extends BaseActivity {
 
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        InternetUtility.initSnackBar(this, findViewById(R.id.search_layout), getString(R.string.no_connection), Snackbar.LENGTH_INDEFINITE);
+        InternetUtility.initSnackBar(this, findViewById(R.id.search_layout), getString(R.string.no_connection), BaseTransientBottomBar.LENGTH_INDEFINITE);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -150,7 +150,7 @@ public class SearchActivity extends BaseActivity {
                     .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                     .show(searchResultFragment)
                     .commit();
-            if (locations.size() == 0) {
+            if (locations.isEmpty()) {
                 searchView.requestFocus();
                 Utilities.showKeyboard(this, searchView);
             }
@@ -176,7 +176,7 @@ public class SearchActivity extends BaseActivity {
         liveData.observe(this, locations -> {
             location.Id = 0;
             location.TripId = tripId;
-            location.Order = locations.size() > 0 ? locations.get(locations.size() - 1).Order + 1 : 1;
+            location.Order = !locations.isEmpty() ? locations.get(locations.size() - 1).Order + 1 : 1;
             location.IsPassed = false;
             location.FullName = location.DisplayName;
             locationViewModel.insertLocation(location);

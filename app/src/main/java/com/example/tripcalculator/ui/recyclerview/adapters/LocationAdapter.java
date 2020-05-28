@@ -73,9 +73,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     }
 
     @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
+    public void onItemMove(int fromPosition, int toPosition) {
         notifyItemMoved(fromPosition, toPosition);
-        return true;
     }
 
     @Override

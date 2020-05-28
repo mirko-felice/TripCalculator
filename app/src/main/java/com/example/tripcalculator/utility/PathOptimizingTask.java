@@ -42,7 +42,7 @@ public class PathOptimizingTask extends AsyncTask<Location, Integer, List<Locati
     protected List<Location> doInBackground(Location... locations) {
         List<Location> path = new ArrayList<>(Arrays.asList(locations));
         List<Location> resultPath = new ArrayList<>();
-        if (path.size() > 0){
+        if (!path.isEmpty()){
             List<Location> primaryLocations = new ArrayList<>();
             List<Location> nextLocations = new ArrayList<>();
 

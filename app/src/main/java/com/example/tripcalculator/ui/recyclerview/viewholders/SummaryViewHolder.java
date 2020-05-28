@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tripcalculator.R;
+import com.google.android.material.card.MaterialCardView;
 
 public class SummaryViewHolder extends RecyclerView.ViewHolder {
 
@@ -55,5 +56,9 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
 
     public void setViewReminderListener(View.OnClickListener listener){
         showReminder.setOnClickListener(listener);
+    }
+
+    public void setCardColor(int color) {
+        ((MaterialCardView) itemView.findViewById(R.id.summary_card)).setCardBackgroundColor(color);
     }
 }

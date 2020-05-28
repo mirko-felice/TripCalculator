@@ -20,6 +20,8 @@ public class InternetUtility {
     private static boolean networkConnected = false;
     private static Snackbar snackbar;
 
+    private InternetUtility(){}
+
     public static void registerNetworkCallback(AppCompatActivity activity){
         ConnectivityManager connectivityManager = (ConnectivityManager) activity.getSystemService((Context.CONNECTIVITY_SERVICE));
 
@@ -51,7 +53,7 @@ public class InternetUtility {
 
     public static void initSnackBar(AppCompatActivity activity, View viewHolder, String message, int duration){
         snackbar = Snackbar.make(viewHolder, message, duration)
-                            .setAction(R.string.settings, (v) -> setNetSettingsIntent(activity));
+                            .setAction(R.string.settings, v -> setNetSettingsIntent(activity));
     }
 
     public static void showSnackbar(){

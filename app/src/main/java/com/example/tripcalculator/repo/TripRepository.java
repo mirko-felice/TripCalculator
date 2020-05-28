@@ -53,4 +53,8 @@ public class TripRepository {
     public void deleteTrip(Trip trip){
         AppDatabase.databaseWriteExecutor.execute(() -> tripDao.deleteTrip(trip));
     }
+
+    public void deleteAllEndedTrips() {
+        AppDatabase.databaseWriteExecutor.execute(() -> tripDao.deleteAllEndedTrips());
+    }
 }

@@ -124,6 +124,8 @@
     <string name="view_photo">Guarda Galleria</string>
     <string name="active_trip">Viaggio Attivo:</string>
     <string name="other_trips">Altri Viaggi:</string>
-    <string name="active_trip_error">Il viaggio non può partire, perchè ne hai già uno attivo!</string>
-    <string name="planned_trip_error">Il viaggio non può partire perchè ne hai già pianificato uno!</string>
+    <string name="active_trip_error">Il viaggio non può partire, perché ne hai già uno attivo!</string>
+    <string name="planned_trip_error">Il viaggio non può partire perché ne hai già pianificato uno!</string>
+    <string name="delete_past_trips">Sei sicuro di voler eliminare definitivamente tutti i viaggi passati?</string>
+    <string name="delete">Cancella</string>
 </resources>

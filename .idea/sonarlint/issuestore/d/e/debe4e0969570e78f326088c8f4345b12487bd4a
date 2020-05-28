@@ -1,0 +1,9 @@
+
+h
+java:S3776M"RRefactor this method to reduce its Cognitive Complexity from 54 to the 15 allowed.(³ìÓ
+]
+java:S1117Ú"ARename "tripViewModel" which hides the field declared at line 54.(¬Ä¾ûÿÿÿÿ
+~
+java:S3252Ü"gUse static access with "com.google.android.material.snackbar.BaseTransientBottomBar" for "LENGTH_LONG".(Ìåã
+D
+java:S1481v".Remove this unused "!unknown!" local variable.(œü›©

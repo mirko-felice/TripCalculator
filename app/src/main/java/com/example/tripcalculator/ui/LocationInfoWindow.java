@@ -25,8 +25,5 @@ public class LocationInfoWindow extends MarkerInfoWindow {
     }
 
     @Override
-    public void onOpen(Object item) {}
-
-    @Override
-    public void onClose() {}
+    public void onOpen(Object item) { }
 }

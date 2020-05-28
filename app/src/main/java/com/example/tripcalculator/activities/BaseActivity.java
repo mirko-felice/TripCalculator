@@ -22,11 +22,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-    }
-
-    @Override
     public Context createConfigurationContext(@NonNull Configuration overrideConfiguration) {
         overrideConfiguration.setLocale(PreferenceManager.getDefaultSharedPreferences(this).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
         return super.createConfigurationContext(overrideConfiguration);

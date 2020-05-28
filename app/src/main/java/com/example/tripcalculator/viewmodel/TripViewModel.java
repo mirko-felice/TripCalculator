@@ -56,5 +56,7 @@ public class TripViewModel extends AndroidViewModel {
         repo.deleteTrip(trip);
     }
 
-
+    public void deleteAllEndedTrips() {
+        repo.deleteAllEndedTrips();
+    }
 }

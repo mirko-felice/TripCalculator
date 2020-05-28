@@ -25,6 +25,7 @@ import com.example.tripcalculator.ui.viewpager.LocationViewPagerAdapter;
 import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import java.util.List;
 public class TripActivity extends BaseActivity {
 
     private static final String TRIP_ID = "TripId";
-    private int tripId = -1;
     private ActivityTripBinding binding;
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
@@ -52,8 +52,8 @@ public class TripActivity extends BaseActivity {
         Intent intent = getIntent();
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        netSnackbar = Snackbar.make(binding.getRoot(), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.settings, (v) -> InternetUtility.setNetSettingsIntent(this));
+        netSnackbar = Snackbar.make(binding.getRoot(), R.string.no_internet, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                .setAction(R.string.settings, v -> InternetUtility.setNetSettingsIntent(this));
         LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
         loader.show(getSupportFragmentManager(), "loader");
 
@@ -62,7 +62,7 @@ public class TripActivity extends BaseActivity {
         viewPager.setVisibility(View.GONE);
 
         if (intent.hasExtra(TRIP_ID)){
-            tripId = intent.getIntExtra(TRIP_ID, -1);
+            int tripId = intent.getIntExtra(TRIP_ID, -1);
 
             locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
             LiveData<List<Location>> locationsLiveData = locationViewModel.getLocationsFromTrip(tripId);
@@ -115,11 +115,6 @@ public class TripActivity extends BaseActivity {
                 loader.dismiss();
             });
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

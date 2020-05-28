@@ -30,6 +30,7 @@ import java.util.Date;
 
 public class NextTripsFragment extends Fragment {
 
+    private static final String TRIP_ID = "TripId";
     private TripAdapter adapter;
 
     @Nullable
@@ -58,15 +59,15 @@ public class NextTripsFragment extends Fragment {
             activeTrip.removeObservers(getViewLifecycleOwner());
             if(trip != null){
                 Intent intent = new Intent(getContext(), TripActivity.class);
-                intent.putExtra("TripId", trip.TripId);
+                intent.putExtra(TRIP_ID, trip.TripId);
                 startActivity(intent);
             }
         });
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        if (sharedPreferences.contains("TripId")) {
-            int tripId = sharedPreferences.getInt("TripId", -1);
-            sharedPreferences.edit().remove("TripId").apply();
+        if (sharedPreferences.contains(TRIP_ID)) {
+            int tripId = sharedPreferences.getInt(TRIP_ID, -1);
+            sharedPreferences.edit().remove(TRIP_ID).apply();
             TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
             LiveData<Trip> liveData = tripViewModel.getTripFromId(tripId);
             liveData.observe(getViewLifecycleOwner(), trip -> {

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +42,8 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull SummaryViewHolder holder, int position) {
         Location location = locations.get(position);
-
+        if(location.IsPassed)
+            holder.setCardColor(fragment.getResources().getColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? R.color.cardNight : R.color.cardNotNight));
         holder.adjustVisibility(location.IsPassed);
         holder.setName(location.DisplayName);
         holder.setViewReminderListener(v -> DialogHelper.showReminder(location, fragment));

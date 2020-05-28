@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.ViewCompat;
-
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Location;

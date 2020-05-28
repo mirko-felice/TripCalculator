@@ -37,7 +37,6 @@ public class SummaryFragment extends Fragment {
     private static final int REQUEST_PHOTO_CODE = 1;
     private final int tripId;
     private LocationViewModel locationViewModel;
-    private SummaryFragmentBinding binding;
     private Uri photoURI;
     private Location lastLocation;
 
@@ -48,7 +47,7 @@ public class SummaryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = SummaryFragmentBinding.inflate(inflater, container, false);
+        SummaryFragmentBinding binding = SummaryFragmentBinding.inflate(inflater, container, false);
         binding.summary.setLayoutManager(new LinearLayoutManager(getContext()));
         SummaryAdapter adapter = new SummaryAdapter(this);
         binding.summary.setAdapter(adapter);

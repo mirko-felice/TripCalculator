@@ -17,7 +17,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.BuildConfig;
@@ -53,8 +54,8 @@ import java.util.List;
 
 public class MapFragment extends MapViewFragment {
 
-    private final static float DISTANCE_DELTA = 200F;
-    private final static String PROVIDER = "USER";
+    private static final float DISTANCE_DELTA = 200F;
+    private static final String PROVIDER = "USER";
     private static final int REQUEST_LOCATION_PERMISSIONS = 0;
     private static final long MAP_SPEED = 1000L;
     private MapView map;
@@ -156,7 +157,7 @@ public class MapFragment extends MapViewFragment {
             marker.setInfoWindow(infoWindow);
             map.getOverlays().add(marker);
         }
-        if (locations.size() > 0){
+        if (!locations.isEmpty()){
             focusOn(locations.get(0));
         }
     }
@@ -263,6 +264,8 @@ public class MapFragment extends MapViewFragment {
 
         binding.zoomOutBtn.setOnClickListener(v -> showAllMarkers());
         binding.toNorthBtn.setOnClickListener(v -> map.getController().animateTo(map.getMapCenter(), map.getZoomLevelDouble(), MAP_SPEED, 0.0F));
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            binding.clearMarkersBtn.setImageResource(R.drawable.ic_delete_);
         binding.clearMarkersBtn.setOnClickListener(v -> clearMarkers());
 
         binding.checkPositionBtn.setOnClickListener(v -> {
@@ -310,7 +313,7 @@ public class MapFragment extends MapViewFragment {
             i++;
         if (i < path.size()){
             nextLocationIndex = i;
-            if (markers.size() > 0)
+            if (!markers.isEmpty())
                 ((ActiveTripLocationInfoWindow)markers.get(i).getInfoWindow()).setEnabled(true);
             focusOn(path.get(i));
         } else {
@@ -339,16 +342,16 @@ public class MapFragment extends MapViewFragment {
 
     private void checkPermissions(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
             } else {
                 hasPermissions = true;
             }
         } else {
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSIONS);
             } else {
                 hasPermissions = true;

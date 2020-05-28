@@ -48,9 +48,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putBoolean("dark_theme", (Boolean) newValue).apply();
                         restart();
                     })
-                    .setNegativeButton(R.string.discard, (dialog, which) -> {
-                        switchPreferenceCompat.setChecked(oldValue);
-                    })
+                    .setNegativeButton(R.string.discard, (dialog, which) -> switchPreferenceCompat.setChecked(oldValue))
                     .setCancelable(false)
                     .show();
            return true;

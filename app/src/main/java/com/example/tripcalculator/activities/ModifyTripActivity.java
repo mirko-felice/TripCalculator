@@ -36,7 +36,9 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
     private TripViewModel tripViewModel;
     private LocationViewModel locationViewModel;
     private LocationAdapter adapter;
-    private boolean hasTwoLocations, isAnyActive, isAnyPlanned;
+    private boolean isAnyActive;
+    private boolean hasTwoLocations;
+    private boolean isAnyPlanned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
             binding.tripName.setText(trip.Name);
             LiveData<List<Location>> listLiveData = locationViewModel.getLocationsFromTrip(trip.TripId);
             listLiveData.observe(this, locations -> {
-                if (locations.size() == 0){
+                if (locations.isEmpty()){
                     hasTwoLocations = false;
                     binding.startingLocationLabel.setVisibility(View.GONE);
                     binding.addLocationBtn.setText(getString(R.string.add_start_point));
@@ -103,8 +105,8 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
             activeTrip.observe(this, trip1 -> {
                 isAnyActive = trip1 != null;
                 activeTrip.removeObservers(this);
-                plannedTrip.observe(this, trip -> {
-                    isAnyPlanned = trip != null;
+                plannedTrip.observe(this, trip2 -> {
+                    isAnyPlanned = trip2 != null;
                     plannedTrip.removeObservers(this);
                     if (hasTwoLocations && !isAnyActive && !isAnyPlanned) {
                         Intent intent = new Intent(this, TripActivity.class);

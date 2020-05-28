@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class MapViewFragment extends Fragment {
 
-    private final static String TAG = "OSM_REQUEST";
+    private static final String TAG = "OSM_REQUEST";
 
     void createRequest(String place){
         String url = "https://nominatim.openstreetmap.org/search?q=" + place + "&format=json";

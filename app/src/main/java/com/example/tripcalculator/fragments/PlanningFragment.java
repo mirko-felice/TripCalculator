@@ -21,11 +21,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.example.tripcalculator.R;
-import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
+import com.example.tripcalculator.broadcast_receiver.ReminderReceiver;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.databinding.PlanningFragmentBinding;
 import com.example.tripcalculator.utility.DialogHelper;
-import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;

@@ -1,0 +1,7 @@
+
+_
+java:S1128"IRemove this unused import 'com.example.tripcalculator.utility.Utilities'.(ò”ŸÕ
+r
+java:S1450/"\Remove the "dateFormatter" field and declare it as a local variable in the relevant methods.(Í´×Ý
+w
+java:S1450."\Remove the "timeFormatter" field and declare it as a local variable in the relevant methods.(÷‰á˜ÿÿÿÿÿ

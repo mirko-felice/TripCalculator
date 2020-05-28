@@ -124,4 +124,8 @@
     <string name="view_photo">Watch Gallery</string>
     <string name="active_trip">Active Trip:</string>
     <string name="other_trips">Other Trips:</string>
+    <string name="delete_past_trips">Are you sure to definitively delete all past trips?</string>
+    <string name="active_trip_error">Your trip can\'t start because you already have another active!</string>
+    <string name="planned_trip_error">Your trip can\'t start because you already have planned one!</string>
+    <string name="delete">Delete</string>
 </resources>

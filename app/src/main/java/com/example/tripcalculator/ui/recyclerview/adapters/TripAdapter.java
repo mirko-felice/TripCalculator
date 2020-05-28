@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tripcalculator.R;
 import com.example.tripcalculator.activities.ModifyTripActivity;
 import com.example.tripcalculator.activities.TripActivity;
-import com.example.tripcalculator.broadcastReceiver.ReminderReceiver;
+import com.example.tripcalculator.broadcast_receiver.ReminderReceiver;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.PlanningFragment;
@@ -34,6 +34,7 @@ import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
@@ -115,11 +116,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 } else {
                     int countChecked = 0;
                     card.setChecked(!card.isChecked());
-                    for (MaterialCardView cardView : tripCards) {
-                        if (cardView.isChecked()) {
+                    for (MaterialCardView cardView : tripCards)
+                        if (cardView.isChecked())
                             countChecked++;
-                        }
-                    }
+
                     if (countChecked == 0) {
                         actionMode.finish();
                         actionMode = null;
@@ -215,9 +215,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
             pendingIntent.cancel();
         }
         trip.IsPlanned = false;
-        TripViewModel tripViewModel = new ViewModelProvider(activity).get(TripViewModel.class);
         tripViewModel.updateTrip(trip);
-        Snackbar.make(activity.findViewById(R.id.coordinator_layout), R.string.planning_removed, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(activity.findViewById(R.id.coordinator_layout), R.string.planning_removed, BaseTransientBottomBar.LENGTH_LONG).show();
     }
 
     private void deleteItems(){

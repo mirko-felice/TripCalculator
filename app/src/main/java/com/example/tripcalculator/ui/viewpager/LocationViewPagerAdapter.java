@@ -7,12 +7,10 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.tripcalculator.database.Location;
-import com.example.tripcalculator.fragments.LoaderFragment;
 import com.example.tripcalculator.fragments.LocationFragment;
 import com.example.tripcalculator.fragments.MapFragment;
 
 import java.util.List;
-import java.util.Objects;
 
 public class LocationViewPagerAdapter extends FragmentStateAdapter {
 

@@ -19,20 +19,20 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "trip-database";
     private static AppDatabase instance;
-    private static Migration MIGRATION_1_2 = new Migration(1, 2) {
+    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            String ADD_INSERT_DATE_TO_TRIP = "ALTER TABLE `Trip` ADD COLUMN `InsertDate` INTEGER NOT NULL DEFAULT 0";
-            database.execSQL(ADD_INSERT_DATE_TO_TRIP);
-            String ADD_LATITUDE_TO_LOCATION = "ALTER TABLE `Location` ADD COLUMN `Latitude` REAL NOT NULL DEFAULT 0.0";
-            database.execSQL(ADD_LATITUDE_TO_LOCATION);
-            String ADD_LONGITUDE_TO_LOCATION = "ALTER TABLE `Location` ADD COLUMN `Longitude` REAL NOT NULL DEFAULT 0.0";
-            database.execSQL(ADD_LONGITUDE_TO_LOCATION);
-            String ADD_DISPLAY_NAME_TO_LOCATION = "ALTER TABLE `Location` ADD COLUMN `DisplayName` TEXT NOT NULL DEFAULT ''";
-            database.execSQL(ADD_DISPLAY_NAME_TO_LOCATION);
+            String addInsertDateToTrip = "ALTER TABLE `Trip` ADD COLUMN `InsertDate` INTEGER NOT NULL DEFAULT 0";
+            database.execSQL(addInsertDateToTrip);
+            String addLatitudeToLocation = "ALTER TABLE `Location` ADD COLUMN `Latitude` REAL NOT NULL DEFAULT 0.0";
+            database.execSQL(addLatitudeToLocation);
+            String addLongitudeToLocation = "ALTER TABLE `Location` ADD COLUMN `Longitude` REAL NOT NULL DEFAULT 0.0";
+            database.execSQL(addLongitudeToLocation);
+            String addDisplayNameToLocation = "ALTER TABLE `Location` ADD COLUMN `DisplayName` TEXT NOT NULL DEFAULT ''";
+            database.execSQL(addDisplayNameToLocation);
         }
     };
-    private static Migration MIGRATION_2_3 = new Migration(2, 3) {
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("DROP TABLE `Location`");
@@ -40,30 +40,30 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_Location_TripId_Order` ON `Location` (`TripId`, `Order`)");
         }
     };
-    private static Migration MIGRATION_3_4 = new Migration(3, 4) {
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("DROP INDEX `index_Location_TripId_Order`");
         }
     };
-    private static Migration MIGRATION_4_5 = new Migration(4, 5) {
+    private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("CREATE INDEX IF NOT EXISTS `index_Location_TripId` ON `Location` (`TripId`)");
         }
     };
-    private static Migration MIGRATION_5_6 = new Migration(5, 6) {
+    private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            String ADD_FULL_NAME_TO_LOCATION = "ALTER TABLE `Location` ADD COLUMN `FullName` TEXT NOT NULL DEFAULT ''";
-            database.execSQL(ADD_FULL_NAME_TO_LOCATION);
+            String addFullNameToLocation = "ALTER TABLE `Location` ADD COLUMN `FullName` TEXT NOT NULL DEFAULT ''";
+            database.execSQL(addFullNameToLocation);
         }
     };
-    private static Migration MIGRATION_6_7 = new Migration(6, 7) {
+    private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            String ADD_IS_PASSED_TO_TRIP = "ALTER TABLE `Trip` ADD COLUMN `IsPassed` INTEGER NOT NULL DEFAULT 0";
-            database.execSQL(ADD_IS_PASSED_TO_TRIP);
+            String addIsPassedToTrip = "ALTER TABLE `Trip` ADD COLUMN `IsPassed` INTEGER NOT NULL DEFAULT 0";
+            database.execSQL(addIsPassedToTrip);
         }
     };
 
