@@ -76,6 +76,15 @@
                         android:text="@string/add_note"
                         app:chipIcon="@drawable/ic_add_note"/>
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/view_note"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/show_notes"
+                        app:chipIcon="@drawable/ic_note"
+                        android:visibility="gone" />
+
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
         </LinearLayout>

@@ -127,4 +127,6 @@
     <string name="planned_trip_error">Il viaggio non può partire perchè ne hai già pianificato uno!</string>
     <string name="delete_past_trips">Sei sicuro di voler eliminare definitivamente tutti i viaggi passati?</string>
     <string name="delete">Cancella</string>
+    <string name="none">Nessuno</string>
+    <string name="previous_location_removed">Località precedente rimossa!</string>
 </resources>

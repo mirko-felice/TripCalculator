@@ -122,7 +122,7 @@ public class PlanningFragment extends DialogFragment {
     }
 
     private void showTimeDialog() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(), R.style.TimePickerDialog, (view, hourOfDay, minute) -> {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(), (view, hourOfDay, minute) -> {
             hourToSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
             hourToSet.set(Calendar.MINUTE, minute);
             binding.clock.setText(timeFormatter.format(hourToSet.getTime()));
@@ -132,7 +132,7 @@ public class PlanningFragment extends DialogFragment {
     }
 
     private void showDateDialog() {
-        DatePickerDialog datePicker = new DatePickerDialog(requireContext(), R.style.Theme_MaterialComponents_DayNight_Dialog_Alert, (view, year, month, dayOfMonth) -> {
+        DatePickerDialog datePicker = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
             dateToSet.set(Calendar.YEAR, year);
             dateToSet.set(Calendar.MONTH, month);
             dateToSet.set(Calendar.DAY_OF_MONTH, dayOfMonth);

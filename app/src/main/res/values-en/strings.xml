@@ -128,4 +128,6 @@
     <string name="active_trip_error">Your trip can\'t start because you already have another active!</string>
     <string name="planned_trip_error">Your trip can\'t start because you already have planned one!</string>
     <string name="delete">Delete</string>
+    <string name="none">None</string>
+    <string name="previous_location_removed">Previous location removed!</string>
 </resources>

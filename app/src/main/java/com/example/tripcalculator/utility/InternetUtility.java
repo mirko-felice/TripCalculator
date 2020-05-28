@@ -13,12 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.fragments.MapFragment;
 import com.google.android.material.snackbar.Snackbar;
 
 public class InternetUtility {
 
     private static boolean networkConnected = false;
     private static Snackbar snackbar;
+    private static MapFragment mapFragment;
 
     private InternetUtility(){}
 
@@ -35,6 +37,8 @@ public class InternetUtility {
         } else {
             networkConnected = false;
         }
+        if (mapFragment != null)
+            mapFragment.requireActivity().runOnUiThread(() -> mapFragment.setConnectionStatus(networkConnected));
     }
 
     private static ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback(){
@@ -42,17 +46,21 @@ public class InternetUtility {
         public void onAvailable(@NonNull Network network) {
             super.onAvailable(network);
             networkConnected = true;
+            if (mapFragment != null)
+                mapFragment.requireActivity().runOnUiThread(() -> mapFragment.setConnectionStatus(true));
         }
 
         @Override
         public void onLost(@NonNull Network network) {
             super.onLost(network);
             networkConnected = false;
+            if (mapFragment != null)
+                mapFragment.requireActivity().runOnUiThread(() -> mapFragment.setConnectionStatus(false));
         }
     };
 
-    public static void initSnackBar(AppCompatActivity activity, View viewHolder, String message, int duration){
-        snackbar = Snackbar.make(viewHolder, message, duration)
+    public static void initSnackBar(AppCompatActivity activity, View viewHolder){
+        snackbar = Snackbar.make(viewHolder, activity.getString(R.string.no_connection), Snackbar.LENGTH_LONG)
                             .setAction(R.string.settings, v -> setNetSettingsIntent(activity));
     }
 
@@ -71,7 +79,7 @@ public class InternetUtility {
         }
     }
 
-    public static void setNetSettingsIntent(AppCompatActivity activity) {
+    private static void setNetSettingsIntent(AppCompatActivity activity) {
         Intent intent = new Intent();
         intent.setAction((Settings.ACTION_WIRELESS_SETTINGS));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -79,5 +87,9 @@ public class InternetUtility {
         if(intent.resolveActivity(activity.getPackageManager()) != null){
             activity.startActivity(intent);
         }
+    }
+
+    public static void setMapFragment(MapFragment fragment){
+        mapFragment = fragment;
     }
 }

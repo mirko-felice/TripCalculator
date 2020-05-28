@@ -22,7 +22,6 @@ import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +48,8 @@ public class SearchActivity extends BaseActivity {
 
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        InternetUtility.initSnackBar(this, findViewById(R.id.search_layout), getString(R.string.no_connection), BaseTransientBottomBar.LENGTH_INDEFINITE);
 
+        InternetUtility.initSnackBar(this, findViewById(R.id.search_layout));
         fragmentManager = getSupportFragmentManager();
 
         searchResultFragment = new SearchResultFragment();
@@ -69,14 +68,14 @@ public class SearchActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         InternetUtility.registerNetworkCallback(this);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         InternetUtility.unregisterNetworkCallback(this);
     }
 
@@ -84,13 +83,15 @@ public class SearchActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
-            if (InternetUtility.isNetworkConnected()) {
+            //if (InternetUtility.isNetworkConnected()) {
                 String query = intent.getStringExtra(SearchManager.QUERY);
                 searchResultFragment.executeQueue(query);
                 Utilities.hideKeyboard(this);
-            } else {
-                InternetUtility.showSnackbar();
-            }
+                mapFragment.setConnectionStatus(true);
+            //} else {
+               // InternetUtility.showSnackbar();
+                //mapFragment.setConnectionStatus(false);
+            //}
         }
     }
 

@@ -20,6 +20,21 @@
     </org.osmdroid.views.MapView>
 
     <ImageButton
+        android:id="@+id/no_connection_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/image_border"
+        android:contentDescription="@string/disable_rotation"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:src="@drawable/ic_connection_off"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
         android:id="@+id/enable_rotation_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -27,6 +27,7 @@ import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.databinding.MapFragmentBinding;
 import com.example.tripcalculator.ui.ActiveTripLocationInfoWindow;
 import com.example.tripcalculator.ui.LocationInfoWindow;
+import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.ShowRoadTask;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -71,7 +72,7 @@ public class MapFragment extends MapViewFragment {
     //GPS
     private boolean isGPSOn = false;
 
-    public MapFragment(){ }
+    public MapFragment(){}
 
     public MapFragment(List<Location> path){
         this.path = path;
@@ -83,6 +84,7 @@ public class MapFragment extends MapViewFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         markers = new ArrayList<>();
+        InternetUtility.setMapFragment(this);
         IConfigurationProvider configuration = Configuration.getInstance();
         configuration.setUserAgentValue(BuildConfig.APPLICATION_ID);
         configuration.load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()));
@@ -106,6 +108,7 @@ public class MapFragment extends MapViewFragment {
         checkGPS();
         GpsMyLocationProvider provider = new GpsMyLocationProvider(requireContext());
         mLocationOverlay = new MyLocationNewOverlay(provider, map);
+
         if(isGPSOn){
             map.getOverlays().add(mLocationOverlay);
             mLocationOverlay.enableMyLocation();
@@ -114,6 +117,7 @@ public class MapFragment extends MapViewFragment {
         } else if (hasPermissions){
             showActivateGPSDialog();
         }
+
         if(path != null){
             binding.clearMarkersBtn.setVisibility(View.GONE);
             showActualRoad();
@@ -132,6 +136,7 @@ public class MapFragment extends MapViewFragment {
     public void onResume() {
         super.onResume();
         map.onResume();
+        InternetUtility.setMapFragment(this);
         checkGPS();
         if (isGPSOn)
             mLocationOverlay.enableMyLocation();
@@ -185,6 +190,15 @@ public class MapFragment extends MapViewFragment {
         }
     }
 
+    public void setConnectionStatus(boolean isConnectionAvailable){
+        if (isConnectionAvailable)
+            binding.noConnectionBtn.setVisibility(View.GONE);
+        else {
+            binding.noConnectionBtn.setVisibility(View.VISIBLE);
+            InternetUtility.showSnackbar();
+        }
+    }
+
     private void showAllMarkers() {
         ArrayList<GeoPoint> points = new ArrayList<>();
         for (Marker marker : markers){
@@ -234,12 +248,18 @@ public class MapFragment extends MapViewFragment {
         Overlay overlay = new Overlay() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e, MapView mapView) {
-                if (path == null) {
-                    Projection proj = mapView.getProjection();
-                    GeoPoint loc = (GeoPoint) proj.fromPixels((int) e.getX(), (int) e.getY());
-                    double longitude = loc.getLongitude();
-                    double latitude = loc.getLatitude();
-                    createRequest(latitude + " " + longitude);
+                if (!InternetUtility.isNetworkConnected()) {
+                    InternetUtility.showSnackbar();
+                    setConnectionStatus(false);
+                } else {
+                    setConnectionStatus(true);
+                    if (path == null) {
+                        Projection proj = mapView.getProjection();
+                        GeoPoint loc = (GeoPoint) proj.fromPixels((int) e.getX(), (int) e.getY());
+                        double longitude = loc.getLongitude();
+                        double latitude = loc.getLatitude();
+                        createRequest(latitude + " " + longitude);
+                    }
                 }
                 return true;
             }
@@ -295,6 +315,14 @@ public class MapFragment extends MapViewFragment {
                 }
             } else
                 showActivateGPSDialog();
+        });
+        binding.noConnectionBtn.setOnClickListener(v -> {
+            if (InternetUtility.isNetworkConnected()) {
+                setConnectionStatus(true);
+                if (path != null)
+                    showActualRoad();
+            } else
+                InternetUtility.showSnackbar();
         });
     }
 

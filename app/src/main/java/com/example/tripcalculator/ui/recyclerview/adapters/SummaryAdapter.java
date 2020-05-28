@@ -44,11 +44,12 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
         Location location = locations.get(position);
         if(location.IsPassed)
             holder.setCardColor(fragment.getResources().getColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? R.color.cardNight : R.color.cardNotNight));
-        holder.adjustVisibility(location.IsPassed);
+        holder.adjustVisibility(location.IsPassed, isEnded);
         holder.setName(location.DisplayName);
         holder.setViewReminderListener(v -> DialogHelper.showReminder(location, fragment));
         holder.setModReminderListener(v -> DialogHelper.showSetReminderDialog(location, fragment.requireActivity()));
         holder.setAddNoteListener(v -> DialogHelper.showAddNote(location, fragment.requireActivity()));
+        holder.setViewNoteListener(v -> DialogHelper.showNotes(location, fragment));
         if(fragment.requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))
             holder.setViewPhotoListener(v -> DialogHelper.showImages(location, fragment));
     }
@@ -64,7 +65,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
         if (locations.size() > 0) {
             LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(locations.get(0).TripId);
             tripLiveData.observe(fragment.getViewLifecycleOwner(), trip -> {
-                isEnded = true;
+                isEnded = trip.IsEnded;
                 tripLiveData.removeObservers(fragment.getViewLifecycleOwner());
             });
         }

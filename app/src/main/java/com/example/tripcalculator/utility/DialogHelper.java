@@ -43,6 +43,8 @@ import static android.widget.GridView.AUTO_FIT;
 
 public class DialogHelper {
 
+    private DialogHelper(){}
+
     public static void showSetReminderDialog(Location location, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.reminder_view, null);
@@ -56,16 +58,20 @@ public class DialogHelper {
 
     public static void showSetPreviousDialog(Location locationToExclude, FragmentActivity activity){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
-        builder.setView(R.layout.previous_layout);
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         LiveData<List<Location>> liveData = locationViewModel.getPossiblePreviousLocations(locationToExclude.TripId, locationToExclude.Id);
         liveData.observe(activity, locations -> {
+            Location noneLocation = new Location();
+            noneLocation.Id = -1;
+            noneLocation.DisplayName = activity.getString(R.string.none);
+            locations.add(noneLocation);
             builder.setAdapter(new PreviousLocationAdapter(activity, locations), (dialog, which) -> {
-                locationToExclude.PreviousId = locations.get(which).Id;
+                locationToExclude.PreviousId = locations.get(which).Id == -1 ? null : locations.get(which).Id;
                 locationViewModel.updateLocation(locationToExclude);
-                Toast.makeText(activity, R.string.previous_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, locationToExclude.PreviousId != null ? R.string.previous_message : R.string.previous_location_removed, Toast.LENGTH_SHORT).show();
             });
-            builder.show();
+            builder.setNeutralButton(R.string.close, (dialog, which) -> {})
+                    .show();
             liveData.removeObservers(activity);
         });
     }
@@ -107,7 +113,8 @@ public class DialogHelper {
             }
             tripLiveData.removeObservers(fragment.requireActivity());
         });
-        builder.show();
+        builder.setNeutralButton(R.string.close, (dialog, which) -> {})
+                .show();
     }
 
     public static void showReminder(Location location, SummaryFragment fragment){

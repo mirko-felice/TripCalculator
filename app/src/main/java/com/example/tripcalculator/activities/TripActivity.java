@@ -25,8 +25,6 @@ import com.example.tripcalculator.ui.viewpager.LocationViewPagerAdapter;
 import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,6 @@ public class TripActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private SummaryTripFragment myFragment;
-    private Snackbar netSnackbar;
     private ViewPager2 viewPager;
 
     private List<Location> path;
@@ -52,8 +49,7 @@ public class TripActivity extends BaseActivity {
         Intent intent = getIntent();
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        netSnackbar = Snackbar.make(binding.getRoot(), R.string.no_internet, BaseTransientBottomBar.LENGTH_INDEFINITE)
-                .setAction(R.string.settings, v -> InternetUtility.setNetSettingsIntent(this));
+        InternetUtility.initSnackBar(this, binding.getRoot());
         LoaderFragment loader = new LoaderFragment((ViewGroup) binding.getRoot());
         loader.show(getSupportFragmentManager(), "loader");
 
@@ -83,12 +79,8 @@ public class TripActivity extends BaseActivity {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() == locations.size() - 1 ? locations.size() - 1: viewPager.getCurrentItem() + 1, true);
                     mapFragment.focusOn(locations.get(viewPager.getCurrentItem()));
                 });
-                if (InternetUtility.isNetworkConnected()) {
-                    mapFragment = new MapFragment(path);
-                } else {
-                    mapFragment = new MapFragment();
-                    netSnackbar.show();
-                }
+
+                mapFragment = new MapFragment(path);
                 LocationViewPagerAdapter adapter = new LocationViewPagerAdapter(getSupportFragmentManager(), getLifecycle(), locations, mapFragment);
 
                 viewPager.setAdapter(adapter);
@@ -139,14 +131,14 @@ public class TripActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         InternetUtility.registerNetworkCallback(this);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         InternetUtility.unregisterNetworkCallback(this);
     }
 
@@ -154,11 +146,12 @@ public class TripActivity extends BaseActivity {
         path.get(index).IsPassed = true;
         locationViewModel.updateLocation(path.get(index));
         viewPager.setCurrentItem(index + 1, true);
-        if (InternetUtility.isNetworkConnected()) {
-            mapFragment.updatePassedLocation(index);
-        } else {
-            netSnackbar.show();
-        }
+        mapFragment.updatePassedLocation(index);
+        if (!InternetUtility.isNetworkConnected()) {
+            InternetUtility.showSnackbar();
+            mapFragment.setConnectionStatus(false);
+        } else
+            mapFragment.setConnectionStatus(true);
         Utilities.createLocationNotification(this, path.get(index));
     }
 }

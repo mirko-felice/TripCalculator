@@ -15,6 +15,7 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
     private View showPhoto;
     private View addNote;
     private View showReminder;
+    private View showNote;
 
     public SummaryViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -22,23 +23,34 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
         showPhoto = itemView.findViewById(R.id.view_photo);
         addNote = itemView.findViewById(R.id.add_note);
         showReminder = itemView.findViewById(R.id.view_reminder);
+        showNote = itemView.findViewById(R.id.view_note);
     }
 
     public void setName(String name){
         ((TextView)itemView.findViewById(R.id.summary_name)).setText(name);
     }
 
-    public void adjustVisibility(boolean isPassed) {
-        if(isPassed){
+    public void adjustVisibility(boolean isPassed, boolean isEnded) {
+        if (isEnded){
             modifyReminder.setVisibility(View.GONE);
             showPhoto.setVisibility(View.VISIBLE);
-            addNote.setVisibility(View.VISIBLE);
+            showNote.setVisibility(View.VISIBLE);
+            addNote.setVisibility(View.GONE);
             showReminder.setVisibility(View.VISIBLE);
         } else {
-            modifyReminder.setVisibility(View.VISIBLE);
-            showPhoto.setVisibility(View.GONE);
-            addNote.setVisibility(View.GONE);
-            showReminder.setVisibility(View.GONE);
+            if (isPassed) {
+                modifyReminder.setVisibility(View.GONE);
+                showPhoto.setVisibility(View.VISIBLE);
+                showNote.setVisibility(View.GONE);
+                addNote.setVisibility(View.VISIBLE);
+                showReminder.setVisibility(View.VISIBLE);
+            } else {
+                modifyReminder.setVisibility(View.VISIBLE);
+                showPhoto.setVisibility(View.GONE);
+                showNote.setVisibility(View.GONE);
+                addNote.setVisibility(View.GONE);
+                showReminder.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -60,5 +72,9 @@ public class SummaryViewHolder extends RecyclerView.ViewHolder {
 
     public void setCardColor(int color) {
         ((MaterialCardView) itemView.findViewById(R.id.summary_card)).setCardBackgroundColor(color);
+    }
+
+    public void setViewNoteListener(View.OnClickListener listener){
+        showNote.setOnClickListener(listener);
     }
 }
