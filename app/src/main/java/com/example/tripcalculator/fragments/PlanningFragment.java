@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
@@ -66,6 +67,7 @@ public class PlanningFragment extends DialogFragment {
         intent.putExtra("TripId", trip.TripId);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(requireActivity(), ReminderReceiver.NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         binding.toolbar.setNavigationOnClickListener(v -> dismiss());
+        binding.toolbar.setNavigationIcon(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? R.drawable.ic_close : R.drawable.ic_close_);
         binding.toolbar.setTitle(R.string.plan_trip_title);
         binding.toolbar.inflateMenu(R.menu.plan);
         binding.toolbar.setOnMenuItemClickListener(item -> {
@@ -107,7 +109,7 @@ public class PlanningFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.PlanningTheme);
     }
 
     @Override

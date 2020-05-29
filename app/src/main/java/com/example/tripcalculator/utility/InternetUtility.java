@@ -37,7 +37,7 @@ public class InternetUtility {
         } else {
             networkConnected = false;
         }
-        if (mapFragment != null)
+        if (mapFragment != null && mapFragment.isVisible())
             mapFragment.requireActivity().runOnUiThread(() -> mapFragment.setConnectionStatus(networkConnected));
     }
 
@@ -46,7 +46,7 @@ public class InternetUtility {
         public void onAvailable(@NonNull Network network) {
             super.onAvailable(network);
             networkConnected = true;
-            if (mapFragment != null)
+            if (mapFragment != null && mapFragment.isVisible())
                 mapFragment.requireActivity().runOnUiThread(() -> mapFragment.setConnectionStatus(true));
         }
 
@@ -54,7 +54,7 @@ public class InternetUtility {
         public void onLost(@NonNull Network network) {
             super.onLost(network);
             networkConnected = false;
-            if (mapFragment != null)
+            if (mapFragment != null && mapFragment.isVisible())
                 mapFragment.requireActivity().runOnUiThread(() -> mapFragment.setConnectionStatus(false));
         }
     };
