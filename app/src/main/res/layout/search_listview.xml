@@ -12,7 +12,6 @@
         android:textSize="12sp"
         android:textAllCaps="false"
         android:textAlignment="textStart"
-        android:layout_margin="0dp"
         app:icon="@drawable/ic_result"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         />

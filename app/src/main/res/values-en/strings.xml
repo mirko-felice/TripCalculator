@@ -16,13 +16,13 @@
     <string name="trip_hint">Trip\'s name</string>
     <string name="prev_location">Previous Location</string>
     <string name="next_location">Next Location</string>
-    <string name="add_reminder">Add Reminder</string>
+    <string name="add_reminder">Set Reminder</string>
     <string name="set_previous">Set Previous</string>
     <string name="locations_list_label">Location\'s List</string>
     <string name="save_changes_title">Save Changes</string>
     <string name="optimize_trip">Optimize</string>
     <string name="summary_label">Trip Summary</string>
-    <string name="add_note">Add Note</string>
+    <string name="add_note">Set Note</string>
     <string name="view_reminder">View Reminder</string>
     <string name="details">Details</string>
     <string name="end_trip_label">End Trip</string>
@@ -63,7 +63,7 @@
     <string name="plan_trip_not_message">You have planned to start your trip %s now.</string>
     <string name="no_diary_label">"You add no diary "</string>
     <string name="new_trip">New Trip</string>
-    <string name="plan_trip_title">Planning Trip</string>
+    <string name="plan_trip_title">Planning</string>
     <string name="confirm">Confirm</string>
     <string name="discard">Discard</string>
     <string name="optimize_message">Your route has been optimized!</string>
@@ -73,14 +73,14 @@
     <string name="ticker_reminder">You arrived at %s. \\n %s</string>
     <string name="add_label">Add</string>
     <string name="previous_message">Previous Location has been set.</string>
-    <string name="insert">Insert</string>
+    <string name="insert">Set</string>
     <string name="reminder">Reminder</string>
     <string name="reminder_save_message">Your reminder has been saved.</string>
     <string name="note_message">Your note has been saved.</string>
     <string name="reminder_cancel_message">Reminder not added</string>
     <string name="note_cancel_message">Note not added</string>
     <string name="plan_cancel_message">Value not  set</string>
-    <string name="start_trip_label">Start your trip</string>
+    <string name="start_trip_label">Start</string>
     <string name="start_error">To start, your trip must have at least 2 locations.</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="language">Language</string>
@@ -130,4 +130,8 @@
     <string name="delete">Delete</string>
     <string name="none">None</string>
     <string name="previous_location_removed">Previous location removed!</string>
+    <string name="plan_message">You can\'t plan a trip to a date and clock before now.</string>
+    <string name="note_view_message">Here you can add a note to this location: for example write what you like the most</string>
+    <string name="reminder_view_message">Here you can add a reminder that will be remember to you when you will reach the selected location</string>
+    <string name="edit_cd">Edit location name</string>
 </resources>

@@ -17,15 +17,15 @@
     <string name="trip_hint">Nome del viaggio</string>
     <string name="prev_location">Località precedente</string>
     <string name="next_location">Località successiva</string>
-    <string name="add_reminder">Aggiungi Promemoria</string>
+    <string name="add_reminder">Imposta Promemoria</string>
     <string name="set_previous">Imposta Precedente</string>
     <string name="locations_list_label">Lista delle Destinazioni</string>
     <string name="save_changes_title">Salva Modifiche</string>
     <string name="optimize_trip">Ottimizza</string>
     <string name="summary_label">Riepilogo Del Viaggio</string>
     <string name="add_photo">"Allega Foto"</string>
-    <string name="mod_reminder">Modifica Promemoria</string>
-    <string name="add_note">Aggiungi Nota</string>
+    <string name="mod_reminder">Imposta Promemoria</string>
+    <string name="add_note">Imposta Nota</string>
     <string name="view_reminder">Visualizza Promemoria</string>
     <string name="details">Dettagli</string>
     <string name="end_trip_label">Termina Viaggio</string>
@@ -52,7 +52,7 @@
     <string name="plan_trip_not_message">Hai pianificato di iniziare il viaggio %s ora.</string>
     <string name="no_diary_label">Non hai inserito nessun diario</string>
     <string name="new_trip">Nuovo Viaggio</string>
-    <string name="plan_trip_title">Pianificazione Viaggio</string>
+    <string name="plan_trip_title">Pianificazione</string>
     <string name="confirm">Conferma</string>
     <string name="discard">Annulla</string>
     <string name="optimize_message">Il tuo percorso è stato ottimizzato!</string>
@@ -62,7 +62,7 @@
     <string name="ticker_reminder">Sei arrivato alla destinazione %s. \n %s</string>
     <string name="add_label">Aggiungi</string>
     <string name="previous_message">La destinazione precedente è stata impostata.</string>
-    <string name="insert">Inserisci</string>
+    <string name="insert">Imposta</string>
     <string name="reminder">Promemoria</string>
     <string name="cancel">Cancella</string>
     <string name="reminder_save_message">Il promemoria è stato salvato.</string>
@@ -81,7 +81,7 @@
     <string name="location_out_order_message">Non hai superato la destinazione precedente!</string>
     <string name="location_passed">Località superata!</string>
     <string name="splash_screen">Splash Screen</string>
-    <string name="start_trip_label">Inizia il viaggio</string>
+    <string name="start_trip_label">Inizia</string>
     <string name="save_changes">Le modifiche sono state salvate.</string>
     <string name="start_error">Per poter partire, il viaggio deve avere almeno 2 località.</string>
     <string name="dark_theme">Tema Scuro</string>
@@ -130,4 +130,8 @@
     <string name="delete">Cancella</string>
     <string name="none">Nessuno</string>
     <string name="previous_location_removed">Località precedente rimossa!</string>
+    <string name="plan_message">Non puoi pianificare un viaggio per una data e un orario precedente ad adesso.</string>
+    <string name="note_view_message">Qui puoi aggiungere una nota a questa località: per esempio scrivi cosa ti è piaciuto di più</string>
+    <string name="reminder_view_message">Qui puoi aggiungere un promemoria che ti verrà ricordato quando raggiungerai la destinazione selezionata</string>
+    <string name="edit_cd">Modifica nome località</string>
 </resources>

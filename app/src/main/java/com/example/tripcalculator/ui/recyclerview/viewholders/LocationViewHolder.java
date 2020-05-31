@@ -27,7 +27,7 @@ public class LocationViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setLocationNameListener(View.OnClickListener listener){
-        itemView.findViewById(R.id.location_name).setOnClickListener(listener);
+        itemView.findViewById(R.id.edit_location).setOnClickListener(listener);
     }
 
     public void setDividerVisibility(int visibility){

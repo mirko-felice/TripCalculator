@@ -78,8 +78,6 @@ public class MapFragment extends MapViewFragment {
         this.path = path;
     }
 
-    //TODO controllare internet
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

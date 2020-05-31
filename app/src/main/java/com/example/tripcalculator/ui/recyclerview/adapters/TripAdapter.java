@@ -88,6 +88,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                 holder.setOtherTripsVisibility(View.GONE);
                 card.setCardBackgroundColor(activity.getResources().getColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? R.color.cardNight : R.color.cardNotNight));
                 holder.setTripInfoVisibility(View.VISIBLE);
+                holder.setPlanVisibility(View.GONE);
+                holder.setStartVisibility(View.GONE);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", PreferenceManager.getDefaultSharedPreferences(activity).getString("language", "0").equals("0") ? Locale.ITALIAN : Locale.ENGLISH);
                 assert trip.StartDate != null;
                 holder.setTripInfo(activity.getString(R.string.start_date_label, dateFormat.format(trip.StartDate)));
@@ -171,8 +173,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         LiveData<List<Location>> locationLiveData = new ViewModelProvider(activity).get(LocationViewModel.class).getLocationsFromTrip(trip.TripId);
         locationLiveData.observe(activity, locations -> {
             if (locations.size() < 2) {
-                holder.setStartEnabled(false);
-                holder.setPlanEnabled(false);
+                holder.setStartVisibility(View.GONE);
+                holder.setPlanVisibility(View.GONE);
                 holder.setTripInfo(activity.getString(R.string.start_error));
             } else if (!trip.IsActive){
                 holder.setTripInfoVisibility(View.GONE);

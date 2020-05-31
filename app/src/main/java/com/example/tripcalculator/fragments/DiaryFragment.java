@@ -43,9 +43,12 @@ public class DiaryFragment extends Fragment {
             if(trip.IsEnded){
                 binding.diaryContent.setEnabled(false);
                 binding.diaryContent.setHint("");
-                binding.diaryContent.setText(trip.Diary == null || trip.Diary.isEmpty() ? getString(R.string.no_diary_label) : trip.Diary);
+                if(trip.Diary == null || trip.Diary.isEmpty())
+                    binding.diaryContent.setText(R.string.no_diary_label);
+                else
+                    binding.diaryContent.setText(trip.Diary);
             } else {
-                binding.diaryContent.setHint(getString(R.string.diary_hint));
+                binding.diaryContent.setHint(R.string.diary_hint);
                 binding.diaryContent.setText(trip.Diary);
             }
         });
@@ -55,7 +58,9 @@ public class DiaryFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        trip.Diary = Objects.requireNonNull(binding.diaryContent.getText()).toString();
-        tripViewModel.updateTrip(trip);
+        if(!trip.IsEnded) {
+            trip.Diary = Objects.requireNonNull(binding.diaryContent.getText()).toString();
+            tripViewModel.updateTrip(trip);
+        }
     }
 }

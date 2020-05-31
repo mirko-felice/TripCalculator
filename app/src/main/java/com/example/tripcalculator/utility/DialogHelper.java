@@ -51,7 +51,7 @@ public class DialogHelper {
         ((TextInputEditText)view.findViewById(R.id.reminder)).setText(location.Reminder);
         builder.setTitle(R.string.reminder)
                 .setView(view)
-                .setPositiveButton(R.string.add_label, (dialog, which) -> setReminder(activity, view, location))
+                .setPositiveButton(R.string.insert, (dialog, which) -> setReminder(activity, view, location))
                 .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.reminder_cancel_message, Toast.LENGTH_SHORT).show())
                 .show();
     }
@@ -98,10 +98,13 @@ public class DialogHelper {
             gridView.setAdapter(adapter);
             TextView noImagesView = view.findViewById(R.id.no_images_found_text_view);
             if (adapter.getCount() == 0){
+                gridView.setVisibility(View.GONE);
                 noImagesView.setVisibility(View.VISIBLE);
                 noImagesView.setText(R.string.no_images_found);
-            } else
+            } else {
+                gridView.setVisibility(View.VISIBLE);
                 noImagesView.setVisibility(View.GONE);
+            }
         });
         LiveData<Trip> tripLiveData = new ViewModelProvider(fragment.requireActivity()).get(TripViewModel.class).getTripFromId(location.TripId);
         tripLiveData.observe(fragment.requireActivity(), trip -> {
@@ -167,8 +170,12 @@ public class DialogHelper {
         locationViewModel.updateLocation(location);
     }
 
-    public static void showAlertPlanDialog() {
-        //TODO dialog di errore nel caso la data non è maggiore di now
+    public static void showAlertPlanDialog(Context context) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setTitle(R.string.alert);
+        builder.setMessage(R.string.plan_message);
+        builder.setPositiveButton("OK", null);
+        builder.show();
     }
 
     private static class PreviousLocationAdapter extends ArrayAdapter<Location> {
@@ -188,48 +195,6 @@ public class DialogHelper {
             return convertView;
         }
     }
-/*
-    private static class ImageAdapter extends BaseAdapter{
-
-        private Context context;
-        private List<String> imageNames;
-
-        ImageAdapter(Context context, List<String> names){
-            this.context = context;
-            this.imageNames = names;
-        }
-
-        @Override
-        public int getCount() {
-            return imageNames.size();
-        }
-
-        @Override
-        public String getItem(int position) {
-            return imageNames.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                final LayoutInflater layoutInflater = LayoutInflater.from(context);
-                convertView = layoutInflater.inflate(R.layout.photo_layout, null);
-            }
-            try (InputStream inputStream =  context.getContentResolver().openInputStream(Uri.parse(getItem(position)))){
-                Bitmap bitmap =  BitmapFactory.decodeStream(inputStream);
-                ((ImageView)convertView.findViewById(R.id.photo_preview)).setImageResource(bitmap.);
-            } catch (IOException e) {
-                Log.e("ImageAdapter", e.toString());
-            }
-            return convertView;
-        }
-    }
-*/
 
     private static class ImageAdapter extends ArrayAdapter<String>{
 

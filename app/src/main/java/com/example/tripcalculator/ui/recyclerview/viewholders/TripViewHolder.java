@@ -76,4 +76,12 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
     public void setOtherTripsVisibility(int value){
         otherTrips.setVisibility(value);
     }
+
+    public void setStartVisibility(int value) {
+        startTripBtn.setVisibility(value);
+    }
+
+    public void setPlanVisibility(int value) {
+        planTripBtn.setVisibility(value);
+    }
 }

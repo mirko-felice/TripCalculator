@@ -5,6 +5,5 @@
     <item
         android:id="@+id/start_trip"
         android:title="@string/start_trip_label"
-        android:icon="@drawable/ic_start"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

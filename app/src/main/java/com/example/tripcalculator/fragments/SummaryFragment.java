@@ -48,7 +48,7 @@ public class SummaryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         SummaryFragmentBinding binding = SummaryFragmentBinding.inflate(inflater, container, false);
-        binding.summary.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.summary.setLayoutManager(new LinearLayoutManager(requireContext()));
         SummaryAdapter adapter = new SummaryAdapter(this);
         binding.summary.setAdapter(adapter);
         locationViewModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
@@ -61,6 +61,7 @@ public class SummaryFragment extends Fragment {
                     binding.endTripBtn.setVisibility(View.VISIBLE);
                 adapter.updateLocations(locations);
             });
+            //TODO non funziona + get road verificare
             if(!trip.IsEnded){
                 binding.endTripBtn.setOnClickListener(v -> {
                     trip.IsEnded = true;

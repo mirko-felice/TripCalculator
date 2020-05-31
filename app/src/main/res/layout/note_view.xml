@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Qui puoi aggiungere una nota a questa località: per esempio scrivi cosa ti è piaciuto di più" />
+        android:text="@string/note_view_message" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"

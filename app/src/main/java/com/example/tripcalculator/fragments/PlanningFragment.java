@@ -83,7 +83,8 @@ public class PlanningFragment extends DialogFragment {
                     new ViewModelProvider(requireActivity()).get(TripViewModel.class).updateTrip(trip);
                 }
             } else {
-                DialogHelper.showAlertPlanDialog();
+                DialogHelper.showAlertPlanDialog(requireContext());
+                return false;
             }
             dismiss();
             return true;
