@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
@@ -55,13 +56,14 @@ public class SummaryFragment extends Fragment {
 
         TripViewModel tripViewModel = new ViewModelProvider(requireActivity()).get(TripViewModel.class);
         LiveData<Trip> tripLiveData = tripViewModel.getTripFromId(tripId);
+        LiveData<List<Location>> locationsLiveData = locationViewModel.getLocationsFromTrip(tripId);
         tripLiveData.observe(getViewLifecycleOwner(), trip -> {
-            locationViewModel.getLocationsFromTrip(tripId).observe(getViewLifecycleOwner(), locations -> {
-                if(locations.get(locations.size() - 1).IsPassed)
-                    binding.endTripBtn.setVisibility(View.VISIBLE);
+            locationsLiveData.observe(getViewLifecycleOwner(), locations -> {
+                if(!trip.IsEnded)
+                    if(locations.get(locations.size() - 1).IsPassed)
+                        binding.endTripBtn.setVisibility(View.VISIBLE);
                 adapter.updateLocations(locations);
             });
-            //TODO non funziona + get road verificare
             if(!trip.IsEnded){
                 binding.endTripBtn.setOnClickListener(v -> {
                     trip.IsEnded = true;
@@ -70,6 +72,7 @@ public class SummaryFragment extends Fragment {
                     tripViewModel.updateTrip(trip);
                     requireActivity().finish();
                     tripLiveData.removeObservers(getViewLifecycleOwner());
+                    locationsLiveData.removeObservers(getViewLifecycleOwner());
                 });
             } else
                 binding.endTripBtn.setVisibility(View.GONE);

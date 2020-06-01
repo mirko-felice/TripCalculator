@@ -109,7 +109,6 @@ public class MapFragment extends MapViewFragment {
 
         if(isGPSOn){
             map.getOverlays().add(mLocationOverlay);
-            mLocationOverlay.enableMyLocation();
             if (mLocationOverlay.getMyLocation() != null)
                 startPoint = mLocationOverlay.getMyLocation();
         } else if (hasPermissions){
@@ -137,7 +136,10 @@ public class MapFragment extends MapViewFragment {
         InternetUtility.setMapFragment(this);
         checkGPS();
         if (isGPSOn)
-            mLocationOverlay.enableMyLocation();
+            if (path == null)
+                mLocationOverlay.enableMyLocation();
+            else
+                startNavigation();
     }
 
     @Override
@@ -167,6 +169,7 @@ public class MapFragment extends MapViewFragment {
 
     public void updatePassedLocation(int index){
         path.get(index).IsPassed = true;
+        mLocationOverlay.disableMyLocation();
         showActualRoad();
     }
 
