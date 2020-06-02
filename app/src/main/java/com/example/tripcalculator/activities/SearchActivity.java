@@ -22,6 +22,7 @@ import com.example.tripcalculator.fragments.SearchResultFragment;
 import com.example.tripcalculator.utility.InternetUtility;
 import com.example.tripcalculator.utility.Utilities;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,15 +84,12 @@ public class SearchActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())){
-            //if (InternetUtility.isNetworkConnected()) {
+            if (InternetUtility.isNetworkConnected()) {
                 String query = intent.getStringExtra(SearchManager.QUERY);
                 searchResultFragment.executeQueue(query);
                 Utilities.hideKeyboard(this);
-                mapFragment.setConnectionStatus(true);
-            //} else {
-               // InternetUtility.showSnackbar();
-                //mapFragment.setConnectionStatus(false);
-            //}
+            }
+            mapFragment.setConnectionStatus(true);
         }
     }
 
@@ -175,14 +173,26 @@ public class SearchActivity extends BaseActivity {
         LocationViewModel locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         LiveData<List<Location>> liveData = locationViewModel.getLocationsFromTrip(tripId);
         liveData.observe(this, locations -> {
-            location.Id = 0;
-            location.TripId = tripId;
-            location.Order = !locations.isEmpty() ? locations.get(locations.size() - 1).Order + 1 : 1;
-            location.IsPassed = false;
-            location.FullName = location.DisplayName;
-            locationViewModel.insertLocation(location);
-            liveData.removeObservers(this);
-            finish();
+            boolean isPresent = false;
+            for (Location presentLocation : locations){
+                if (presentLocation.Latitude == location.Latitude && presentLocation.Longitude == location.Longitude) {
+                    isPresent = true;
+                    break;
+                }
+            }
+            if (isPresent){
+                Snackbar.make(mapFragment.requireView(), R.string.double_location_message, Snackbar.LENGTH_LONG).show();
+            } else {
+                location.Id = 0;
+                location.TripId = tripId;
+                location.Order = !locations.isEmpty() ? locations.get(locations.size() - 1).Order + 1 : 1;
+                location.IsPassed = false;
+                location.FullName = location.DisplayName;
+
+                locationViewModel.insertLocation(location);
+                liveData.removeObservers(this);
+                finish();
+            }
         });
     }
 }

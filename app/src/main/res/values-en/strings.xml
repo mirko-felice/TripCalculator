@@ -134,4 +134,5 @@
     <string name="note_view_message">Here you can add a note to this location: for example write what you like the most</string>
     <string name="reminder_view_message">Here you can add a reminder that will be remember to you when you will reach the selected location</string>
     <string name="edit_cd">Edit location name</string>
+    <string name="double_location_message">You are not allowed to add a location that is already added to your trip</string>
 </resources>

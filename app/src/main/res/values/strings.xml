@@ -133,4 +133,5 @@
     <string name="reminder_view_message">Qui puoi aggiungere un promemoria che ti verrà ricordato quando raggiungerai la destinazione selezionata</string>
     <string name="edit_cd">Modifica nome località</string>
     <string name="insert">Imposta</string>
+    <string name="double_location_message">Non è possibile reinserire una località già aggiunta in precedenza</string>
 </resources>
