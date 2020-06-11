@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.SearchActivity">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </org.osmdroid.views.MapView>
+
+    <ImageButton
+        android:id="@+id/no_connection_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/image_border"
+        android:contentDescription="@string/disable_rotation"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:src="@drawable/ic_connection_off"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/enable_rotation_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/enable_rotation"
+        android:src="@drawable/ic_enable_rotation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/disable_rotation_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/disable_rotation"
+        android:src="@drawable/ic_disable_rotation"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/enable_rotation_btn" />
+
+    <ImageButton
+        android:id="@+id/zoom_out_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/show_all_markers"
+        android:src="@drawable/ic_zoom_markers"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/disable_rotation_btn" />
+
+    <ImageButton
+        android:id="@+id/check_position_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/check_my_position"
+        android:src="@drawable/ic_gps_off"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/zoom_out_btn" />
+
+    <ImageButton
+        android:id="@+id/my_position_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/show_my_position"
+        android:src="@drawable/ic_gps_on"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/check_position_btn"
+        android:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/to_north_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/rotate_to_north"
+        android:src="@drawable/ic_rotate_north"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_position_btn" />
+
+    <ImageButton
+        android:id="@+id/clear_markers_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/clear_all_markers"
+        android:src="@drawable/ic_delete"
+        android:background="@drawable/image_border"
+        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/to_north_btn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

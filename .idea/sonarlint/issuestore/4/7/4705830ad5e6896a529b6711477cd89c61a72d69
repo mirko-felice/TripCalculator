@@ -1,0 +1,13 @@
+
+l
+java:S1450%"VRemove the "binding" field and declare it as a local variable in the relevant methods.(¹Êý
+p
+java:S1450$"URemove the "tripId" field and declare it as a local variable in the relevant methods.(´±ßýÿÿÿÿ
+m
+java:S37760"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(Û½Ê€þÿÿÿÿ
+ˆ
+java:S32527"mUse static access with "com.google.android.material.snackbar.BaseTransientBottomBar" for "LENGTH_INDEFINITE".(¢ÊÉ£ÿÿÿÿÿ
+J
+java:S16118"/Remove the parentheses around the "v" parameter(âþäàýÿÿÿÿ
+>
+java:S1185y"(Remove this method to simply inherit it.(Ù«µ§
