@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,9 +24,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tripcalculator.R;
+import com.example.tripcalculator.activities.TripActivity;
 import com.example.tripcalculator.database.Location;
 import com.example.tripcalculator.database.Trip;
 import com.example.tripcalculator.fragments.SummaryFragment;
+import com.example.tripcalculator.ui.recyclerview.adapters.LocationAdapter;
 import com.example.tripcalculator.viewmodel.LocationViewModel;
 import com.example.tripcalculator.viewmodel.TripViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -45,18 +46,18 @@ public class DialogHelper {
 
     private DialogHelper(){}
 
-    public static void showSetReminderDialog(Location location, FragmentActivity activity){
+    public static void showSetReminderDialog(Location location, FragmentActivity activity, int position){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         View view = View.inflate(activity, R.layout.reminder_view, null);
         ((TextInputEditText)view.findViewById(R.id.reminder)).setText(location.Reminder);
         builder.setTitle(R.string.reminder)
                 .setView(view)
-                .setPositiveButton(R.string.insert, (dialog, which) -> setReminder(activity, view, location))
+                .setPositiveButton(R.string.insert, (dialog, which) -> setReminder(activity, view, location, position))
                 .setNegativeButton(R.string.cancel, (dialog, which) -> Toast.makeText(activity, R.string.reminder_cancel_message, Toast.LENGTH_SHORT).show())
                 .show();
     }
 
-    public static void showSetPreviousDialog(Location locationToExclude, FragmentActivity activity){
+    public static void showSetPreviousDialog(Location locationToExclude, FragmentActivity activity, LocationAdapter adapter){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         LiveData<List<Location>> liveData = locationViewModel.getPossiblePreviousLocations(locationToExclude.TripId, locationToExclude.Id);
@@ -65,12 +66,23 @@ public class DialogHelper {
             noneLocation.Id = -1;
             noneLocation.DisplayName = activity.getString(R.string.none);
             locations.add(noneLocation);
-            builder.setAdapter(new PreviousLocationAdapter(activity, locations), (dialog, which) -> {
+            String[] names = new String[locations.size()];
+            int checkedItem = locations.size() - 1;
+            for (int i = 0; i < locations.size(); i++) {
+                names[i] = locations.get(i).DisplayName;
+                if (locationToExclude.PreviousId != null && locations.get(i).Id == locationToExclude.PreviousId)
+                    checkedItem = i;
+            }
+            builder.setSingleChoiceItems(names, checkedItem, (dialog, which) -> {
                 locationToExclude.PreviousId = locations.get(which).Id == -1 ? null : locations.get(which).Id;
                 locationViewModel.updateLocation(locationToExclude);
+                int from = locations.get(which).Order - 1;
+                int to = locationToExclude.Order - 1;
+                if (from > to)
+                    adapter.moveLocation(from, to);
                 Toast.makeText(activity, locationToExclude.PreviousId != null ? R.string.previous_message : R.string.previous_location_removed, Toast.LENGTH_SHORT).show();
-            });
-            builder.setNeutralButton(R.string.close, (dialog, which) -> {})
+            })
+                    .setNeutralButton(R.string.close, (dialog, which) -> {})
                     .show();
             liveData.removeObservers(activity);
         });
@@ -154,12 +166,14 @@ public class DialogHelper {
         locationViewModel.updateLocation(location);
     }
 
-    private static void setReminder(FragmentActivity activity, View viewHolder, Location location) {
+    private static void setReminder(FragmentActivity activity, View viewHolder, Location location, int position) {
         TextInputEditText editText = viewHolder.findViewById(R.id.reminder);
         location.Reminder = editText.getText() != null ? editText.getText().toString(): "";
         Toast.makeText(activity, R.string.reminder_save_message, Toast.LENGTH_SHORT).show();
         LocationViewModel locationViewModel = new ViewModelProvider(activity).get(LocationViewModel.class);
         locationViewModel.updateLocation(location);
+        if (activity instanceof TripActivity)
+            ((TripActivity)activity).updateLocation(position, location);
     }
 
     private static void setNote(FragmentActivity activity, View viewHolder, Location location) {
@@ -176,24 +190,6 @@ public class DialogHelper {
         builder.setMessage(R.string.plan_message);
         builder.setPositiveButton("OK", null);
         builder.show();
-    }
-
-    private static class PreviousLocationAdapter extends ArrayAdapter<Location> {
-
-        private PreviousLocationAdapter(@NonNull Context context, List<Location> items) {
-            super(context, 0, items);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.previous_layout, parent, false);
-            }
-            Location location = getItem(position);
-            ((TextView)convertView.findViewById(R.id.previous_name)).setText(location != null ? location.DisplayName : "Errore");
-            return convertView;
-        }
     }
 
     private static class ImageAdapter extends ArrayAdapter<String>{

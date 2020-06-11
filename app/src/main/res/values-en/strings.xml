@@ -70,7 +70,7 @@
     <string name="arrival_title">You arrived at %s.</string>
     <string name="empty_reminder">No reminder set.</string>
     <string name="reminder_message">Remember to %s.</string>
-    <string name="ticker_reminder">You arrived at %s. \\n %s</string>
+    <string name="ticker_reminder">You arrived at %s.  %s</string>
     <string name="add_label">Add</string>
     <string name="previous_message">Previous Location has been set.</string>
     <string name="insert">Set</string>

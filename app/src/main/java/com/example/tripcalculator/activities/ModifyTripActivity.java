@@ -28,7 +28,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Date;
 import java.util.List;
 
-//TODO Non inserire due volte la stessa loc
 public class ModifyTripActivity extends BaseActivity implements IOptimizeCallback {
 
     private static final String TRIP_ID = "TripId";
@@ -86,7 +85,6 @@ public class ModifyTripActivity extends BaseActivity implements IOptimizeCallbac
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TripItemTouchHelper(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT, adapter));
         itemTouchHelper.attachToRecyclerView(binding.locations);
-
         setContentView(binding.getRoot());
     }
 

@@ -47,7 +47,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryViewHolder> {
         holder.adjustVisibility(location.IsPassed, isEnded);
         holder.setName(location.DisplayName);
         holder.setViewReminderListener(v -> DialogHelper.showReminder(location, fragment));
-        holder.setModReminderListener(v -> DialogHelper.showSetReminderDialog(location, fragment.requireActivity()));
+        holder.setModReminderListener(v -> DialogHelper.showSetReminderDialog(location, fragment.requireActivity(), position));
         holder.setAddNoteListener(v -> DialogHelper.showAddNote(location, fragment.requireActivity()));
         holder.setViewNoteListener(v -> DialogHelper.showNotes(location, fragment));
         if(fragment.requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))

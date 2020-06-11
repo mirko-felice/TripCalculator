@@ -59,7 +59,7 @@
     <string name="arrival_title">Sei arrivato a %s.</string>
     <string name="empty_reminder">Nessun promemoria impostato.</string>
     <string name="reminder_message">Ricordati di %s.</string>
-    <string name="ticker_reminder">Sei arrivato alla destinazione %s. \n %s</string>
+    <string name="ticker_reminder">Sei arrivato alla destinazione %s. %s</string>
     <string name="add_label">Aggiungi</string>
     <string name="previous_message">La destinazione precedente è stata impostata.</string>
     <string name="insert">Imposta</string>

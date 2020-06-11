@@ -150,6 +150,10 @@ public class MapFragment extends MapViewFragment {
             mLocationOverlay.disableMyLocation();
     }
 
+    public void updateLocation(Location location, int index){
+        path.set(index, location);
+    }
+
     public void setSearchLocationMarkers(List<Location> locations) {
         clearMarkers();
         for (Location location : locations) {

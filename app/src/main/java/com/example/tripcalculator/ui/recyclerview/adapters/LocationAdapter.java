@@ -51,8 +51,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         Location location = locations.get(position);
         holder.setName(location.DisplayName);
-        holder.setReminderListener(v -> DialogHelper.showSetReminderDialog(location, activity));
-        holder.setPreviousListener(v -> DialogHelper.showSetPreviousDialog(location, activity));
+        holder.setReminderListener(v -> DialogHelper.showSetReminderDialog(location, activity, position));
+        holder.setPreviousListener(v -> DialogHelper.showSetPreviousDialog(location, activity, this));
         holder.setDividerColor(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? Color.WHITE : Color.BLACK);
         if (position > 0) {
             holder.setDividerVisibility(View.GONE);
@@ -87,17 +87,35 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationViewHolder> im
     @Override
     public void moveLocation(int from, int to) {
         if(locations.size() > 1 && from > -1) {
+            boolean canMove = true;
+            Location movedLocation = locations.get(from);
             if (from < to) {
-                for (int i = from; i < to; i++) {
+                for (int i = from + 1; i <= to; i++) {
+                    if (locations.get(i).PreviousId != null && locations.get(i).PreviousId == movedLocation.Id) {
+                        canMove = false;
+                        break;
+                    }
+                }
+                for (int i = from; canMove && i < to; i++) {
                     Utilities.swapLocations(activity, locations.get(i), locations.get(i + 1));
                     Collections.swap(locations, i, i + 1);
                 }
             } else {
-                for (int i = from; i > to; i--) {
+                if (movedLocation.PreviousId != null) {
+                    for (int i = from - 1; i >= to; i--) {
+                        if (locations.get(i).Id == movedLocation.PreviousId) {
+                            canMove = false;
+                            break;
+                        }
+                    }
+                }
+                for (int i = from; canMove && i > to; i--) {
                     Utilities.swapLocations(activity, locations.get(i), locations.get(i - 1));
                     Collections.swap(locations, i, i - 1);
                 }
             }
+            if (!canMove)
+                notifyDataSetChanged();
         }
     }
 

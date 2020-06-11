@@ -142,6 +142,10 @@ public class TripActivity extends BaseActivity {
         InternetUtility.unregisterNetworkCallback(this);
     }
 
+    public void updateLocation(int index, Location location){
+        mapFragment.updateLocation(location, index);
+    }
+
     public void setLocationAsPassed(int index){
         path.get(index).IsPassed = true;
         locationViewModel.updateLocation(path.get(index));
